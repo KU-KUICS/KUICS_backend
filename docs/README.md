@@ -17,3 +17,7 @@ npm run start
 ```shell
 npm run dev
 ```
+
+## API
+
+[API](/docs/API.md)
