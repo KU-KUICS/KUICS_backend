@@ -1,0 +1,6 @@
+# Dependency Folder
+node_modules
+
+# Log file
+/log/*
+*/**.log

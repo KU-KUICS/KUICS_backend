@@ -1,0 +1,32 @@
+{
+  "name": "KUICS_backend",
+  "version": "1.0.0",
+  "description": "KUICS_backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeLeap/KUICS_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeLeap/KUICS_backend/issues"
+  },
+  "homepage": "https://github.com/BeLeap/KUICS_backend#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "nodemon": "^2.0.2",
+    "prettier": "^2.0.3"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.2",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2"
+  }
+}
