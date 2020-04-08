@@ -1,8 +1,9 @@
 const { Router } = require('express');
-const { getAuth } = require('./auth.ctrl');
+const { getAuth, postAuth } = require('./auth.ctrl');
 
 const router = Router();
 
-router.get('/', getAuth);
+router.get('/:user_id', getAuth);
+router.post('/', postAuth);
 
 module.exports = router;
