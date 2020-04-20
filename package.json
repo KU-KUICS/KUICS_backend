@@ -4,8 +4,8 @@
   "description": "KUICS_backend",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js",
-    "start:dev": "nodemon ./src/index.js"
+    "start": "cross-env NODE_ENV=production&& node ./src/index.js",
+    "start:dev": "cross-env NODE_ENV=development&& nodemon ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "express": "^4.17.1",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2",
     "winston-syslog": "^2.4.4"
