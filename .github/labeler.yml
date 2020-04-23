@@ -1,0 +1,4 @@
+API:
+  - src/api/**/*
+Document:
+  - docs/**/*
