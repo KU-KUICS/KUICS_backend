@@ -18,7 +18,7 @@ const handleError = (err, req, res, next) => {
 
     res.status(statusCode).json({
         errorCode,
-        msg: msg + (err.message in exceptions ? '' : ` - ${err.message}`),
+        msg: msg + (err.message in exceptions ? ` - ${err.message}` : ''),
     });
 };
 
