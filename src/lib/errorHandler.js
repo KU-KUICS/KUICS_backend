@@ -1,3 +1,5 @@
+const { logger } = require('./logger');
+
 const exceptions = {
     INTERNAL_SERVER_ERROR: {
         statusCode: 500,
@@ -15,6 +17,12 @@ const handleError = (err, req, res, next) => {
     const errorName =
         err.message in exceptions ? err.message : 'INTERNAL_SERVER_ERROR';
     const { statusCode, errorCode, msg } = exceptions[errorName];
+
+    logger.error(
+        `${msg} - ${
+            err.message in exceptions ? err.message : 'NOT_DEFINED_ERROR'
+        }`,
+    );
 
     res.status(statusCode).json({
         errorCode,
