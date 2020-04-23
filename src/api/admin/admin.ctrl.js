@@ -5,14 +5,18 @@ const getAdmin = (req, res) => {
     });
 };
 
-const postAdmin = (req, res) => {
+const postAdmin = (req, res, next) => {
     const user_id = Number(req.body.user_id);
-    if (user_id !== 10) {
-        throw new Error('WRONG_USER_ID');
+
+    try {
+        if (user_id !== 10) throw new Error('WRONG_USER_ID');
+
+        res.json({
+            user_id,
+        });
+    } catch (error) {
+        next(error);
     }
-    res.json({
-        user_id,
-    });
 };
 
 module.exports = {
