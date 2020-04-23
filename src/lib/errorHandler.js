@@ -20,6 +20,8 @@ const handleError = (err, req, res, next) => {
         errorCode,
         msg: msg + (err.message in exceptions ? ` - ${err.message}` : ''),
     });
+
+    next();
 };
 
 module.exports = handleError;
