@@ -1,8 +1,8 @@
-require('./env');
 const { logger } = require('./lib/logger');
 const server = require('./server');
 
-const { PORT } = process.env;
+const { PORT } = require('../config/config.json');
+
 const port = PORT || 4000;
 
 server.listen(port, () => {
