@@ -2,8 +2,8 @@ const { Router } = require('express');
 
 const admin = require('./admin');
 const auth = require('./auth');
-const board = require('./board');
-const notice = require('./notice');
+const board = require('./boards');
+const notice = require('./notices');
 const search = require('./search');
 
 const router = Router();
