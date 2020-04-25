@@ -2,8 +2,8 @@ const Express = require('express');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
 const handleError = require('./lib/errorHandler');
-const { stream } = require('./lib/logger');
 const activateSwagger = require('./lib/swagger');
+const { logger, stream } = require('./lib/logger');
 
 const api = require('./api');
 
@@ -26,5 +26,17 @@ app.use('/api', api);
 app.use(handleError);
 
 activateSwagger(app);
+
+const models = require('./models');
+
+models.sequelize
+    .sync()
+    .then(() => {
+        logger.debug('DB sync process succeed');
+    })
+    .catch((err) => {
+        logger.error(err);
+        logger.error('DB sync process failed');
+    });
 
 module.exports = app;
