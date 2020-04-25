@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getNotice, postNotice } = require('./notice.ctrl');
+const { getNotice, postNotice } = require('./notices.ctrl');
 
 const router = Router();
 

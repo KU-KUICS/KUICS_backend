@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getBoard, postBoard } = require('./board.ctrl');
+const { getBoard, postBoard } = require('./boards.ctrl');
 
 const router = Router();
 
