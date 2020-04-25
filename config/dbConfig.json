@@ -1,19 +1,20 @@
 {
-    "development": {
-      "username": "kuics",
-      "password": "kuics!test09321",
-      "database": "kuics",
-      "host": "zheedong.iptime.org",
-      "dialect": "mysql",
-      "operatorsAliases": false
-    },
-    "production": {
-      "username": "root",
-      "password": null,
-      "database": "database_production",
-      "host": "127.0.0.1",
-      "dialect": "mysql",
-      "operatorsAliases": false
-    }
+  "development": {
+    "username": "kuics",
+    "password": "kuics!test09321",
+    "database": "kuics",
+    "host": "zheedong.iptime.org",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorsAliases": false
   }
+}
   
