@@ -2,6 +2,7 @@ const Express = require('express');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
 const handleError = require('./lib/errorHandler');
+const activateSwagger = require('./lib/swagger');
 const { logger, stream } = require('./lib/logger');
 
 const api = require('./api');
@@ -23,6 +24,8 @@ if (NODE_ENV === 'production') {
 app.use('/api', api);
 
 app.use(handleError);
+
+activateSwagger(app);
 
 const models = require('./models');
 
