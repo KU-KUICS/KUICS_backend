@@ -1,21 +1,17 @@
-const getAuth = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
-};
-
-const postAuth = (req, res) => {
-    const user_id = Number(req.body.user_id);
-    if (user_id !== 10) {
-        throw new Error('WRONG_USER_ID');
-    }
-    res.json({
-        user_id,
-    });
-};
+const login = (req, res) => {};
+const logout = (req, res) => {};
+const register = (req, res) => {};
+const unregister = (req, res) => {};
+const findId = (req, res) => {};
+const findPw = (req, res) => {};
+const changePw = (req, res) => {};
 
 module.exports = {
-    getAuth,
-    postAuth,
+    login,
+    logout,
+    register,
+    unregister,
+    findId,
+    findPw,
+    changePw,
 };
