@@ -30,7 +30,7 @@ activateSwagger(app);
 const models = require('./models');
 
 models.sequelize
-    .sync()
+    .sync({ alter: true })
     .then(() => {
         logger.debug('DB sync process succeed');
     })
