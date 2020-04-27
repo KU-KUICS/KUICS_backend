@@ -6,10 +6,10 @@ const exceptions = {
         errorCode: 0,
         msg: 'Internal Server Error',
     },
-    WRONG_USER_ID: {
+    INVALID_PARAMETERS: {
         statusCode: 404,
-        errorCode: 10000,
-        msg: 'Wrong user id',
+        errorCode: 1,
+        msg: 'Invalid Parameters',
     },
 };
 

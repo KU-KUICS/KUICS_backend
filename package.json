@@ -27,6 +27,7 @@
     "prettier": "^2.0.5"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.11.0",

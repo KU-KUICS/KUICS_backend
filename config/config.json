@@ -1,3 +1,4 @@
 {
-    "PORT": 4000
+    "PORT": 4000,
+    "AUTH_KEY": "KUICS_AUTH_SECRET"
 }
