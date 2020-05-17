@@ -1,30 +1,37 @@
 module.exports = (sequelize, DataTypes) => {
     const Users = sequelize.define('users', {
+        // Primary Key
         userNo: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
+        // 로그인 시 사용하는 ID
         userId: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // 로그인 시 사용하는 PW
         userPW: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // 사용자 이름
         userName: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // 사용자 이메일
         email: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // 학번
         studentId: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        // 가입일자
         joinedAt: {
             type: DataTypes.DATE,
             allowNull: false,
