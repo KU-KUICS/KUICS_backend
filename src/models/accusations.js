@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         // 신고자
         Accusations.belongsTo(models.users);
 
-        // 신고된 대상
+        // 신고된 게시물
         Accusations.belongsTo(models.boards);
         Accusations.belongsTo(models.boardComments);
     };

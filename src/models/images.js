@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Images.associate = (models) => {
+        // 이미지가 사용된 게시물
         Images.belongsTo(models.boards);
     };
 

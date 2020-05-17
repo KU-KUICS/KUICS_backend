@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     AttachedFile.associate = (models) => {
+        // 파일이 첨부된 게시물
         AttachedFile.belongsTo(models.boards);
     };
 

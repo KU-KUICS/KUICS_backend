@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Boards.associate = (models) => {
+        // 작성자
         Boards.belongsTo(models.users);
     };
 

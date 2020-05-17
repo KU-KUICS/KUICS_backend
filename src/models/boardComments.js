@@ -23,7 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     boardComments.associate = (models) => {
+        // 작성자
         boardComments.belongsTo(models.users);
+        // 댓글이 작성된 게시물
         boardComments.belongsTo(models.boards);
     };
 
