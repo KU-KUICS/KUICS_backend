@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Accusations = sequelize.definre('accusations', {
+    const Accusations = sequelize.define('accusations', {
         // Primary Key
         accusationNo: {
             type: DataTypes.INTEGER,
