@@ -1,51 +1,50 @@
 module.exports = (sequelize, DataTypes) => {
-    const Users = sequelize.define('Users', {
-        // Primary key
-        userId: {
-            field: 'user_id',
+    const Users = sequelize.define('users', {
+        // Primary Key
+        userNo: {
             type: DataTypes.INTEGER,
-            primaryKey: true,
             autoIncrement: true,
+            primaryKey: true,
         },
-        // 유저가 로그인 할 때 쓰는 ID
-        username: {
+        // 로그인 시 사용하는 ID
+        userId: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        // 유저가 로그인 할 때 쓰는 PW
-        password: {
+        // 로그인 시 사용하는 PW
+        userPW: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        // 유저 권한: 0 | 1 | 2 | 999 / unauthorized | associate | regular | admin
+        // 사용자 이름
+        userName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        // 사용자 이메일
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        // 학번
+        studentId: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        // 가입일자
+        joinedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        // 0: 미승인 | 1: 준회원 | 2: 정회원 | 999: 관리자
         level: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,
         },
-        // 실명
-        realName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        }
-        // 별명
-        nickName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        // 학교 이메일
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        // 회원가입 일자
-        joinedAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        }
-        // 상태: 0 | 1 | 2 / 일반 | 탈퇴 | 강퇴
+        // 0: 정상 | 1: 탈퇴
         state: {
-            type: DataTypes.TINYINT,
+            type: DataTypes.INTEGER(1),
             allowNull: false,
             defaultValue: 0,
         },
