@@ -3,7 +3,7 @@
         "username": "kuics",
         "password": "kuics!test09321",
         "database": "kuics",
-        "host": "ec2-18-222-122-195.us-east-2.compute.amazonaws.com",
+        "host": "ec2-3-23-128-147.us-east-2.compute.amazonaws.com",
         "dialect": "mysql",
         "operatorsAliases": false
     },
@@ -16,4 +16,3 @@
         "operatorsAliases": false
     }
 }
-
