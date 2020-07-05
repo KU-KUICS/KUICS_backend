@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/BeLeap/KUICS_backend#readme",
   "devDependencies": {
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "nodemon": "^2.0.4",
