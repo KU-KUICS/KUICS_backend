@@ -1,9 +1,9 @@
 const { Router } = require('express');
-const { getBoard, postBoard } = require('./boards.ctrl');
+const { getBoardList, postBoard } = require('./boards.ctrl');
 
 const router = Router();
 
-router.get('/:user_id', getBoard);
-router.post('/', postBoard);
+router.get('/', getBoardList);
+router.post('/:userId', postBoard);
 
 module.exports = router;
