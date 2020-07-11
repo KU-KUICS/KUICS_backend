@@ -1,0 +1,2 @@
+#Force js file eol to LF
+*.js    text eol=lf

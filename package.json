@@ -1,0 +1,48 @@
+{
+  "name": "KUICS_backend",
+  "version": "1.0.0",
+  "description": "KUICS_backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production&& node ./src/index.js",
+    "start:dev": "cross-env NODE_ENV=development&& nodemon ./src/index.js",
+    "test": "eslint ./src/**.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeLeap/KUICS_backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeLeap/KUICS_backend/issues"
+  },
+  "homepage": "https://github.com/BeLeap/KUICS_backend#readme",
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "express": "^4.17.1",
+    "express-swagger-generator": "^1.1.17",
+    "method-override": "^3.0.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.1.0",
+    "pg": "^8.3.0",
+    "sequelize": "^6.3.0",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.4.2",
+    "winston-syslog": "^2.4.4"
+  }
+}
