@@ -22,14 +22,7 @@ jobs:
         - name: build docker image
           uses: garygrossgarten/github-action-ssh@release
           with:
-            command: cd KUICS_backend && docker image build --tag kuics-backend .
-            host: ${{ secrets.SERVER }}
-            username: ${{ secrets.USERNAME }}
-            privateKey: ${{ secrets.PRIVATE_KEY }}
-        - name: run docker
-          uses: garygrossgarten/github-action-ssh@release
-          with:
-            command: docker run -d -p 4000:4000 --name kuics-backend kuics-backend 
+            command: cd KUICS_backend && docker image build --tag kuics-backend . && docker run -d -p 4000:4000 --name kuics-backend kuics-backend
             host: ${{ secrets.SERVER }}
             username: ${{ secrets.USERNAME }}
             privateKey: ${{ secrets.PRIVATE_KEY }}
