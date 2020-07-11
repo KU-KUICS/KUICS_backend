@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const app = require('../../server');
+const { users } = require('../../../models/');
 
 const {
     GOOGLE_CLIENT_ID,
@@ -30,12 +31,16 @@ passport.use(
     ),
 );
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
     try {
         if (!req.user) throw new Error('NO_LOGIN');
 
+        let email = req.user.emails[0].value;
+        let is_kuics = await users.findOne({
+            where: { email },
+        });
 
-        if (!dbExists) throw new Error('NOT_KUICS');
+        if (!is_kuics) throw new Error('NOT_KUICS');
         next();
     } catch (err) {
         next(err);
