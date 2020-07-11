@@ -27,7 +27,7 @@ jobs:
       - name: Generate .env file
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: ENV=${{secret.ENV}} echo '$ENV' > ~/.env
+          command: ENV=${{secrets.ENV}} echo '$ENV' > ~/.env
           host: ${{secrets.SERVER}}
           username: ${{secrets.USERNAME}}
           privateKey: ${{secrets.PRIVATE_KEY}}
