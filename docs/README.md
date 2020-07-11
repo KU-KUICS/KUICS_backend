@@ -1,5 +1,7 @@
 # KUICS_backend
 
+![.github/workflows/main.yml](https://github.com/KU-KUICS/KUICS_backend/workflows/.github/workflows/main.yml/badge.svg)
+
 ## Install Dependencies
 
 ```shell
