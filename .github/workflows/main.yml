@@ -1,9 +1,10 @@
+name: Pull Repo and Run Docker
 on: [push]
 
 jobs:
     server:
         runs-on: ubuntu-latest
-        name: sync repo and run docker
+        name: run 
         steps:
         - name: stop and delete running container
           uses: garygrossgarten/github-action-ssh@release
