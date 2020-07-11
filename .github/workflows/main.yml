@@ -1,32 +1,18 @@
-name: Pull Repo and Run Docker
+name: Build Docker Image and Run Docker on Server 
 on:
   push:
     branches:
       - master
 
 jobs:
-    server:
+    docker-image:
         runs-on: ubuntu-latest
-        name: run 
+        name: Build and Push
         steps:
-        - name: stop and delete running container
-          uses: garygrossgarten/github-action-ssh@release
+        - name: Build and Push Docker Image
+          uses: docker/build-push-actions@v1
           with:
-            command: docker stop kuics-backend && docker rm kuics-backend
-            host: ${{ secrets.SERVER }}
-            username: ${{ secrets.USERNAME }}
-            privateKey: ${{ secrets.PRIVATE_KEY }}
-        - name: git pull 
-          uses: garygrossgarten/github-action-ssh@release
-          with:
-            command: cd KUICS_backend && git checkout master && git pull origin master
-            host: ${{ secrets.SERVER }}
-            username: ${{ secrets.USERNAME }}
-            privateKey: ${{ secrets.PRIVATE_KEY }}
-        - name: build docker image and run docker
-          uses: garygrossgarten/github-action-ssh@release
-          with:
-            command: cd KUICS_backend && docker image build --tag kuics-backend . && docker run -d -p 4000:4000 --name kuics-backend kuics-backend
-            host: ${{ secrets.SERVER }}
-            username: ${{ secrets.USERNAME }}
-            privateKey: ${{ secrets.PRIVATE_KEY }}
+            username: ${{secrets.DOCKER_USERNAME}}
+            password: ${{secrets.DOCKER_PASSWORD}}
+            repository: ${{secrests.DOCKER_USERNAME}}/kuics-backend
+            tags: latest
