@@ -1,21 +1,23 @@
 # KUICS_backend
 
+![.github/workflows/main.yml](https://github.com/KU-KUICS/KUICS_backend/workflows/.github/workflows/main.yml/badge.svg)
+
 ## Install Dependencies
 
 ```shell
-npm install
+yarn install
 ```
 
 ## Start Server
 
 ```shell
-npm run start
+yarn start
 ```
 
 ## Start dev Server
 
 ```shell
-npm run dev
+yarn start:dev
 ```
 
 ## API
