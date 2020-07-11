@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true,
         },
+        fileName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         // 파일 위치
         path: {
             type: DataTypes.STRING,
