@@ -5,7 +5,7 @@ const getLoginGoogle = passport.authenticate('google', {});
 const googleAuth = passport.authenticate('google', {
     scope: ['profile', 'email'],
     failureRedirect: '/login',
-    successRedirect: '/',
+    successRedirect: '/api/auth/testroute',
 });
 
 const getLoginGoogleCallback = async (req, res) => {
@@ -14,7 +14,7 @@ const getLoginGoogleCallback = async (req, res) => {
 };
 
 const testCb = (req, res) => {
-    res.send('Hello World');
+    res.send(req.user);
 };
 
 const getLogout = (req, res) => {
