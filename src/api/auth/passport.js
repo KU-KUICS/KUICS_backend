@@ -31,10 +31,14 @@ passport.use(
 );
 
 const isAuthenticated = (req, res, next) => {
-    if (req.user) {
+    try {
+        if (!req.user) throw new Error('NO_LOGIN');
+
+
+        if (!dbExists) throw new Error('NOT_KUICS');
         next();
-    } else {
-        res.send('plz login');
+    } catch (err) {
+        next(err);
     }
 };
 
