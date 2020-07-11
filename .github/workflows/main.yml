@@ -14,5 +14,5 @@ jobs:
           with:
             username: ${{secrets.DOCKER_USERNAME}}
             password: ${{secrets.DOCKER_PASSWORD}}
-            repository: ${{secrests.DOCKER_USERNAME}}/kuics-backend
+            repository: ${{secrets.DOCKER_USERNAME}}/kuics-backend
             tags: latest
