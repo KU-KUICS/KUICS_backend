@@ -9,8 +9,6 @@ jobs:
       runs-on: ubuntu-latest
       name: Build and Push
       steps:
-      - name: Show Directory Content
-        run: ls -al
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v1
         with:
@@ -18,3 +16,5 @@ jobs:
           password: ${{secrets.DOCKER_PASSWORD}}
           repository: ${{secrets.DOCKER_USERNAME}}/kuics-backend
           tags: latest
+      - name: Show Directory Content
+        run: ls -al
