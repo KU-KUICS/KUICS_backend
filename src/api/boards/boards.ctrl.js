@@ -1,3 +1,4 @@
+// board API
 const { boards } = require('../../../models');
 
 const getBoardList = async (req, res, next) => {
