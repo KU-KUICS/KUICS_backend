@@ -4,6 +4,8 @@
 
 ![Test Source Code](https://github.com/KU-KUICS/KUICS_backend/workflows/Test%20Source%20Code/badge.svg)
 
+This is repository for renewed KUICS homepage backend
+
 ## Install Dependencies
 
 ```shell
