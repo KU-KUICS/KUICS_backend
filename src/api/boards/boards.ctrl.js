@@ -1,4 +1,3 @@
-// board API
 const { boards } = require('../../../models');
 
 const getBoardList = async (req, res, next) => {
@@ -14,8 +13,19 @@ const getBoardList = async (req, res, next) => {
     }
 };
 
+const getBoard = async (req, res, next) => {
+    try {
+        const { boardId } = req.query;
+
+        res.json({ boardId });
+    } catch (err) {
+        next(err);
+    }
+};
+
 const postBoard = async (req, res, next) => {
     try {
+        /*
         const { userId } = req.query;
         const boardInfo = req.body;
 
@@ -26,8 +36,56 @@ const postBoard = async (req, res, next) => {
             commentCount: 0,
             userUserNo: userId,
         });
-
+        */
         res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const reviseBoard = async (req, res, next) => {
+    try {
+        const { boardId } = req.query;
+
+        res.json({ boardId });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deleteBoard = async (req, res, next) => {
+    try {
+        const { boardId } = req.query;
+
+        res.json({ boardId });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const postComment = async (req, res, next) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const reviseComment = async (req, res, next) => {
+    try {
+        const { boardId, commentId } = req.query;
+
+        res.json({ boardId, commentId });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deleteComment = async (req, res, next) => {
+    try {
+        const { boardId, commentId } = req.query;
+
+        res.json({ boardId, commentId });
     } catch (err) {
         next(err);
     }
@@ -35,5 +93,11 @@ const postBoard = async (req, res, next) => {
 
 module.exports = {
     getBoardList,
+    getBoard,
     postBoard,
+    reviseBoard,
+    deleteBoard,
+    postComment,
+    reviseComment,
+    deleteComment,
 };
