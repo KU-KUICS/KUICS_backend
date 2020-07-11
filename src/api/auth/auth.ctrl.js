@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const jwt = require('jsonwebtoken');
 const joi = require('@hapi/joi');
 const crypto = require('crypto');
@@ -55,6 +56,25 @@ const postLogin = async (req, res, next) => {
         res.json(user);
     } catch (err) {
         next(new Error('INVALID_PARAMETERS'));
+=======
+const { users } = require('../../../models');
+
+const postAuth = async (req, res, next) => {
+    try {
+        const userInfo = req.body;
+        if (!userInfo) throw new Error('AUTH_NO_INPUT');
+
+        await users.create({
+            ...userInfo,
+            joinedAt: new Date(),
+            level: 0,
+            state: 0,
+        });
+
+        res.json({});
+    } catch (err) {
+        next(err);
+>>>>>>> master
     }
 };
 
@@ -66,6 +86,7 @@ const findPw = (req, res, next) => {};
 const changePw = (req, res, next) => {};
 
 module.exports = {
+<<<<<<< HEAD
     postLogin,
     postLogout,
     postRegister,
@@ -73,4 +94,7 @@ module.exports = {
     findId,
     findPw,
     changePw,
+=======
+    postAuth,
+>>>>>>> master
 };

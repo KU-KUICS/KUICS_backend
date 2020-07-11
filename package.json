@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/BeLeap/KUICS_backend#readme",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.2",
-    "nodemon": "^2.0.3",
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
   },
   "dependencies": {
@@ -31,18 +31,27 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-prettier": "^3.1.4",
     "express": "^4.17.1",
     "express-swagger-generator": "^1.1.17",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
+<<<<<<< HEAD
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0",
     "sequelize": "^5.21.7",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4",
     "winston": "^3.2.1",
+=======
+    "mysql2": "^2.1.0",
+    "pg": "^8.3.0",
+    "sequelize": "^6.3.0",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-ui-express": "^4.1.4",
+    "winston": "^3.3.3",
+>>>>>>> master
     "winston-daily-rotate-file": "^4.4.2",
     "winston-syslog": "^2.4.4"
   }
