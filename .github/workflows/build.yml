@@ -1,9 +1,8 @@
 name: Build Docker Image
 on:
   push:
-    branches:
-      - '**'
-      - '!master'
+    branches-ignore:
+      - 'master'
 
 jobs:
     docker-image:
@@ -11,10 +10,11 @@ jobs:
       name: Docker Image Build
       steps:
       - uses: actions/checkout@v1
+      - uses: nelonoel/branch-name@v1
       - name: Build Docker Image and Push
         uses: docker/build-push-action@v1
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
           repository: ${{secrets.DOCKER_USERNAME}}/kuics-backend
-          tags: ${GITHUB_REF##*/} 
+          tags: ${BRANCH_NAME} 
