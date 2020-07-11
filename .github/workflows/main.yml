@@ -9,6 +9,8 @@ jobs:
       runs-on: ubuntu-latest
       name: Build and Push
       steps:
+      - name: Show Directory Content
+        run: ls -al
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v1
         with:
