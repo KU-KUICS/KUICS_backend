@@ -1,5 +1,8 @@
 name: Pull Repo and Run Docker
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
     server:
