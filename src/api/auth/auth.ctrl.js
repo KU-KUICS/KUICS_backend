@@ -1,15 +1,31 @@
-const passport = require('passport');
+const { passport } = require('./passport');
 
-const getLogin = passport.authenticate('google', {});
-const getLoginCallback = passport.authenticate('google', {
+const getLoginGoogle = passport.authenticate('google', {});
+
+const googleAuth = passport.authenticate('google', {
+    scope: ['profile', 'email'],
     failureRedirect: '/login',
     successRedirect: '/',
 });
 
-const getLogout = (req, res, next) => {};
+const getLoginGoogleCallback = async (req, res) => {
+    console.log(req.user);
+    res.send(req.user);
+};
+
+const testCb = (req, res) => {
+    res.send('Hello World');
+};
+
+const getLogout = (req, res) => {
+    req.logout();
+    res.redirect('/');
+};
 
 module.exports = {
-    getLogin,
-    getLoginCallback,
+    getLoginGoogle,
+    googleAuth,
+    getLoginGoogleCallback,
     getLogout,
+    testCb,
 };
