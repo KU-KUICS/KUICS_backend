@@ -1,4 +1,4 @@
-const { boards } = require('../../../models');
+const { boards, sequelize } = require('../../../models');
 
 const getBoardList = async (req, res, next) => {
     try {
@@ -17,26 +17,48 @@ const getBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
 
-        res.json({ boardId });
+        await boards.update(
+            { hit: sequelize.literal('hit + 1') },
+            { where: { boardNo: boardId }, silent: true },
+        );
+
+        const board = await boards.findAll({
+            where: { boardNo: boardId },
+            attributes: [
+                'boardNo',
+                'type',
+                'title',
+                'body',
+                'hit',
+                'commentCount',
+                'createdAt',
+                'updatedAt',
+                'deletedAt',
+                'userUserNo',
+            ],
+        });
+        res.json({ board });
     } catch (err) {
         next(err);
     }
+    // 이미지, 파일 관련 추가 필요
+    // comment join
 };
 
 const postBoard = async (req, res, next) => {
     try {
-        /*
         const { userId } = req.query;
-        const boardInfo = req.body;
+        const { title, body } = req.body;
 
         await boards.create({
-            ...boardInfo,
+            title,
+            body,
             type: 'board',
             hit: 0,
             commentCount: 0,
             userUserNo: userId,
         });
-        */
+
         res.json({});
     } catch (err) {
         next(err);
