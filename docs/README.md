@@ -1,6 +1,8 @@
 # KUICS_backend
 
-![.github/workflows/main.yml](https://github.com/KU-KUICS/KUICS_backend/workflows/.github/workflows/main.yml/badge.svg)
+!![Pull Repo and Run Docker](https://github.com/KU-KUICS/KUICS_backend/workflows/Pull%20Repo%20and%20Run%20Docker/badge.svg)
+
+![Test Source Code](https://github.com/KU-KUICS/KUICS_backend/workflows/Test%20Source%20Code/badge.svg)
 
 ## Install Dependencies
 
