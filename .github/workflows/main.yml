@@ -4,28 +4,30 @@ jobs:
     server:
         runs-on: ubuntu-latest
         name: sync repo and run docker
-        uses: garygrossgarten/github-action-ssh@release
         steps:
         - name: stop and delete running container
+          uses: garygrossgarten/github-action-ssh@release
           with:
             command: docker stop kuics-backend && docker rm kuics-backend
             host: ${{ secrets.SERVER }}
             username: ${{ secrets.USERNAME }}
             privateKey: ${{ secrets.PRIVATE_KEY }}
-        - name: build docker image
         - name: git pull 
+          uses: garygrossgarten/github-action-ssh@release
           with:
             command: cd KUICS_backend && git checkout master && git pull origin master
             host: ${{ secrets.SERVER }}
             username: ${{ secrets.USERNAME }}
             privateKey: ${{ secrets.PRIVATE_KEY }}
         - name: build docker image
+          uses: garygrossgarten/github-action-ssh@release
           with:
             command: cd KUICS_backend && docker image build --tag kuics-backend .
             host: ${{ secrets.SERVER }}
             username: ${{ secrets.USERNAME }}
             privateKey: ${{ secrets.PRIVATE_KEY }}
         - name: run docker
+          uses: garygrossgarten/github-action-ssh@release
           with:
             command: docker run -d -p 4000:4000 --name kuics-backend kuics-backend 
             host: ${{ secrets.SERVER }}
