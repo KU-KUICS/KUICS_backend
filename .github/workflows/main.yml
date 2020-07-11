@@ -9,5 +9,6 @@ jobs:
       runs-on: ubuntu-latest
       name: Build and Push
       steps:
+      - uses: actions/checkout@v1
       - name: Show Directory Content
         run: ls -al
