@@ -30,4 +30,4 @@ jobs:
         - name: Run Docker Image
           uses: garygrossgarten/github-action-ssh@release
           with:
-            command: docker run -d -p ${{secrets.API_PORT}}:${{secrets.API_PORT}} --env username=${{secrets.DB_USERNAME}} --env password=${{secrets.DB_PASSWORD}} --env database=${{secrets.DB_DATABASE}} --env host=${{secrets.DB_HOST}} --env dialect=${{DB_DIALECT}} --name kuics-backend ${{secrets.DOCKER_USERNAME}}/kuics-backend
+            command: docker run -d -p ${{secrets.API_PORT}}:${{secrets.API_PORT}} --env username=${{secrets.DB_USERNAME}} --env password=${{secrets.DB_PASSWORD}} --env database=${{secrets.DB_DATABASE}} --env host=${{secrets.DB_HOST}} --env dialect=${{secrets.DB_DIALECT}} --name kuics-backend ${{secrets.DOCKER_USERNAME}}/kuics-backend
