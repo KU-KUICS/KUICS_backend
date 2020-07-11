@@ -5,7 +5,8 @@ WORKDIR /kuics-backend
 COPY package.json /kuics-backend
 RUN npm install
 
+ARG CACHEBUST=1
 COPY . /kuics-backend
-CMD git pull origin master && npm run start
+CMD npm run start
 
 EXPOSE 4000
