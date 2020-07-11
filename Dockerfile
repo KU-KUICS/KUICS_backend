@@ -6,6 +6,6 @@ COPY package.json /kuics-backend
 RUN npm install
 
 COPY . /kuics-backend
-CMD npm run start
+CMD git pull origin master && npm run start
 
 EXPOSE 4000
