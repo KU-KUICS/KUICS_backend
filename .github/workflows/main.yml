@@ -27,7 +27,7 @@ jobs:
       - name: Run Docker
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: ${{secrets.ENV}} > ~/.env && docker login --username ${{secrets.DOCKER_USERNAME}} --password ${{secrets.DOCKER_PASSWORD}} && docker pull ${{secrets.DOCKER_USERNAME}}/kuics-backend && docker run -d --env-file ~/.env -p ${{secrets.API_PORT}}:${{secrets.API_PORT}} --name kuics-backend ${{secrets.DOCKER_USERNAME}}/kuics-backend
+          command: echo ${{secrets.ENV}} > ~/.env && docker login --username ${{secrets.DOCKER_USERNAME}} --password ${{secrets.DOCKER_PASSWORD}} && docker pull ${{secrets.DOCKER_USERNAME}}/kuics-backend && docker run -d --env-file ~/.env -p ${{secrets.API_PORT}}:${{secrets.API_PORT}} --name kuics-backend ${{secrets.DOCKER_USERNAME}}/kuics-backend
           host: ${{secrets.SERVER}}
           username: ${{secrets.USERNAME}}
           privateKey: ${{secrets.PRIVATE_KEY}}
