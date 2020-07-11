@@ -1,23 +1,31 @@
-const { users } = require('../../../models');
+const { passport } = require('./passport');
 
-const postAuth = async (req, res, next) => {
-    try {
-        const userInfo = req.body;
-        if (!userInfo) throw new Error('AUTH_NO_INPUT');
+const getLoginGoogle = passport.authenticate('google', {});
 
-        await users.create({
-            ...userInfo,
-            joinedAt: new Date(),
-            level: 0,
-            state: 0,
-        });
+const googleAuth = passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    failureRedirect: '/login',
+    successRedirect: '/api/auth/testroute',
+});
 
-        res.json({});
-    } catch (err) {
-        next(err);
-    }
+const getLoginGoogleCallback = async (req, res) => {
+    console.log(req.user);
+    res.send(req.user);
+};
+
+const testCb = (req, res) => {
+    res.send(req.user);
+};
+
+const getLogout = (req, res) => {
+    req.logout();
+    res.redirect('/');
 };
 
 module.exports = {
-    postAuth,
+    getLoginGoogle,
+    googleAuth,
+    getLoginGoogleCallback,
+    getLogout,
+    testCb,
 };
