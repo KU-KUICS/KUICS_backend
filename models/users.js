@@ -6,16 +6,6 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        // 로그인 시 사용하는 ID
-        userId: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        // 로그인 시 사용하는 PW
-        userPw: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         // 사용자 이름
         userName: {
             type: DataTypes.STRING,
