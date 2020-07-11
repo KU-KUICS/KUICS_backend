@@ -1,21 +1,23 @@
-const getAuth = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
-};
+const { users } = require('../../../models');
 
-const postAuth = (req, res) => {
-    const user_id = Number(req.body.user_id);
-    if (user_id !== 10) {
-        throw new Error('WRONG_USER_ID');
+const postAuth = async (req, res, next) => {
+    try {
+        const userInfo = req.body;
+        if (!userInfo) throw new Error('AUTH_NO_INPUT');
+
+        await users.create({
+            ...userInfo,
+            joinedAt: new Date(),
+            level: 0,
+            state: 0,
+        });
+
+        res.json({});
+    } catch (err) {
+        next(err);
     }
-    res.json({
-        user_id,
-    });
 };
 
 module.exports = {
-    getAuth,
     postAuth,
 };

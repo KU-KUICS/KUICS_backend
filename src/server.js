@@ -27,7 +27,7 @@ app.use(handleError);
 
 activateSwagger(app);
 
-const models = require('./models');
+const models = require('../models');
 
 models.sequelize
     .sync({ alter: true })

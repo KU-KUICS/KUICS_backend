@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         // 로그인 시 사용하는 PW
-        userPW: {
+        userPw: {
             type: DataTypes.STRING,
             allowNull: false,
         },
