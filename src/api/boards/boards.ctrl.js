@@ -15,7 +15,7 @@ const getBoardList = async (req, res, next) => {
 
 const getBoard = async (req, res, next) => {
     try {
-        const { boardId } = req.query;
+        const { boardId } = req.params;
 
         res.json({ boardId });
     } catch (err) {
@@ -45,7 +45,7 @@ const postBoard = async (req, res, next) => {
 
 const reviseBoard = async (req, res, next) => {
     try {
-        const { boardId } = req.query;
+        const { boardId } = req.params;
 
         res.json({ boardId });
     } catch (err) {
@@ -55,7 +55,7 @@ const reviseBoard = async (req, res, next) => {
 
 const deleteBoard = async (req, res, next) => {
     try {
-        const { boardId } = req.query;
+        const { boardId } = req.params;
 
         res.json({ boardId });
     } catch (err) {
@@ -73,7 +73,7 @@ const postComment = async (req, res, next) => {
 
 const reviseComment = async (req, res, next) => {
     try {
-        const { boardId, commentId } = req.query;
+        const { boardId, commentId } = req.params;
 
         res.json({ boardId, commentId });
     } catch (err) {
@@ -83,7 +83,7 @@ const reviseComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
     try {
-        const { boardId, commentId } = req.query;
+        const { boardId, commentId } = req.params;
 
         res.json({ boardId, commentId });
     } catch (err) {
