@@ -1,0 +1,18 @@
+{
+    "development": {
+        "username": "dummy",
+        "password": "dummy",
+        "database": "dummy",
+        "host": "dummy",
+        "dialect": "dummy",
+        "operatorsAliases": false
+    },
+    "production": {
+        "username": "dummy",
+        "password": "dummy",
+        "database": "dummy",
+        "host": "dummy",
+        "dialect": "dummy",
+        "operatorsAliases": false
+    }
+}
