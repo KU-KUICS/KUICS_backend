@@ -1,7 +1,7 @@
 const { logger } = require('./lib/logger');
 const server = require('./server');
 
-const { PORT } = require('../config/config.json');
+const { PORT } = process.env;
 
 const port = PORT || 4000;
 
