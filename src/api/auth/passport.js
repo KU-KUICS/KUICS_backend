@@ -1,7 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const app = require('../../server');
-const { users } = require('../../../models/');
+const { users } = require('../../../models');
 
 const {
     GOOGLE_CLIENT_ID,
@@ -22,6 +21,7 @@ passport.use(
             clientID: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
             callbackURL:
+                /* TODO: 나중에 product 서버로 바꾸기 */
                 'http://ec2-3-23-128-147.us-east-2.compute.amazonaws.com:4000/api/auth/login/google/callback',
             scope: ['profile', 'email'],
         },
@@ -35,13 +35,16 @@ const isAuthenticated = async (req, res, next) => {
     try {
         if (!req.user) throw new Error('NO_LOGIN');
 
-        let email = req.user.emails[0].value;
-        let is_kuics = await users.findOne({
+        const email = req.user.emails[0].value;
+        const isMember = await users.findOne({
             where: { email },
         });
 
-        if (!is_kuics) throw new Error('NOT_KUICS');
-        next();
+        if (!isMember) {
+            throw new Error('NOT_KUICS');
+        } else {
+            next();
+        }
     } catch (err) {
         next(err);
     }
