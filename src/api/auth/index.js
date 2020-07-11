@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const {
-    login,
-    logout,
-    register,
-    unregister,
+    postLogin,
+    postLogout,
+    postRegister,
+    postUnregister,
     findId,
     findPw,
     changePw,
@@ -11,10 +11,10 @@ const {
 
 const router = Router();
 
-router.post('/login', login);
-router.post('/logout', logout);
-router.post('/register', register);
-router.post('/unregister', unregister);
+router.post('/login', postLogin);
+router.post('/logout', postLogout);
+router.post('/register', postRegister);
+router.post('/unregister', postUnregister);
 router.post('/find/:user_id', findId);
 router.post('/find/:user_pw', findPw);
 router.post('/change/password', changePw);
