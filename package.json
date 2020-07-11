@@ -37,21 +37,15 @@
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
-<<<<<<< HEAD
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.3.0",
     "sequelize": "^5.21.7",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4",
     "winston": "^3.2.1",
-=======
-    "mysql2": "^2.1.0",
-    "pg": "^8.3.0",
-    "sequelize": "^6.3.0",
-    "swagger-jsdoc": "^4.0.0",
-    "swagger-ui-express": "^4.1.4",
-    "winston": "^3.3.3",
->>>>>>> master
     "winston-daily-rotate-file": "^4.4.2",
     "winston-syslog": "^2.4.4"
   }
