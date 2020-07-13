@@ -2,12 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 const Sequelize = require('sequelize');
+const logger = require('../lib/logger');
 
 dotenv.config({ path: path.join(__dirname, '../../.env.development') });
 
 const basename = path.basename(__filename);
 const config = process.env;
 const db = {};
+
+logger.debug(config);
 
 const sequelize = new Sequelize(
     config.db_database,
