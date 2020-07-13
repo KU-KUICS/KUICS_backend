@@ -1,4 +1,4 @@
-const { Users } = require('../../../models');
+const { Users } = require('../../models');
 
 const getAdmin = (req, res) => {
     const { user_id } = req.params;

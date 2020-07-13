@@ -1,4 +1,5 @@
 const { logger } = require('./lib/logger');
+require('./env');
 const server = require('./server');
 
 const { PORT } = process.env;
