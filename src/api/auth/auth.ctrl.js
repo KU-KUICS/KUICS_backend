@@ -1,23 +1,24 @@
-const { users } = require('../../../models');
+const { passport } = require('./passport');
 
-const postAuth = async (req, res, next) => {
-    try {
-        const userInfo = req.body;
-        if (!userInfo) throw new Error('AUTH_NO_INPUT');
+const getLogin = passport.authenticate('google', {});
 
-        await users.create({
-            ...userInfo,
-            joinedAt: new Date(),
-            level: 0,
-            state: 0,
-        });
+const getLoginCallback = passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    failureRedirect: '/api/auth/login/google/',
 
-        res.json({});
-    } catch (err) {
-        next(err);
-    }
+    /* TODO: 나중에 front 루트로 수정 */
+    successRedirect: '/',
+});
+
+const getLogout = (req, res) => {
+    req.logout();
+
+    /* TODO: 나중에 front 루트로 수정 */
+    res.redirect('/');
 };
 
 module.exports = {
-    postAuth,
+    getLogin,
+    getLoginCallback,
+    getLogout,
 };

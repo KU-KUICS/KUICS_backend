@@ -6,10 +6,20 @@ const exceptions = {
         errorCode: 0,
         msg: 'Internal Server Error',
     },
-    WRONG_USER_ID: {
+    INVALID_PARAMETERS: {
         statusCode: 404,
-        errorCode: 10000,
-        msg: 'Wrong user id',
+        errorCode: 1,
+        msg: 'Invalid Parameters',
+    },
+    NO_LOGIN: {
+        statusCode: 403,
+        errorCode: 3,
+        msg: 'NO LOGIN',
+    },
+    NOT_KUICS: {
+        statusCode: 403,
+        errorCode: 2,
+        msg: 'NOT MEMBER OF KUICS',
     },
 };
 

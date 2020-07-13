@@ -1,8 +1,10 @@
 const { Router } = require('express');
-const { postAuth } = require('./auth.ctrl');
+const { getLogin, getLoginCallback, getLogout } = require('./auth.ctrl');
 
 const router = Router();
 
-router.post('/', postAuth);
+router.get('/login', getLogin);
+router.get('/login/callback', getLoginCallback);
+router.get('/logout', getLogout);
 
 module.exports = router;
