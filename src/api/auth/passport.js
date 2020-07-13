@@ -19,7 +19,7 @@ passport.use(
             clientSecret: GOOGLE_CLIENT_SECRET,
             callbackURL:
                 /* TODO: 나중에 product 서버로 바꾸기 */
-                'http://ec2-3-133-79-104.us-east-2.compute.amazonaws.com/api/auth/login/google/callback',
+                'http://ec2-3-133-79-104.us-east-2.compute.amazonaws.com/api/auth/login/callback',
             scope: ['profile', 'email'],
         },
         (accessToken, refreshToken, profile, cb) => {
