@@ -11,8 +11,7 @@ const getBoardList = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-    // TODO
-    // 미리보기
+    /* TODO: 미리보기 구현 */
 };
 
 const getBoard = async (req, res, next) => {
@@ -21,7 +20,7 @@ const getBoard = async (req, res, next) => {
 
         /* TODO: 삭제 여부 확인, error handling */
         /* TODO: 보기 권한 추가 (준회원, 정회원, 관리자) */
-        boards.increment('hit', {
+        await boards.increment('hit', {
             by: 1,
             where: { boardNo: boardId },
             silent: true,
@@ -89,8 +88,8 @@ const postBoard = async (req, res, next) => {
 
 const reviseBoard = async (req, res, next) => {
     try {
-        const { boardId } = req.params;
         // const { userId } = req.query;
+        const { boardId } = req.params;
         const { title, body } = req.body;
 
         /* TODO: 권한 확인, 삭제 여부 확인, error handling */
@@ -109,6 +108,7 @@ const deleteBoard = async (req, res, next) => {
         // const { userId } = req.query;
 
         /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        /* 관리자 삭제 가능 */
         await boards.destroy({ where: { boardNo: boardId } });
 
         /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
@@ -133,7 +133,7 @@ const postComment = async (req, res, next) => {
             boardBoardNo: boardId,
         });
 
-        boards.increment('commentCount', {
+        await boards.increment('commentCount', {
             by: 1,
             where: { boardNo: boardId },
             silent: true,
@@ -147,9 +147,18 @@ const postComment = async (req, res, next) => {
 
 const reviseComment = async (req, res, next) => {
     try {
-        const { boardId, commentId } = req.params;
+        // const { userId } = req.query;
+        const { /* boardId, */ commentId } = req.params;
+        const { body } = req.body;
 
-        res.json({ boardId, commentId });
+        /* TODO: boardId 확인 */
+        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        await boardComments.update(
+            { body },
+            { where: { boardCommentsNo: commentId } },
+        );
+
+        res.json({});
     } catch (err) {
         next(err);
     }
@@ -157,9 +166,21 @@ const reviseComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
     try {
+        // const { userId } = req.query;
         const { boardId, commentId } = req.params;
 
-        res.json({ boardId, commentId });
+        /* TODO: boardId 확인 */
+        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        /* 관리자 삭제 가능 */
+        await boardComments.destroy({ where: { boardCommentsNo: commentId } });
+
+        await boards.decrement('commentCount', {
+            by: 1,
+            where: { boardNo: boardId },
+            silent: true,
+        });
+
+        res.json({});
     } catch (err) {
         next(err);
     }
