@@ -1,4 +1,4 @@
-const { boards, boardComments, sequelize } = require('../../models');
+const { boards, boardComments } = require('../../models');
 
 const getBoardList = async (req, res, next) => {
     try {
@@ -21,10 +21,11 @@ const getBoard = async (req, res, next) => {
 
         /* TODO: 삭제 여부 확인, error handling */
         /* TODO: 보기 권한 추가 (준회원, 정회원, 관리자) */
-        await boards.update(
-            { hit: sequelize.literal('hit + 1') },
-            { where: { boardNo: boardId }, silent: true },
-        );
+        boards.increment('hit', {
+            by: 1,
+            where: { boardNo: boardId },
+            silent: true,
+        });
 
         const board = await boards.findAll({
             where: { boardNo: boardId },
@@ -37,16 +38,27 @@ const getBoard = async (req, res, next) => {
                 'commentCount',
                 'createdAt',
                 'updatedAt',
-                'deletedAt',
+                'userUserNo',
+            ],
+        });
+
+        /* TODO: 삭제된 경우 미표시 */
+        const commentList = await boardComments.findAll({
+            where: { boardBoardNo: boardId },
+            attributes: [
+                'boardCommentsNo',
+                'body',
+                'recommendedTime',
+                'createdAt',
+                'updatedAt',
                 'userUserNo',
             ],
         });
 
         /* TODO: 이미지, 파일 정보 추가 */
-        /* TODO: comment 정보 추가 */
-        /* TODO: 작성자 정보 추가 */
+        /* TODO: 작성자 정보 추가 (게시글, 댓글) */
 
-        res.json({ board });
+        res.json({ board, commentList });
     } catch (err) {
         next(err);
     }
@@ -119,6 +131,12 @@ const postComment = async (req, res, next) => {
             recommendedTime: 0,
             userUserNo: userId,
             boardBoardNo: boardId,
+        });
+
+        boards.increment('commentCount', {
+            by: 1,
+            where: { boardNo: boardId },
+            silent: true,
         });
 
         res.json({});
