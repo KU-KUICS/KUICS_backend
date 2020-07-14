@@ -11,6 +11,8 @@ const getBoardList = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+    // TODO
+    // 미리보기
 };
 
 const getBoard = async (req, res, next) => {
@@ -41,8 +43,11 @@ const getBoard = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-    // 이미지, 파일 관련 추가 필요
-    // comment join
+    // TODO
+    // 이미지, 파일 정보 추가
+    // comment 정보 추가
+    // 유저 정보 추가
+    // 보기 권한 추가 (준회원, 정회원, 관리자) -> error handiling
 };
 
 const postBoard = async (req, res, next) => {
@@ -63,6 +68,9 @@ const postBoard = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+    // TODO
+    // 이미지, 파일 정보 추가
+    // expected error: wrong userId
 };
 
 const reviseBoard = async (req, res, next) => {
