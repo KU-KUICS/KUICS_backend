@@ -21,6 +21,16 @@ const exceptions = {
         errorCode: 2,
         msg: 'NOT MEMBER OF KUICS',
     },
+    NO_AUTH: {
+        statusCode: 401,
+        errorCode: 4,
+        msg: 'UNAUTHORIZED',
+    },
+    DELETED: {
+        statusCode: 403,
+        errorCode: 4,
+        msg: 'ALREADY DELETED',
+    },
 };
 
 const handleError = (err, req, res, next) => {
