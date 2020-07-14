@@ -28,7 +28,7 @@ const exceptions = {
     },
     DELETED: {
         statusCode: 403,
-        errorCode: 4,
+        errorCode: 5,
         msg: 'ALREADY DELETED',
     },
 };

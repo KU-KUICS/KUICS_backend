@@ -88,11 +88,24 @@ const postBoard = async (req, res, next) => {
 
 const reviseBoard = async (req, res, next) => {
     try {
-        // const { userId } = req.query;
+        const { userId } = req.query;
         const { boardId } = req.params;
         const { title, body } = req.body;
 
-        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        const { deletedAt, userUserNo } = await boards.findOne({
+            where: { boardNo: boardId },
+            paranoid: false,
+            raw: true,
+        });
+
+        if (deletedAt !== null) {
+            throw new Error('DELETED');
+        }
+
+        if (userId !== userUserNo.toString()) {
+            throw new Error('NO_AUTH');
+        }
+
         await boards.update({ title, body }, { where: { boardNo: boardId } });
 
         /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
