@@ -118,6 +118,14 @@ const deleteBoard = async (req, res, next) => {
     }
 };
 
+const recommendBoard = async (req, res, next) => {
+    try {
+        /* */
+    } catch (err) {
+        next(err);
+    }
+};
+
 const postComment = async (req, res, next) => {
     try {
         const { userId } = req.query;
@@ -186,13 +194,23 @@ const deleteComment = async (req, res, next) => {
     }
 };
 
+const recommendComment = async (req, res, next) => {
+    try {
+        /* */
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getBoardList,
     getBoard,
     postBoard,
     reviseBoard,
     deleteBoard,
+    recommendBoard,
     postComment,
     reviseComment,
     deleteComment,
+    recommendComment,
 };
