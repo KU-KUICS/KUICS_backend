@@ -1,33 +1,18 @@
 const { Users } = require('../../models');
+const { Boards } = require('../../models');
 
-const getAdmin = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
-};
-
-const postAdmin = async (req, res, next) => {
-    const user_id = Number(req.body.user_id);
-
-    try {
-        if (user_id !== 10) throw new Error('WRONG_USER_ID');
-
-        const users = await Users.find({
-            where: {
-                user_id,
-            },
-        });
-
-        res.json({
-            users,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+const getUser = async (req, res, next) => {};
+const deleteUser = async (req, res, next) => {};
+const postUserAuth = async (req, res, next) => {};
+const postNotice = async (req, res, next) => {};
+const postEditNotice = async (req, res, next) => {};
+const deleteNotice = async (req, res, next) => {};
 
 module.exports = {
-    getAdmin,
-    postAdmin,
+    getUser,
+    deleteUser,
+    postUserAuth,
+    postNotice,
+    postEditNotice,
+    deleteNotice,
 };
