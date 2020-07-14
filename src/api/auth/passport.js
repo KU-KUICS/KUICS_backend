@@ -30,17 +30,21 @@ passport.use(
 
 const isAuthenticated = async (req, res, next) => {
     try {
-        if (!req.user) throw new Error('NO_LOGIN');
-
-        const email = req.user.emails[0].value;
-        const isMember = await users.findOne({
-            where: { email },
-        });
-
-        if (!isMember) {
-            throw new Error('NOT_KUICS');
-        } else {
+        if (true) {
             next();
+        } else {
+            if (!req.user) throw new Error('NO_LOGIN');
+
+            const email = req.user.emails[0].value;
+            const isMember = await users.findOne({
+                where: { email },
+            });
+
+            if (!isMember) {
+                throw new Error('NOT_KUICS');
+            } else {
+                next();
+            }
         }
     } catch (err) {
         next(err);
