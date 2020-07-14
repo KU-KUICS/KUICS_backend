@@ -13,16 +13,10 @@ const isAdmin = async (email) => {
 
 const getUser = async (req, res, next) => {
     try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
-
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
+        // TODO: 관리자 제외? || 탈퇴자 제외?
         const userList = await users.findAll();
         res.json({ userList });
     } catch (err) {
@@ -32,13 +26,7 @@ const getUser = async (req, res, next) => {
 
 const postUser = async (req, res, next) => {
     try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         if (!req.body.userName) throw new Error('INVALID_PARAMETERS');
@@ -60,16 +48,38 @@ const postUser = async (req, res, next) => {
     }
 };
 
+const postUserPermission = async (req, res, next) => {
+    try {
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
+        if (!req.body.user_id) throw new Error('INVALID_PARAMETERS');
+        if (!req.body.level) throw new Error('INVALID_PARAMETERS');
+
+        const user = await users.findOne({
+            where: { userNo: req.body.user_id },
+        });
+        if (!user) throw new Error('INVALID_PARAMETERS');
+        if (user.dataValues.state) throw new Error('INVALID_PARAMETERS');
+
+        await users.update(
+            {
+                level: req.body.level,
+            },
+            { where: { userNo: req.body.user_id } },
+        );
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
 const deleteUser = async (req, res, next) => {
     try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
+
         if (!req.params.user_id) throw new Error('INVALID_PARAMETERS');
 
         const user = await users.findOne({
@@ -100,67 +110,15 @@ const deleteUser = async (req, res, next) => {
     }
 };
 
-const postNotice = async (req, res, next) => {
-    try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
-
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
-
-        const userList = await users.findAll();
-        res.json({ users: userList });
-    } catch (err) {
-        next(err);
-    }
-};
-
-const postEditNotice = async (req, res, next) => {
-    try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
-
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
-
-        const userList = await users.findAll();
-        res.json({ users: userList });
-    } catch (err) {
-        next(err);
-    }
-};
-
-const deleteNotice = async (req, res, next) => {
-    try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
-
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
-
-        const userList = await users.findAll();
-        res.json({ users: userList });
-    } catch (err) {
-        next(err);
-    }
-};
+const postNotice = async (req, res, next) => {};
+const postEditNotice = async (req, res, next) => {};
+const deleteNotice = async (req, res, next) => {};
 
 module.exports = {
     getUser,
-    deleteUser,
     postUser,
+    postUserPermission,
+    deleteUser,
     postNotice,
     postEditNotice,
     deleteNotice,

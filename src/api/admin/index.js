@@ -2,8 +2,9 @@ const { Router } = require('express');
 const { isAuthenticated } = require('../auth/passport');
 const {
     getUser,
-    deleteUser,
     postUser,
+    postUserPermission,
+    deleteUser,
     postNotice,
     postEditNotice,
     deleteNotice,
@@ -13,6 +14,7 @@ const router = Router();
 
 router.get('/user', isAuthenticated, getUser); // 사용자 리스트
 router.post('/user', isAuthenticated, postUser); // 사용자 추가
+router.post('/user/permission', isAuthenticated, postUserPermission); // 사용자 등급 변경
 router.delete('/user/:user_id', isAuthenticated, deleteUser); // 사용자 삭제
 
 router.post('/notice', isAuthenticated, postNotice); // 공지 작성
