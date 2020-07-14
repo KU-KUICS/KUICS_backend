@@ -24,7 +24,33 @@ const getUser = async (req, res, next) => {
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         const userList = await users.findAll();
-        res.json({ users: userList });
+        res.json({ userList });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const postUser = async (req, res, next) => {
+    try {
+        let email = null;
+        if (true) {
+            email = req.query.email;
+        } else {
+            email = req.user.emails[0].value;
+        }
+        const checkAdmin = await isAdmin(email);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
+        await users.create({
+            userName: req.body.userName,
+            email: req.body.email,
+            studentId: req.body.studentId,
+            joinedAt: new Date(Date.now()),
+            level: 1,
+            state: 0,
+        });
+
+        res.json({});
     } catch (err) {
         next(err);
     }
@@ -65,25 +91,6 @@ const deleteUser = async (req, res, next) => {
         );
 
         res.json({});
-    } catch (err) {
-        next(err);
-    }
-};
-
-const postUserAuth = async (req, res, next) => {
-    try {
-        let email = null;
-        if (true) {
-            email = req.query.email;
-        } else {
-            email = req.user.emails[0].value;
-        }
-        const checkAdmin = await isAdmin(email);
-
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
-
-        const userList = await users.findAll();
-        res.json({ users: userList });
     } catch (err) {
         next(err);
     }
@@ -149,7 +156,7 @@ const deleteNotice = async (req, res, next) => {
 module.exports = {
     getUser,
     deleteUser,
-    postUserAuth,
+    postUser,
     postNotice,
     postEditNotice,
     deleteNotice,
