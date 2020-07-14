@@ -1,18 +1,10 @@
 const { Router } = require('express');
-const {
-    getLoginGoogle,
-    googleAuth,
-    getLoginGoogleCallback,
-    testCb,
-    getLogout,
-} = require('./auth.ctrl');
-const { isAuthenticated } = require('./passport');
+const { getLogin, getLoginCallback, getLogout } = require('./auth.ctrl');
 
 const router = Router();
 
-router.get('/login/google', getLoginGoogle);
-router.get('/login/google/callback', googleAuth, getLoginGoogleCallback);
-router.get('/testroute', isAuthenticated, testCb);
+router.get('/login', getLogin);
+router.get('/login/callback', getLoginCallback);
 router.get('/logout', getLogout);
 
 module.exports = router;

@@ -6,7 +6,8 @@ const handleError = require('./lib/errorHandler');
 const activateSwagger = require('./lib/swagger');
 const { logger, stream } = require('./lib/logger');
 const { passport } = require('./api/auth/passport');
-const { AUTH_KEY } = require('../config/config.json');
+
+const { AUTH_KEY } = process.env;
 
 const api = require('./api');
 
@@ -39,7 +40,7 @@ app.use(handleError);
 
 activateSwagger(app);
 
-const models = require('../models');
+const models = require('./models');
 
 models.sequelize
     .sync({ alter: true })

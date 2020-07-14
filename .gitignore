@@ -4,3 +4,7 @@ node_modules
 # Log file
 /log/*
 */**.log
+yarn-error.log
+
+# Environment file
+.env*

@@ -1,31 +1,24 @@
 const { passport } = require('./passport');
 
-const getLoginGoogle = passport.authenticate('google', {});
+const getLogin = passport.authenticate('google', {});
 
-const googleAuth = passport.authenticate('google', {
+const getLoginCallback = passport.authenticate('google', {
     scope: ['profile', 'email'],
-    failureRedirect: '/login',
-    successRedirect: '/api/auth/testroute',
+    failureRedirect: '/api/auth/login/google/',
+
+    /* TODO: 나중에 front 루트로 수정 */
+    successRedirect: '/',
 });
-
-const getLoginGoogleCallback = async (req, res) => {
-    console.log(req.user);
-    res.send(req.user);
-};
-
-const testCb = (req, res) => {
-    res.send(req.user);
-};
 
 const getLogout = (req, res) => {
     req.logout();
+
+    /* TODO: 나중에 front 루트로 수정 */
     res.redirect('/');
 };
 
 module.exports = {
-    getLoginGoogle,
-    googleAuth,
-    getLoginGoogleCallback,
+    getLogin,
+    getLoginCallback,
     getLogout,
-    testCb,
 };

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const { boards, sequelize } = require('../../../models');
+=======
+const { boards } = require('../../models');
+>>>>>>> master
 
 const getBoardList = async (req, res, next) => {
     try {
