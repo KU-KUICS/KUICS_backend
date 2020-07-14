@@ -1,4 +1,4 @@
-const { boards, sequelize } = require('../../models');
+const { boards, boardComments, sequelize } = require('../../models');
 
 const getBoardList = async (req, res, next) => {
     try {
@@ -19,6 +19,8 @@ const getBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
 
+        /* TODO: 삭제 여부 확인, error handling */
+        /* TODO: 보기 권한 추가 (준회원, 정회원, 관리자) */
         await boards.update(
             { hit: sequelize.literal('hit + 1') },
             { where: { boardNo: boardId }, silent: true },
@@ -39,15 +41,15 @@ const getBoard = async (req, res, next) => {
                 'userUserNo',
             ],
         });
+
+        /* TODO: 이미지, 파일 정보 추가 */
+        /* TODO: comment 정보 추가 */
+        /* TODO: 작성자 정보 추가 */
+
         res.json({ board });
     } catch (err) {
         next(err);
     }
-    // TODO LIST
-    // 이미지, 파일 정보 추가
-    // comment 정보 추가
-    // 유저 정보 추가
-    // 보기 권한 추가 (준회원, 정회원, 관리자) -> error handiling
 };
 
 const postBoard = async (req, res, next) => {
@@ -55,6 +57,8 @@ const postBoard = async (req, res, next) => {
         const { userId } = req.query;
         const { title, body } = req.body;
 
+        /* TODO: 권한 확인, error handling */
+        /* TODO: 에러나는 경우에 boardNo 증가하지 않도록 처리 필요 */
         const board = await boards.create({
             title,
             body,
@@ -64,16 +68,11 @@ const postBoard = async (req, res, next) => {
             userUserNo: userId,
         });
 
+        /* TODO: 이미지, 파일 정보 추가 */
         res.json({ board });
     } catch (err) {
         next(err);
     }
-    // TODO LIST
-    // 이미지, 파일 정보 추가
-    // userId로 권한 check, error handling
-
-    // ISSUE
-    // 에러나는 경우에 boardNo 증가하지 않도록 처리 필요
 };
 
 const reviseBoard = async (req, res, next) => {
@@ -82,20 +81,14 @@ const reviseBoard = async (req, res, next) => {
         // const { userId } = req.query;
         const { title, body } = req.body;
 
-        const board = await boards.update(
-            { title, body },
-            { where: { boardNo: boardId } },
-        );
+        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        await boards.update({ title, body }, { where: { boardNo: boardId } });
 
-        res.json({ board });
+        /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
+        res.json({});
     } catch (err) {
         next(err);
     }
-
-    // TODO LIST
-    // 이미지, 파일 정보 추가, 수정, 삭제
-    // userID 동일한지 check, error handling
-    // 이미 삭제되었는지 확인
 };
 
 const deleteBoard = async (req, res, next) => {
@@ -103,20 +96,31 @@ const deleteBoard = async (req, res, next) => {
         const { boardId } = req.params;
         // const { userId } = req.query;
 
+        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
         await boards.destroy({ where: { boardNo: boardId } });
 
+        /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
         res.json({});
     } catch (err) {
         next(err);
     }
-    // TODO LIST
-    // 권한 확인, error handling
-    // 이미 삭제되었는지 확인
-    // 이미지, 파일 정보, 댓글 접근 불가능하도록
 };
 
 const postComment = async (req, res, next) => {
     try {
+        const { userId } = req.query;
+        const { boardId } = req.params;
+        const { body } = req.body;
+
+        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        /* TODO: 원본 게시글 관련 처리 */
+        await boardComments.create({
+            body,
+            recommendedTime: 0,
+            userUserNo: userId,
+            boardBoardNo: boardId,
+        });
+
         res.json({});
     } catch (err) {
         next(err);
