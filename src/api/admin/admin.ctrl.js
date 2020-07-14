@@ -41,6 +41,10 @@ const postUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(email);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
+        if (!req.body.userName) throw new Error('INVALID_PARAMETERS');
+        if (!req.body.email) throw new Error('INVALID_PARAMETERS');
+        if (!req.body.studentId) throw new Error('INVALID_PARAMETERS');
+
         await users.create({
             userName: req.body.userName,
             email: req.body.email,
