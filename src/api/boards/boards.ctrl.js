@@ -43,7 +43,7 @@ const getBoard = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-    // TODO
+    // TODO LIST
     // 이미지, 파일 정보 추가
     // comment 정보 추가
     // 유저 정보 추가
@@ -55,7 +55,7 @@ const postBoard = async (req, res, next) => {
         const { userId } = req.query;
         const { title, body } = req.body;
 
-        await boards.create({
+        const board = await boards.create({
             title,
             body,
             type: 'board',
@@ -64,33 +64,55 @@ const postBoard = async (req, res, next) => {
             userUserNo: userId,
         });
 
-        res.json({});
+        res.json({ board });
     } catch (err) {
         next(err);
     }
-    // TODO
+    // TODO LIST
     // 이미지, 파일 정보 추가
-    // expected error: wrong userId
+    // userId로 권한 check, error handling
+
+    // ISSUE
+    // 에러나는 경우에 boardNo 증가하지 않도록 처리 필요
 };
 
 const reviseBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
+        // const { userId } = req.query;
+        const { title, body } = req.body;
 
-        res.json({ boardId });
+        const board = await boards.update(
+            { title, body },
+            { where: { boardNo: boardId } },
+        );
+
+        res.json({ board });
     } catch (err) {
         next(err);
     }
+
+    // TODO LIST
+    // 이미지, 파일 정보 추가, 수정, 삭제
+    // userID 동일한지 check, error handling
+    // 이미 삭제되었는지 확인
 };
 
 const deleteBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
+        // const { userId } = req.query;
 
-        res.json({ boardId });
+        await boards.destroy({ where: { boardNo: boardId } });
+
+        res.json({});
     } catch (err) {
         next(err);
     }
+    // TODO LIST
+    // 권한 확인, error handling
+    // 이미 삭제되었는지 확인
+    // 이미지, 파일 정보, 댓글 접근 불가능하도록
 };
 
 const postComment = async (req, res, next) => {
