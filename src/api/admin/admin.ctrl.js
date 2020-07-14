@@ -29,6 +29,11 @@ const postUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
+        // TODO:
+        // userName 필드 validation
+        // email 필드 validation
+        // studentId 필드 validation
+
         if (!req.body.userName) throw new Error('INVALID_PARAMETERS');
         if (!req.body.email) throw new Error('INVALID_PARAMETERS');
         if (!req.body.studentId) throw new Error('INVALID_PARAMETERS');
@@ -56,6 +61,10 @@ const postUserPermission = async (req, res, next) => {
         if (!req.body.user_id) throw new Error('INVALID_PARAMETERS');
         if (!req.body.level) throw new Error('INVALID_PARAMETERS');
 
+        // TODO:
+        // level 필드 validation
+        // user_id 필드 validation
+
         const user = await users.findOne({
             where: { userNo: req.body.user_id },
         });
@@ -81,6 +90,10 @@ const deleteUser = async (req, res, next) => {
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         if (!req.params.user_id) throw new Error('INVALID_PARAMETERS');
+
+        // TODO:
+        // level 필드 validation
+        // user_id 필드 validation
 
         const user = await users.findOne({
             where: { userNo: req.params.user_id },
