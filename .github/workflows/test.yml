@@ -17,4 +17,4 @@ jobs:
         - run: yarn test
           env:
             CI: true
-        - run: echo -e "${{ secrets.ENV }}" > .env && cat .env && yarn start & && wget localhost:4000/api/auth/logout
+        - run: echo -e "${{ secrets.ENV }}" > .env && yarn start & && wget localhost:4000/api/auth/logout
