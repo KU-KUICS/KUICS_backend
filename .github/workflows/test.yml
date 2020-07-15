@@ -14,8 +14,8 @@ jobs:
           with:
             node-version: ${{ matrix.node-version }}
         - run: echo -e "${{ secrets.ENV }} > .env"
-        - run: npm install
-        - run: npm run test
+        - run: yarn install
+        - run: yarn test
           env:
             CI: true
-        - run: npm run start && wget localhost:4000/api/auth/logout
+        - run: yarn start && wget localhost:4000/api/auth/logout
