@@ -13,8 +13,8 @@ jobs:
           uses: actions/setup-node@v1
           with:
             node-version: ${{ matrix.node-version }}
-        - run: npm install
-        - run: PORT=${{secrets.API_PORT}} username=${{secrets.DB_USERNAME}} password=${{secrets.DB_PASSWORD}} database=${{secrets.DB_DATABASE}} host=${{secrets.DB_HOST}} dialect=${{secrets.DB_DIALECT}} npm run test
+        - run: yarn install
+        - run: yarn test
           env:
             CI: true
-        - run: PORT=${{secrets.API_PORT}} username=${{secrets.DB_USERNAME}} password=${{secrets.DB_PASSWORD}} database=${{secrets.DB_DATABASE}} host=${{secrets.DB_HOST}} dialect=${{secrets.DB_DIALECT}} npm run start && wget localhost:4000/api/auth/logout
+        - run: echo -e "${{ secrets.ENV }}" > .env && yarn start & && wget localhost:4000/api/auth/logout
