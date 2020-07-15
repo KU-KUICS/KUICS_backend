@@ -2,7 +2,7 @@ name: Build Docker Image and Run Docker on Server
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
     docker-image:
