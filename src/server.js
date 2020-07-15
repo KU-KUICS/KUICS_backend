@@ -1,5 +1,6 @@
 const Express = require('express');
 const methodOverride = require('method-override');
+const cors = require('cors');
 const morgan = require('morgan');
 const cookieSession = require('cookie-session');
 const handleError = require('./lib/errorHandler');
@@ -17,6 +18,7 @@ const { NODE_ENV } = process.env;
 
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
+app.use(cors);
 app.use(methodOverride('_method'));
 app.use(
     cookieSession({
