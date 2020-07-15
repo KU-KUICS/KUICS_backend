@@ -18,7 +18,7 @@ const { NODE_ENV } = process.env;
 
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
-app.use(cors);
+app.use(cors());
 app.use(methodOverride('_method'));
 app.use(
     cookieSession({
