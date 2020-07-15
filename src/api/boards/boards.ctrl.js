@@ -5,6 +5,7 @@ const getBoardList = async (req, res, next) => {
         const boardList = await boards.findAll({
             where: { type: 'board' },
             attributes: ['boardNo', 'title', 'hit', 'commentCount'],
+            order: [['boardNo', 'DESC']],
         });
 
         res.json({ boardList });
@@ -52,6 +53,7 @@ const getBoard = async (req, res, next) => {
                 'updatedAt',
                 'userUserNo',
             ],
+            order: [['boardCommentsNo', 'ASC']],
         });
 
         /* TODO: 이미지, 파일 정보 추가 */
