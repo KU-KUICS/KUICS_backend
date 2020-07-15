@@ -1,4 +1,4 @@
-const { boards, boardComments } = require('../../models');
+const { boards, boardComments, users } = require('../../models');
 
 const getBoardList = async (req, res, next) => {
     try {
@@ -104,7 +104,12 @@ const reviseBoard = async (req, res, next) => {
             throw new Error('DELETED');
         }
 
-        if (userId !== userUserNo.toString()) {
+        const { state } = await users.findOne({
+            where: { userNo: userId },
+            raw: true,
+        });
+
+        if (userId !== userUserNo.toString() || state === 1) {
             throw new Error('NO_AUTH');
         }
 
@@ -120,10 +125,30 @@ const reviseBoard = async (req, res, next) => {
 const deleteBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
-        // const { userId } = req.query;
+        const { userId } = req.query;
 
-        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
-        /* 관리자 삭제 가능 */
+        const { deletedAt, userUserNo } = await boards.findOne({
+            where: { boardNo: boardId },
+            paranoid: false,
+            raw: true,
+        });
+
+        const { level, state } = await users.findOne({
+            where: { userNo: userId },
+            raw: true,
+        });
+
+        if (deletedAt !== null) {
+            throw new Error('DELETED');
+        }
+
+        if (
+            (userId !== userUserNo.toString() && level !== 999) ||
+            state === 1
+        ) {
+            throw new Error('NO_AUTH');
+        }
+
         await boards.destroy({ where: { boardNo: boardId } });
 
         /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
