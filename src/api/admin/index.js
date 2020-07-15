@@ -1,9 +1,10 @@
 const { Router } = require('express');
-const { getAdmin, postAdmin } = require('./admin.ctrl');
+const { postIntro, updateIntro, deleteIntro } = require('./admin.ctrl');
 
 const router = Router();
 
-router.get('/:user_id', getAdmin);
-router.post('/', postAdmin);
+router.post('/intro', postIntro);
+router.put('/intro/:introNo', updateIntro);
+router.delete('/intro/:introNo', deleteIntro);
 
 module.exports = router;

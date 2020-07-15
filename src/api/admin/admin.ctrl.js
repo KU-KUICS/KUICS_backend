@@ -1,33 +1,126 @@
-const { Users } = require('../../models');
+const Joi = require('@hapi/joi');
+const { intros } = require('../../models');
 
-const getAdmin = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
+const introNoScheme = Joi.number();
+const titleScheme = Joi.string().min(3).required();
+const contentScheme = Joi.array().items(Joi.string()).required();
+const introScheme = Joi.object({
+    title: titleScheme,
+    content: contentScheme,
+});
+
+const updateIntroScheme = Joi.object({
+    introNo: introNoScheme,
+    title: titleScheme,
+    content: contentScheme,
+});
+
+/**
+ * 소개글 작성
+ * @typedef Intro
+ * @property {string} title.required - 제목
+ * @property {string} content.required - 내용
+ */
+
+/**
+ * 소개글 작성
+ * @route POST /api/admin/intro
+ * @group Admin
+ * @param {Intro.model} intro.body.required - 소개 글
+ * @returns {object} 200 - 빈 객체
+ * @returns {Error} NOT_ADMIN - NOT_ADMIN
+ * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const postIntro = async (req, res, next) => {
+    try {
+        // TODO: 어드민 체크 로직
+        const { error, value } = introScheme.validate(req.body);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const { title, content } = value;
+
+        await intros.create({ title, content });
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
 };
 
-const postAdmin = async (req, res, next) => {
-    const user_id = Number(req.body.user_id);
-
+/**
+ * 소개글 수정
+ * @route PUT /api/admin/intro
+ * @group Admin
+ * @param {number} introNo.path.required - 수정할 소개글 ID
+ * @param {Intro.model} intro.body.required - 소개글 수정
+ * @returns {object} 200 - 빈 객체
+ * @returns {Error} NOT_ADMIN - NOT_ADMIN
+ * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const updateIntro = async (req, res, next) => {
     try {
-        if (user_id !== 10) throw new Error('WRONG_USER_ID');
+        // TODO: 어드민 체크
+        const { error, value } = updateIntroScheme.validate({
+            ...req.body,
+            introNo: req.params.introNo,
+        });
+        if (error) throw new Error('INVALID_PARAMETERS');
 
-        const users = await Users.find({
+        const { introNo, title, content } = value;
+
+        const intro = await intros.findOne({
             where: {
-                user_id,
+                introNo,
             },
         });
 
-        res.json({
-            users,
+        if (!intro) throw new Error('INVALID_PARAMETERS');
+
+        intro.title = title;
+        intro.content = content;
+
+        await intro.save();
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ * 소개글 삭제
+ * @route DELETE /api/admin/intro
+ * @group Admin
+ * @param {number} introNo.path.required - 삭제할 소개글 ID
+ * @returns {object} 200 - 빈 객체
+ * @returns {Error} NOT_ADMIN - NOT_ADMIN
+ * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const deleteIntro = async (req, res, next) => {
+    try {
+        // TODO: 어드민 체크
+        const { error, value } = introNoScheme.validate(req.params.introNo);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const introNo = value;
+
+        const intro = await intros.findOne({
+            where: {
+                introNo,
+            },
         });
-    } catch (error) {
-        next(error);
+        if (!intro) throw new Error('INVALID_PARAMETERS');
+
+        await intro.destroy();
+
+        res.json({});
+    } catch (err) {
+        next(err);
     }
 };
 
 module.exports = {
-    getAdmin,
-    postAdmin,
+    postIntro,
+    updateIntro,
+    deleteIntro,
 };
