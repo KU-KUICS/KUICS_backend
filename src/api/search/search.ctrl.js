@@ -13,6 +13,15 @@ const searchInputScheme = Joi.object({
     target: searchTargetScheme,
 });
 
+/**
+ * 검색 결과를 가져옴
+ * @route GET /api/search
+ * @group Search
+ * @param {string} key.query.required - 검색 키워드
+ * @param {string} target.query.required - 검색 타겟(title, body, titleAndBody)
+ * @returns {Array} 200 - 검색 결과
+ * @returns {Error} INVALID_PARAM - INVALID_PARAM
+ */
 const getSearchResult = async (req, res, next) => {
     try {
         const { err, value } = searchInputScheme.validate(req.query);
