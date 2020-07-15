@@ -1,4 +1,34 @@
+const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
+
+const existsBoard = async (boardNo) => {
+    const board = await boards.findOne({
+        where: { boardNo, deletedAt: null },
+        paranoid: false,
+    });
+    return board;
+};
+
+const isWriterBoard = async (boardNo, userUserNo) => {
+    const board = await boards.findOne({
+        where: { boardNo, userUserNo },
+    });
+    return board;
+};
+
+const hasAuth = async (userNo) => {
+    const writer = await users.findOne({
+        where: { userNo, state: 0, level: [1, 2, 999] },
+    });
+    return writer;
+};
+
+const isAdmin = async (userNo) => {
+    const admin = await users.findOne({
+        where: { userNo, level: 999 },
+    });
+    return admin;
+};
 
 const getBoardList = async (req, res, next) => {
     try {
@@ -94,22 +124,14 @@ const reviseBoard = async (req, res, next) => {
         const { boardId } = req.params;
         const { title, body } = req.body;
 
-        const { deletedAt, userUserNo } = await boards.findOne({
-            where: { boardNo: boardId },
-            paranoid: false,
-            raw: true,
-        });
-
-        if (deletedAt !== null) {
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
             throw new Error('DELETED');
         }
 
-        const { state } = await users.findOne({
-            where: { userNo: userId },
-            raw: true,
-        });
-
-        if (userId !== userUserNo.toString() || state === 1) {
+        const checkWriter = await isWriterBoard(boardId, userId);
+        const checkAuth = await hasAuth(userId);
+        if (!checkWriter || !checkAuth) {
             throw new Error('NO_AUTH');
         }
 
@@ -127,25 +149,15 @@ const deleteBoard = async (req, res, next) => {
         const { boardId } = req.params;
         const { userId } = req.query;
 
-        const { deletedAt, userUserNo } = await boards.findOne({
-            where: { boardNo: boardId },
-            paranoid: false,
-            raw: true,
-        });
-
-        const { level, state } = await users.findOne({
-            where: { userNo: userId },
-            raw: true,
-        });
-
-        if (deletedAt !== null) {
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
             throw new Error('DELETED');
         }
 
-        if (
-            (userId !== userUserNo.toString() && level !== 999) ||
-            state === 1
-        ) {
+        const checkWriter = await isWriterBoard(boardId, userId);
+        const checkAdmin = await isAdmin(userId);
+        const checkAuth = await hasAuth(userId);
+        if ((!checkWriter && !checkAdmin) || !checkAuth) {
             throw new Error('NO_AUTH');
         }
 
