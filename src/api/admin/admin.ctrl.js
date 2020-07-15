@@ -12,6 +12,13 @@ const isAdmin = async (email) => {
     return admin;
 };
 
+/**
+ *  유저 정보를 읽어옴
+ *  @route GET /api/admin/user
+ *  @group Admin
+ *  @returns {Array} 200 - 유저 리스트
+ *  @reutrns {Error} NOT_ADMIN - NOT_ADMIN
+ */
 const getUser = async (req, res, next) => {
     try {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
@@ -25,6 +32,22 @@ const getUser = async (req, res, next) => {
     }
 };
 
+/**
+ * @typedef UserInfo
+ * @property {string} userName.requierd
+ * @property {string} email.required
+ * @property {string} studentId.required
+ */
+
+/**
+ *  유저 정보를 추가함
+ *  @route POST /api/admin/users
+ *  @group Admin
+ *  @param {UserInfo.model} userInfo.body.required - 유저 정보
+ *  @returns {object} 200 - 빈 객체
+ *  @returns {Error} NOT_ADMIN - NOT_ADMIN
+ *  @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
 const postUser = async (req, res, next) => {
     try {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
@@ -63,7 +86,22 @@ const postUser = async (req, res, next) => {
     }
 };
 
-const postUserPermission = async (req, res, next) => {
+/**
+ * @typedef UserPermision
+ * @property {number} userNo.required
+ * @property {number} level.required
+ */
+
+/**
+ *  유저 권한을 설정함
+ *  @route PUT /api/admin/user/permission
+ *  @group Admin
+ *  @param {UserPermission.model} userPermission.body.required - 유저 권한 정보
+ *  @returns {object} 200 - 빈 객체
+ *  @returns {Error} NOT_ADMIN - NOT_ADMIN
+ *  @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const putUserPermission = async (req, res, next) => {
     try {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
@@ -91,6 +129,15 @@ const postUserPermission = async (req, res, next) => {
     }
 };
 
+/**
+ *  유저 삭제
+ *  @route DELETE /api/admin/user/{userNo}
+ *  @group Admin
+ *  @param {number} userNo.required - 유저 넘버
+ *  @returns {object} 200 - 빈 객체
+ *  @returns {Error} NOT_ADMIN - NOT_ADMIN
+ *  @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
 const deleteUser = async (req, res, next) => {
     try {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
@@ -132,15 +179,15 @@ const deleteUser = async (req, res, next) => {
 };
 
 const postNotice = async (req, res, next) => {};
-const postEditNotice = async (req, res, next) => {};
+const putEditNotice = async (req, res, next) => {};
 const deleteNotice = async (req, res, next) => {};
 
 module.exports = {
     getUser,
     postUser,
-    postUserPermission,
+    putUserPermission,
     deleteUser,
     postNotice,
-    postEditNotice,
+    putEditNotice,
     deleteNotice,
 };
