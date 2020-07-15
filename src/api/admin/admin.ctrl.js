@@ -17,7 +17,7 @@ const isAdmin = async (email) => {
  *  @route GET /api/admin/user
  *  @group Admin
  *  @returns {Array} 200 - 유저 리스트
- *  @reutrns {Error} NOT_ADMIN - NOT_ADMIN
+ *  @returns {Error} NOT_ADMIN - NOT_ADMIN
  */
 const getUser = async (req, res, next) => {
     try {
