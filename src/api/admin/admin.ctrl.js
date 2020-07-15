@@ -3,12 +3,32 @@ const crypto = require('crypto');
 const { users } = require('../../models');
 const { boards } = require('../../models');
 
-const isAdmin = async (email) => {
-    const level = 999;
-    const admin = await users.findOne({
-        where: { email, level },
-    });
+/* 검증 스키마 */
+const numberSchema = Joi.string()
+    .pattern(/^[0-9]+$/)
+    .required();
 
+// FIXME: 한글 4글자 초과도 허용됨
+const nameSchema = Joi.string()
+    .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
+    .required();
+
+const emailSchema = Joi.string()
+    .pattern(
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+    )
+    .required();
+
+const studentIdSchema = Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required();
+
+const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
+
+const isAdmin = async (email) => {
+    const admin = await users.findOne({
+        where: { email, level: 999 },
+    });
     return admin;
 };
 
@@ -54,18 +74,9 @@ const postUser = async (req, res, next) => {
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         const inputScheme = Joi.object({
-            // FIXME: 한글 4글자 초과도 허용됨
-            userName: Joi.string()
-                .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
-                .required(),
-            email: Joi.string()
-                .pattern(
-                    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
-                )
-                .required(),
-            studentId: Joi.string()
-                .pattern(/^[0-9]{10}$/)
-                .required(),
+            userName: nameSchema,
+            email: emailSchema,
+            studentId: studentIdSchema,
         });
         const { error, value } = inputScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -107,10 +118,8 @@ const putUserPermission = async (req, res, next) => {
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         const inputScheme = Joi.object({
-            userNo: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .required(),
-            level: Joi.any().valid('0', '1', '2', '999').required(),
+            userNo: numberSchema,
+            level: levelSchema,
         });
         const { error, value } = inputScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -143,11 +152,7 @@ const deleteUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const inputScheme = Joi.object({
-            userNo: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .required(),
-        });
+        const inputScheme = Joi.object({ userNo: numberSchema });
         const { error, value } = inputScheme.validate(req.params);
         if (error) throw new Error('INVALID_PARAMETERS');
 
