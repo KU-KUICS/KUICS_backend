@@ -1,33 +1,46 @@
-const { Users } = require('../../models');
+const Joi = require('@hapi/joi');
+const { intros } = require('../../models');
 
-const getAdmin = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
-};
+const titleScheme = Joi.string().min(3).required();
+const contentSheme = Joi.array().items(Joi.string()).required();
+const IntroScheme = Joi.object({
+    title: titleScheme,
+    content: contentSheme,
+});
 
-const postAdmin = async (req, res, next) => {
-    const user_id = Number(req.body.user_id);
+/**
+ * 소개글 작성
+ * @typedef Intro
+ * @property {string} title.required - 제목
+ * @property {string} content.required - 내용
+ */
 
+/**
+ * 소개글 작성
+ * @route POST /api/admin/intro
+ * @group Admin
+ * @param {Intro.model} intro.body.required - 소개 글
+ * @returns {object} 200 - 빈 객체
+ * @returns {Error} NOT_ADMIN - NOT_ADMIN
+ * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const postIntro = async (req, res, next) => {
     try {
-        if (user_id !== 10) throw new Error('WRONG_USER_ID');
+        // TODO: 어드민 체크 로직
+        console.log(req.body);
+        const { error, value } = IntroScheme.validate(req.body);
+        if (error) throw new Error('INVALID_PARAMETERS');
 
-        const users = await Users.find({
-            where: {
-                user_id,
-            },
-        });
+        const { title, content } = value;
 
-        res.json({
-            users,
-        });
-    } catch (error) {
-        next(error);
+        await intros.create({ title, content });
+
+        res.json({});
+    } catch (err) {
+        next(err);
     }
 };
 
 module.exports = {
-    getAdmin,
-    postAdmin,
+    postIntro,
 };

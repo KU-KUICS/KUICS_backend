@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const { postIntro } = require('./admin.ctrl');
+const { getIntro } = require('./intros.ctrl');
 
 const router = Router();
 
-router.post('/intro', postIntro);
+router.get('/', getIntro);
 
 module.exports = router;
