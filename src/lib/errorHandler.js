@@ -23,12 +23,12 @@ const exceptions = {
     },
     NO_AUTH: {
         statusCode: 401,
-        errorCode: 4,
+        errorCode: 10,
         msg: 'UNAUTHORIZED',
     },
     DELETED: {
         statusCode: 403,
-        errorCode: 5,
+        errorCode: 11,
         msg: 'ALREADY DELETED',
     },
 };
