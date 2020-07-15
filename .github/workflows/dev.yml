@@ -2,7 +2,7 @@ name: Build Docker Image and Run Docker on Server
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
     docker-image:
@@ -20,7 +20,7 @@ jobs:
       - name: Clean Up
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: docker rm --force kuics-backend
+          command: docker rm --force kuics-backend && docker rmi kuicsofficial/kuics-backend
           host: ${{secrets.SERVER}}
           username: ${{secrets.USERNAME}}
           privateKey: ${{secrets.PRIVATE_KEY}}

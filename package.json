@@ -1,11 +1,12 @@
 {
-  "name": "KUICS_backend",
+  "name": "kuics-backend",
   "version": "1.0.0",
   "description": "KUICS_backend",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production&& node ./src/index.js",
     "start:dev": "cross-env NODE_ENV=development&& nodemon ./src/index.js",
+    "prod": "cross-env NODE_ENV=production&& pm2 start ./src/index.js",
     "test": "eslint ./src/**.*"
   },
   "repository": {
@@ -29,7 +30,9 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.2",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -43,6 +46,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.3.0",
+    "pm2": "^4.4.0",
     "sequelize": "^6.3.3",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4",
