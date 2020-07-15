@@ -21,14 +21,19 @@ const exceptions = {
         errorCode: 2,
         msg: 'NOT MEMBER OF KUICS',
     },
+    NOT_ADMIN: {
+        statusCode: 403,
+        errorCode: 4,
+        msg: 'NOT ADMIN',
+    },
     NO_AUTH: {
         statusCode: 401,
-        errorCode: 4,
+        errorCode: 10,
         msg: 'UNAUTHORIZED',
     },
     DELETED: {
         statusCode: 403,
-        errorCode: 5,
+        errorCode: 11,
         msg: 'ALREADY DELETED',
     },
 };
