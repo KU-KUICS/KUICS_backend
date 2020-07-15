@@ -24,8 +24,8 @@ const searchInputScheme = Joi.object({
  */
 const getSearchResult = async (req, res, next) => {
     try {
-        const { err, value } = searchInputScheme.validate(req.query);
-        if (err) throw new Error('INVALID_PARAM');
+        const { error, value } = searchInputScheme.validate(req.query);
+        if (error) throw new Error('INVALID_PARAM');
 
         const { key, target } = value;
 
