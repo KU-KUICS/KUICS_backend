@@ -7,14 +7,14 @@ const getLoginCallback = passport.authenticate('google', {
     failureRedirect: '/api/auth/login/google/',
 
     /* TODO: 나중에 front 루트로 수정 */
-    successRedirect: '/',
+    successRedirect: 'http://test.kuics.kro.kr',
 });
 
 const getLogout = (req, res) => {
     req.logout();
 
     /* TODO: 나중에 front 루트로 수정 */
-    res.redirect('/');
+    res.redirect('http://test.kuics.kro.kr');
 };
 
 module.exports = {
