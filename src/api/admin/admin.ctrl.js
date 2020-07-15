@@ -25,6 +25,19 @@ const studentIdSchema = Joi.string()
 
 const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
 
+const userNoSchema = Joi.object({ userNo: numberSchema });
+
+const userSchema = Joi.object({
+    userName: nameSchema,
+    email: emailSchema,
+    studentId: studentIdSchema,
+});
+
+const permSchema = Joi.object({
+    userNo: numberSchema,
+    level: levelSchema,
+});
+
 const isAdmin = async (email) => {
     const admin = await users.findOne({
         where: { email, level: 999 },
@@ -73,12 +86,7 @@ const postUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const inputScheme = Joi.object({
-            userName: nameSchema,
-            email: emailSchema,
-            studentId: studentIdSchema,
-        });
-        const { error, value } = inputScheme.validate(req.body);
+        const { error, value } = userSchema.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userName, email, studentId } = value;
@@ -117,11 +125,7 @@ const putUserPermission = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const inputScheme = Joi.object({
-            userNo: numberSchema,
-            level: levelSchema,
-        });
-        const { error, value } = inputScheme.validate(req.body);
+        const { error, value } = permSchema.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userNo, level } = value;
@@ -152,8 +156,7 @@ const deleteUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const inputScheme = Joi.object({ userNo: numberSchema });
-        const { error, value } = inputScheme.validate(req.params);
+        const { error, value } = userNoSchema.validate(req.params);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userNo } = value;
