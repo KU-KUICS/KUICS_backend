@@ -49,9 +49,9 @@ const postIntro = async (req, res, next) => {
 
 /**
  * 소개글 수정
- * @route PUT /api/admin/intro/{introId}
+ * @route PUT /api/admin/intro
  * @group Admin
- * @param {number} introId.path.required - 수정할 소개글 ID
+ * @param {number} introNo.path.required - 수정할 소개글 ID
  * @param {Intro.model} intro.body.required - 소개글 수정
  * @returns {object} 200 - 빈 객체
  * @returns {Error} NOT_ADMIN - NOT_ADMIN
@@ -87,7 +87,40 @@ const updateIntro = async (req, res, next) => {
     }
 };
 
+/**
+ * 소개글 삭제
+ * @route DELETE /api/admin/intro
+ * @group Admin
+ * @param {number} introNo.path.required - 삭제할 소개글 ID
+ * @returns {object} 200 - 빈 객체
+ * @returns {Error} NOT_ADMIN - NOT_ADMIN
+ * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
+ */
+const deleteIntro = async (req, res, next) => {
+    try {
+        // TODO: 어드민 체크
+        const { error, value } = introNoScheme.validate(req.params.introNo);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const introNo = value;
+
+        const intro = await intros.findOne({
+            where: {
+                introNo,
+            },
+        });
+        if (!intro) throw new Error('INVALID_PARAMETERS');
+
+        await intro.destroy();
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     postIntro,
     updateIntro,
+    deleteIntro,
 };
