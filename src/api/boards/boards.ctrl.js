@@ -1,5 +1,7 @@
-// const Joi = require('@hapi/joi');
+const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
+
+const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
 
 const existsBoard = async (boardNo) => {
     const board = await boards.findOne({
@@ -102,10 +104,16 @@ const getBoard = async (req, res, next) => {
 const postBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
-        const { title, body, level } = req.body;
+        const { title, body, readLevel } = req.body;
 
         /* TODO: 권한 확인(level 권한), error handling */
         /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
+
+        const { error, level } = levelSchema.validate(readLevel);
+        if (error) {
+            throw new Error('INVALID_PARAMETERS');
+        }
+
         const board = await boards.create({
             title,
             body,
@@ -127,7 +135,7 @@ const reviseBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId } = req.params;
-        const { title, body, level } = req.body;
+        const { title, body, readLevel } = req.body;
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
@@ -140,7 +148,11 @@ const reviseBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
-        /* TODO: level 권한 추가 */
+        const { error, level } = levelSchema.validate(readLevel);
+        if (error) {
+            throw new Error('INVALID_PARAMETERS');
+        }
+
         await boards.update(
             { title, body, level },
             { where: { boardNo: boardId } },
