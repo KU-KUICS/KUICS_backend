@@ -1,7 +1,16 @@
 const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
 
-const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
+const titleScheme = Joi.string().min(3).required();
+const bodyScheme = Joi.string().min(3).required();
+// const bodyScheme = Joi.array().items(Joi.string()).required();
+const levelScheme = Joi.any().valid('0', '1', '2', '999').required();
+
+const boardScheme = Joi.object({
+    title: titleScheme,
+    body: bodyScheme,
+    level: levelScheme,
+});
 
 const existsBoard = async (boardNo) => {
     const board = await boards.findOne({
@@ -19,10 +28,17 @@ const isWriterBoard = async (boardNo, userUserNo) => {
 };
 
 const hasAuth = async (userNo) => {
-    const writer = await users.findOne({
+    const auth = await users.findOne({
         where: { userNo, state: 0, level: [1, 2, 999] },
     });
-    return writer;
+    return auth;
+};
+
+const isRegularMember = async (userNo) => {
+    const regular = await users.findOne({
+        where: { userNo, level: [2, 999] },
+    });
+    return regular;
 };
 
 const isAdmin = async (userNo) => {
@@ -104,16 +120,20 @@ const getBoard = async (req, res, next) => {
 const postBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
-        const { title, body, readLevel } = req.body;
 
-        /* TODO: 권한 확인(level 권한), error handling */
-        /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
-
-        const { error, level } = levelSchema.validate(readLevel);
+        const { error, value } = boardScheme.validate(req.body);
         if (error) {
             throw new Error('INVALID_PARAMETERS');
         }
+        const { title, body, level } = value;
 
+        const checkAuth = await hasAuth(userId);
+        const checkRegularMember = await isRegularMember(userId);
+        if (!checkAuth || (!checkRegularMember && level === '2')) {
+            throw new Error('NO_AUTH');
+        }
+
+        /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         const board = await boards.create({
             title,
             body,
@@ -135,7 +155,12 @@ const reviseBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId } = req.params;
-        const { title, body, readLevel } = req.body;
+
+        const { error, value } = boardScheme.validate(req.body);
+        if (error) {
+            throw new Error('INVALID_PARAMETERS');
+        }
+        const { title, body, level } = value;
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
@@ -143,14 +168,14 @@ const reviseBoard = async (req, res, next) => {
         }
 
         const checkWriter = await isWriterBoard(boardId, userId);
-        const checkAuth = await hasAuth(userId);
-        if (!checkWriter || !checkAuth) {
+        if (!checkWriter) {
             throw new Error('NO_AUTH');
         }
 
-        const { error, level } = levelSchema.validate(readLevel);
-        if (error) {
-            throw new Error('INVALID_PARAMETERS');
+        const checkAuth = await hasAuth(userId);
+        const checkRegularMember = await isRegularMember(userId);
+        if (!checkAuth || (!checkRegularMember && level === '2')) {
+            throw new Error('NO_AUTH');
         }
 
         await boards.update(
