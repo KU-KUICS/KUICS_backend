@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
             },
+            // 추천수
+            recommendedTime: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+            },
             // 댓글 수
             commentCount: {
                 type: DataTypes.INTEGER,
