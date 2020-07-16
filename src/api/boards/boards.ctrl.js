@@ -129,7 +129,7 @@ const postBoard = async (req, res, next) => {
 
         const checkAuth = await hasAuth(userId);
         const checkRegularMember = await isRegularMember(userId);
-        if (!checkAuth || (!checkRegularMember && level === '2')) {
+        if (!checkAuth || (!checkRegularMember && level === 2)) {
             throw new Error('NO_AUTH');
         }
 
@@ -174,7 +174,7 @@ const reviseBoard = async (req, res, next) => {
 
         const checkAuth = await hasAuth(userId);
         const checkRegularMember = await isRegularMember(userId);
-        if (!checkAuth || (!checkRegularMember && level === '2')) {
+        if (!checkAuth || (!checkRegularMember && level === 2)) {
             throw new Error('NO_AUTH');
         }
 
