@@ -1,4 +1,4 @@
-//const Joi = require('@hapi/joi');
+// const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
 
 const existsBoard = async (boardNo) => {
@@ -69,6 +69,7 @@ const getBoard = async (req, res, next) => {
                 'body',
                 'hit',
                 'commentCount',
+                'level',
                 'createdAt',
                 'updatedAt',
                 'userUserNo',
@@ -101,9 +102,9 @@ const getBoard = async (req, res, next) => {
 const postBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
-        const { title, body } = req.body;
+        const { title, body, level } = req.body;
 
-        /* TODO: 권한 확인, error handling */
+        /* TODO: 권한 확인(level 권한), error handling */
         /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         const board = await boards.create({
             title,
@@ -112,6 +113,7 @@ const postBoard = async (req, res, next) => {
             hit: 0,
             commentCount: 0,
             userUserNo: userId,
+            level,
         });
 
         /* TODO: 이미지, 파일 정보 추가 */
@@ -125,7 +127,7 @@ const reviseBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId } = req.params;
-        const { title, body } = req.body;
+        const { title, body, level } = req.body;
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
@@ -138,7 +140,11 @@ const reviseBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
-        await boards.update({ title, body }, { where: { boardNo: boardId } });
+        /* TODO: level 권한 추가 */
+        await boards.update(
+            { title, body, level },
+            { where: { boardNo: boardId } },
+        );
 
         /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
         res.json({});
