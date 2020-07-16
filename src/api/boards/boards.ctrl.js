@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+//const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
 
 const existsBoard = async (boardNo) => {
@@ -43,6 +43,8 @@ const getBoardList = async (req, res, next) => {
         next(err);
     }
     /* TODO: 미리보기 구현 */
+    /* TODO: index별 구현 */
+    /* TODO: 추천수 처리 */
 };
 
 const getBoard = async (req, res, next) => {
@@ -57,6 +59,7 @@ const getBoard = async (req, res, next) => {
             silent: true,
         });
 
+        /* TODO: 추천수 처리 */
         const board = await boards.findAll({
             where: { boardNo: boardId },
             attributes: [
@@ -101,7 +104,7 @@ const postBoard = async (req, res, next) => {
         const { title, body } = req.body;
 
         /* TODO: 권한 확인, error handling */
-        /* TODO: 에러나는 경우에 boardNo 증가하지 않도록 처리 필요 */
+        /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         const board = await boards.create({
             title,
             body,
@@ -172,7 +175,7 @@ const deleteBoard = async (req, res, next) => {
 
 const recommendBoard = async (req, res, next) => {
     try {
-        /* */
+        /* TODO: 글 추천 API 구현 */
     } catch (err) {
         next(err);
     }
@@ -248,7 +251,7 @@ const deleteComment = async (req, res, next) => {
 
 const recommendComment = async (req, res, next) => {
     try {
-        /* */
+        /* TODO: 댓글 추천 API 구현 */
     } catch (err) {
         next(err);
     }
