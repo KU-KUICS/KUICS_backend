@@ -47,6 +47,7 @@ const isAdmin = async (userNo) => {
     return admin;
 };
 
+/* TODO: index별 미리보기 구현으로 변경 */
 const getBoardList = async (req, res, next) => {
     try {
         const boardList = await boards.findAll({
@@ -59,9 +60,6 @@ const getBoardList = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-    /* TODO: 미리보기 구현 */
-    /* TODO: index별 구현 */
-    /* TODO: 추천수 처리 */
 };
 
 const getBoard = async (req, res, next) => {
