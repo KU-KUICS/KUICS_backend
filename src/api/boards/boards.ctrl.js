@@ -2,8 +2,7 @@ const Joi = require('@hapi/joi');
 const { boards, boardComments, users } = require('../../models');
 
 const titleScheme = Joi.string().min(3).required();
-const bodyScheme = Joi.string().min(3).required();
-// const bodyScheme = Joi.array().items(Joi.string()).required();
+const bodyScheme = Joi.string().required();
 const levelScheme = Joi.any().valid('0', '1', '2', '999').required();
 
 const boardScheme = Joi.object({
@@ -69,8 +68,42 @@ const getBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
 
-        /* TODO: 삭제 여부 확인, error handling */
-        /* TODO: 보기 권한 추가 (준회원, 정회원, 관리자) */
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
+            throw new Error('DELETED');
+        }
+
+        const { level } = await boards.findOne({
+            where: { boardNo: boardId },
+            raw: true,
+        });
+
+        /* 읽기 권한이 필요한 경우 권한 검증 */
+        if (level !== 0) {
+            const { userId } = req.query;
+            if (!userId) throw new Error('NO_LOGIN');
+
+            const checkRegularMember = await isRegularMember(userId);
+            const checkAuth = await hasAuth(userId);
+            const checkAdmin = await isAdmin(userId);
+            const checkWriter = await isWriterBoard(boardId, userId);
+
+            switch (level) {
+                case 1:
+                    if (!checkAuth) throw new Error('NO_AUTH');
+                    break;
+                case 2:
+                    if (!checkAuth || !checkRegularMember)
+                        throw new Error('NO_AUTH');
+                    break;
+                case 999:
+                    if (!checkAdmin && !checkWriter) throw new Error('NO_AUTH');
+                    break;
+                default:
+                    break;
+            }
+        }
+
         await boards.increment('hit', {
             by: 1,
             where: { boardNo: boardId },
