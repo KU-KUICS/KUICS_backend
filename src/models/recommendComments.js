@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         // 추천인
         recommendComments.belongsTo(models.users);
         // 추천된 댓글
-        recommendComments.belongsTo(models.boards);
+        recommendComments.belongsTo(models.boardComments);
     };
 
     return recommendComments;
