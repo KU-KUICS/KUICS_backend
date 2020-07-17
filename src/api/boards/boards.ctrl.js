@@ -60,6 +60,21 @@ const recommendedBoard = async (boardBoardNo, userUserNo) => {
     return recommended;
 };
 
+const existsComment = async (boardBoardNo, boardCommentsNo) => {
+    const comment = await boardComments.findOne({
+        where: { boardBoardNo, boardCommentsNo, deletedAt: null },
+        paranoid: false,
+    });
+    return comment;
+};
+
+const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
+    const recommended = await recommendComments.findOne({
+        where: { boardCommentBoardCommentsNo, userUserNo },
+    });
+    return recommended;
+};
+
 const getBoardList = async (req, res, next) => {
     try {
         /* TODO: index별 미리보기 구현으로 변경 */
@@ -369,6 +384,7 @@ const postComment = async (req, res, next) => {
 
         /* TODO: 권한 확인, 삭제 여부 확인, error handling */
         /* TODO: 원본 게시글 관련 처리 */
+        /* TODO: comment 번호 처리 */
         await boardComments.create({
             body,
             recommendedTime: 0,
@@ -429,13 +445,22 @@ const deleteComment = async (req, res, next) => {
     }
 };
 
+/**
+ *  commentId에 해당하는 글 추천하기
+ *  @route POST /api/board/:boardId/comment/:commentId/recommend
+ *  @group Board
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const recommendComment = async (req, res, next) => {
     try {
         const { boardId, commentId } = req.params;
         const { userId } = req.query;
 
         const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
+        const checkExistsComment = await existsComment(boardId, commentId);
+        if (!checkExists || !checkExistsComment) {
             throw new Error('DELETED');
         }
 
@@ -444,7 +469,7 @@ const recommendComment = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
-        const checkRecommended = await recommendedBoard(boardId, userId);
+        const checkRecommended = await recommendedComment(commentId, userId);
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendComments.create({
@@ -454,7 +479,7 @@ const recommendComment = async (req, res, next) => {
 
             await boardComments.increment('recommendedTime', {
                 by: 1,
-                where: { boardCommentsNo: boardId },
+                where: { boardCommentsNo: commentId },
                 silent: true,
             });
         } else {
@@ -468,7 +493,7 @@ const recommendComment = async (req, res, next) => {
 
             await boardComments.decrement('recommendedTime', {
                 by: 1,
-                where: { boardNo: boardId },
+                where: { boardCommentsNo: commentId },
                 silent: true,
             });
         }
