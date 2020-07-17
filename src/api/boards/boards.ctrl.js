@@ -302,15 +302,33 @@ const deleteBoard = async (req, res, next) => {
     }
 };
 
+/**
+ *  boardId에 해당하는 글 추천하기
+ *  @route POST /api/board/:boardId/recommend
+ *  @group Board
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+
 const recommendBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
         const { userId } = req.query;
 
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
+            throw new Error('DELETED');
+        }
+
+        const checkAuth = await hasAuth(userId);
+        if (!checkAuth) {
+            throw new Error('NO_AUTH');
+        }
+
         const checkRecommended = await recommendedBoard(boardId, userId);
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
-            /* TODO: 권한 확인, 삭제 여부 확인, error handling */
             await recommendBoards.create({
                 boardBoardNo: boardId,
                 userUserNo: userId,
