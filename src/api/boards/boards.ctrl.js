@@ -1,5 +1,10 @@
 const Joi = require('@hapi/joi');
-const { boards, boardComments, users } = require('../../models');
+const {
+    boards,
+    boardComments,
+    users,
+    recommendBoards,
+} = require('../../models');
 
 const titleScheme = Joi.string().min(3).required();
 const bodyScheme = Joi.string().required();
@@ -45,6 +50,13 @@ const isAdmin = async (userNo) => {
         where: { userNo, level: 999 },
     });
     return admin;
+};
+
+const recommendedBoard = async (boardBoardNo, userUserNo) => {
+    const recommended = await recommendBoards.findOne({
+        where: { boardBoardNo, userUserNo },
+    });
+    return recommended;
 };
 
 const getBoardList = async (req, res, next) => {
@@ -292,7 +304,40 @@ const deleteBoard = async (req, res, next) => {
 
 const recommendBoard = async (req, res, next) => {
     try {
-        /* TODO: 글 추천 API 구현 */
+        const { boardId } = req.params;
+        const { userId } = req.query;
+
+        const checkRecommended = await recommendedBoard(boardId, userId);
+        if (!checkRecommended) {
+            /* 추천하지 않은 경우, 추천하기 */
+            /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+            await recommendBoards.create({
+                boardBoardNo: boardId,
+                userUserNo: userId,
+            });
+
+            await boards.increment('recommendedTime', {
+                by: 1,
+                where: { boardNo: boardId },
+                silent: true,
+            });
+        } else {
+            /* 이미 추천한 경우, 추천 취소하기 */
+            await recommendBoards.destroy({
+                where: {
+                    boardBoardNo: boardId,
+                    userUserNo: userId,
+                },
+            });
+
+            await boards.decrement('recommendedTime', {
+                by: 1,
+                where: { boardNo: boardId },
+                silent: true,
+            });
+        }
+
+        res.json({});
     } catch (err) {
         next(err);
     }
