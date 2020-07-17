@@ -4,6 +4,7 @@ const {
     boardComments,
     users,
     recommendBoards,
+    recommendComments,
 } = require('../../models');
 
 const titleScheme = Joi.string().min(3).required();
@@ -310,7 +311,6 @@ const deleteBoard = async (req, res, next) => {
  *  @returns {Error} DELETED - already deleted
  *  @returns {Error} NO_AUTH - unauthorized
  */
-
 const recommendBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
@@ -431,7 +431,49 @@ const deleteComment = async (req, res, next) => {
 
 const recommendComment = async (req, res, next) => {
     try {
-        /* TODO: 댓글 추천 API 구현 */
+        const { boardId } = req.params;
+        const { userId } = req.query;
+
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
+            throw new Error('DELETED');
+        }
+
+        const checkAuth = await hasAuth(userId);
+        if (!checkAuth) {
+            throw new Error('NO_AUTH');
+        }
+
+        const checkRecommended = await recommendedBoard(boardId, userId);
+        if (!checkRecommended) {
+            /* 추천하지 않은 경우, 추천하기 */
+            await recommendComments.create({
+                boardBoardNo: boardId,
+                userUserNo: userId,
+            });
+
+            await boardComments.increment('recommendedTime', {
+                by: 1,
+                where: { boardNo: boardId },
+                silent: true,
+            });
+        } else {
+            /* 이미 추천한 경우, 추천 취소하기 */
+            await recommendComments.destroy({
+                where: {
+                    boardBoardNo: boardId,
+                    userUserNo: userId,
+                },
+            });
+
+            await boardComments.decrement('recommendedTime', {
+                by: 1,
+                where: { boardNo: boardId },
+                silent: true,
+            });
+        }
+
+        res.json({});
     } catch (err) {
         next(err);
     }
