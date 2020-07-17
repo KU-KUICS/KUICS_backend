@@ -431,7 +431,7 @@ const deleteComment = async (req, res, next) => {
 
 const recommendComment = async (req, res, next) => {
     try {
-        const { boardId } = req.params;
+        const { boardId, commentId } = req.params;
         const { userId } = req.query;
 
         const checkExists = await existsBoard(boardId);
@@ -448,20 +448,20 @@ const recommendComment = async (req, res, next) => {
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendComments.create({
-                boardBoardNo: boardId,
+                boardCommentBoardCommentsNo: commentId,
                 userUserNo: userId,
             });
 
             await boardComments.increment('recommendedTime', {
                 by: 1,
-                where: { boardNo: boardId },
+                where: { boardCommentsNo: boardId },
                 silent: true,
             });
         } else {
             /* 이미 추천한 경우, 추천 취소하기 */
             await recommendComments.destroy({
                 where: {
-                    boardBoardNo: boardId,
+                    boardCommentBoardCommentsNo: commentId,
                     userUserNo: userId,
                 },
             });
