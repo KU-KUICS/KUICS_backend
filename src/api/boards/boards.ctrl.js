@@ -47,9 +47,9 @@ const isAdmin = async (userNo) => {
     return admin;
 };
 
-/* TODO: index별 미리보기 구현으로 변경 */
 const getBoardList = async (req, res, next) => {
     try {
+        /* TODO: index별 미리보기 구현으로 변경 */
         const boardList = await boards.findAll({
             where: { type: 'board' },
             attributes: ['boardNo', 'title', 'hit', 'commentCount'],
@@ -62,6 +62,15 @@ const getBoardList = async (req, res, next) => {
     }
 };
 
+/**
+ *  boardId에 해당하는 글 정보 가져오기
+ *  @route GET /api/board/:boardId
+ *  @group Board
+ *  @returns {Object, Array} 200 - 글 정보, 댓글 리스트
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_LOGIN - no login
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const getBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
@@ -148,6 +157,22 @@ const getBoard = async (req, res, next) => {
     }
 };
 
+/**
+ * @typedef boardScheme
+ * @property {string} title.required
+ * @property {string} body.required
+ * @property {number} level.required
+ */
+
+/**
+ *  글 작성하기
+ *  @route POST /api/board
+ *  @group Board
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const postBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
@@ -165,7 +190,7 @@ const postBoard = async (req, res, next) => {
         }
 
         /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
-        const board = await boards.create({
+        await boards.create({
             title,
             body,
             type: 'board',
@@ -176,12 +201,22 @@ const postBoard = async (req, res, next) => {
         });
 
         /* TODO: 이미지, 파일 정보 추가 */
-        res.json({ board });
+        res.json({});
     } catch (err) {
         next(err);
     }
 };
 
+/**
+ *  boardId에 해당하는 글 수정하기
+ *  @route POST /api/board/:boardId
+ *  @group Board
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const reviseBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
@@ -221,6 +256,14 @@ const reviseBoard = async (req, res, next) => {
     }
 };
 
+/**
+ *  boardId에 해당하는 글 삭제하기
+ *  @route DELETE /api/board/:boardId
+ *  @group Board
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const deleteBoard = async (req, res, next) => {
     try {
         const { boardId } = req.params;
