@@ -73,10 +73,10 @@ const existsComment = async (boardBoardNo, boardCommentsNo) => {
 };
 
 const isWriterComment = async (boardCommentsNo, userUserNo) => {
-    const board = await boardComments.findOne({
+    const comment = await boardComments.findOne({
         where: { boardCommentsNo, userUserNo },
     });
-    return board;
+    return comment;
 };
 
 const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
@@ -102,8 +102,8 @@ const getBoardList = async (req, res, next) => {
             throw new Error('DELETED');
         }
 
-        const boardList = await boards.findAll({
-            where: { type: 'board' },
+        const boardList = await boards.findOne({
+            where: { type: 'board', boardNo: boardId },
             attributes: [
                 'boardNo',
                 'excerpt',
