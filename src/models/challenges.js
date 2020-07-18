@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Chanllenges = sequelize.define('challenges', {
         // Priamry Key
-        challengeNo: {
+        challNo: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Chanllenges.associate = (models) => {
-        // 퍼스트 플러드
+        // 퍼스트 블러드
         Chanllenges.belongsTo(models.users);
     };
 
