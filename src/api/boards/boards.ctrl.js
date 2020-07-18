@@ -394,7 +394,7 @@ const postComment = async (req, res, next) => {
         const { userId } = req.query;
         const { boardId } = req.params;
 
-        const { error, value } = boardScheme.validate(req.body);
+        const { error, value } = commentScheme.validate(req.body);
         if (error) {
             throw new Error('INVALID_PARAMETERS');
         }
@@ -410,13 +410,17 @@ const postComment = async (req, res, next) => {
             throw new Error('DELETED');
         }
 
-        /* TODO: 원본 게시글 관련 처리 */
-        /* TODO: comment 번호 처리 */
+        const { commentCount } = await boards.findOne({
+            where: { boardNo: boardId },
+            raw: true,
+        });
+
         await boardComments.create({
             body,
             recommendedTime: 0,
             userUserNo: userId,
             boardBoardNo: boardId,
+            commentsNo: commentCount + 1,
         });
 
         await boards.increment('commentCount', {
