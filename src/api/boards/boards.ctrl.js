@@ -106,11 +106,11 @@ const getBoardList = async (req, res, next) => {
             where: { type: 'board' },
             attributes: [
                 'boardNo',
+                'excerpt',
                 'title',
                 'commentCount',
                 'hit',
                 'updatedAt',
-                'body',
             ],
             order: [['boardNo', 'DESC']],
         });
@@ -176,7 +176,6 @@ const getBoard = async (req, res, next) => {
             silent: true,
         });
 
-        /* TODO: 추천수 처리 */
         const board = await boards.findAll({
             where: { boardNo: boardId },
             attributes: [
@@ -184,6 +183,7 @@ const getBoard = async (req, res, next) => {
                 'type',
                 'title',
                 'body',
+                'excerpt',
                 'hit',
                 'commentCount',
                 'level',
@@ -248,6 +248,7 @@ const postBoard = async (req, res, next) => {
         }
 
         /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
+        /* TODO: excerpt 처리 */
         await boards.create({
             title,
             body,
@@ -302,6 +303,7 @@ const reviseBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        /* TODO: excerpt 처리 */
         await boards.update(
             { title, body, level },
             { where: { boardNo: boardId } },
