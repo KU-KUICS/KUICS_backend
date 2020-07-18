@@ -247,11 +247,13 @@ const postBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        const excerpt = body.substring(0, 150);
+
         /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
-        /* TODO: excerpt 처리 */
         await boards.create({
             title,
             body,
+            excerpt,
             type: 'board',
             hit: 0,
             commentCount: 0,
@@ -303,9 +305,11 @@ const reviseBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        const excerpt = body.substring(0, 150);
+
         /* TODO: excerpt 처리 */
         await boards.update(
-            { title, body, level },
+            { title, body, excerpt, level },
             { where: { boardNo: boardId } },
         );
 
