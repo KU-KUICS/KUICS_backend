@@ -112,7 +112,6 @@ const getBoardList = async (req, res, next) => {
                 'hit',
                 'updatedAt',
             ],
-            order: [['boardNo', 'DESC']],
         });
 
         res.json({ boardList });
