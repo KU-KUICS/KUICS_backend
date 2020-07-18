@@ -237,7 +237,7 @@ const postBoard = async (req, res, next) => {
 
 /**
  *  boardId에 해당하는 글 수정하기
- *  @route POST /api/board/:boardId
+ *  @route PUT /api/board/:boardId
  *  @group Board
  *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
  *  @returns {Object} 200 - 빈 객체
