@@ -94,6 +94,7 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
  *  글 미리보기 정보 가져오기
  *  @route GET /api/board
  *  @group Board
+ *  @param {number} boardId.query.required - 글 번호
  *  @returns {Object} 200 - 글 미리보기
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
@@ -182,19 +183,7 @@ const getBoard = async (req, res, next) => {
 
         const board = await boards.findAll({
             where: { boardNo: boardId },
-            attributes: [
-                'boardNo',
-                'type',
-                'title',
-                'body',
-                'excerpt',
-                'hit',
-                'commentCount',
-                'level',
-                'createdAt',
-                'updatedAt',
-                'userUserNo',
-            ],
+            /* attributes: [], */
         });
 
         const commentList = await boardComments.findAll({
