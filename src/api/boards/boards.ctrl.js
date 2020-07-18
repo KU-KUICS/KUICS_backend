@@ -72,6 +72,13 @@ const existsComment = async (boardBoardNo, boardCommentsNo) => {
     return comment;
 };
 
+const isWriterComment = async (boardCommentsNo, userUserNo) => {
+    const board = await boardComments.findOne({
+        where: { boardCommentsNo, userUserNo },
+    });
+    return board;
+};
+
 const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     const recommended = await recommendComments.findOne({
         where: { boardCommentBoardCommentsNo, userUserNo },
@@ -384,10 +391,11 @@ const recommendBoard = async (req, res, next) => {
  *  댓글 작성하기
  *  @route POST /api/board/:boardId/comment
  *  @group Board
- *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @param {commentScheme.model} commentScheme.body.required - 작성할 댓글 정보
  *  @returns {Object} 200 - 빈 객체
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
+ *  @returns {Error} DELETED - already deleted
  */
 const postComment = async (req, res, next) => {
     try {
@@ -435,13 +443,38 @@ const postComment = async (req, res, next) => {
     }
 };
 
+/**
+ *  댓글 수정하기
+ *  @route PUT /api/board/:boardId/comment/:commentId
+ *  @group Board
+ *  @param {commentScheme.model} commentScheme.body.required - 작성할 댓글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ *  @returns {Error} DELETED - already deleted
+ */
 const reviseComment = async (req, res, next) => {
     try {
-        // const { userId } = req.query;
-        const { /* boardId, */ commentId } = req.params;
-        const { body } = req.body;
+        const { userId } = req.query;
+        const { boardId, commentId } = req.params;
 
-        /* TODO: boardId 확인 */
+        const { error, value } = commentScheme.validate(req.body);
+        if (error) {
+            throw new Error('INVALID_PARAMETERS');
+        }
+        const { body } = value;
+
+        const checkExistsBoard = await existsBoard(boardId);
+        const checkExistsComment = await existsComment(boardId, commentId);
+        if (!checkExistsBoard || !checkExistsComment) {
+            throw new Error('DELETED');
+        }
+
+        const checkWriter = await isWriterComment(commentId, userId);
+        if (!checkWriter) {
+            throw new Error('NO_AUTH');
+        }
+
         /* TODO: 권한 확인, 삭제 여부 확인, error handling */
         await boardComments.update(
             { body },
