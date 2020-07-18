@@ -173,7 +173,6 @@ const getBoard = async (req, res, next) => {
             ],
         });
 
-        /* TODO: 삭제된 경우 미표시 */
         const commentList = await boardComments.findAll({
             where: { boardBoardNo: boardId },
             attributes: [
@@ -505,7 +504,7 @@ const deleteComment = async (req, res, next) => {
             throw new Error('DELETED');
         }
 
-        const checkWriter = await isWriterComment(boardId, userId);
+        const checkWriter = await isWriterComment(commentId, userId);
         const checkAdmin = await isAdmin(userId);
         const checkAuth = await hasAuth(userId);
         if ((!checkWriter && !checkAdmin) || !checkAuth) {
