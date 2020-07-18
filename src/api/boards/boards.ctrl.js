@@ -17,6 +17,10 @@ const boardScheme = Joi.object({
     level: levelScheme,
 });
 
+const commentScheme = Joi.object({
+    body: bodyScheme,
+});
+
 const existsBoard = async (boardNo) => {
     const board = await boards.findOne({
         where: { boardNo, deletedAt: null },
@@ -376,13 +380,36 @@ const recommendBoard = async (req, res, next) => {
     }
 };
 
+/**
+ *  댓글 작성하기
+ *  @route POST /api/board/:boardId/comment
+ *  @group Board
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const postComment = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId } = req.params;
-        const { body } = req.body;
 
-        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
+        const { error, value } = boardScheme.validate(req.body);
+        if (error) {
+            throw new Error('INVALID_PARAMETERS');
+        }
+        const { body } = value;
+
+        const checkAuth = await hasAuth(userId);
+        if (!checkAuth) {
+            throw new Error('NO_AUTH');
+        }
+
+        const checkExistsBoard = await existsBoard(boardId);
+        if (!checkExistsBoard) {
+            throw new Error('DELETED');
+        }
+
         /* TODO: 원본 게시글 관련 처리 */
         /* TODO: comment 번호 처리 */
         await boardComments.create({
@@ -458,9 +485,9 @@ const recommendComment = async (req, res, next) => {
         const { boardId, commentId } = req.params;
         const { userId } = req.query;
 
-        const checkExists = await existsBoard(boardId);
+        const checkExistsBoard = await existsBoard(boardId);
         const checkExistsComment = await existsComment(boardId, commentId);
-        if (!checkExists || !checkExistsComment) {
+        if (!checkExistsBoard || !checkExistsComment) {
             throw new Error('DELETED');
         }
 
