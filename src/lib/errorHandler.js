@@ -31,11 +31,6 @@ const exceptions = {
         errorCode: 10,
         msg: 'UNAUTHORIZED',
     },
-    DELETED: {
-        statusCode: 403,
-        errorCode: 11,
-        msg: 'ALREADY DELETED',
-    },
 };
 
 const handleError = (err, req, res, next) => {

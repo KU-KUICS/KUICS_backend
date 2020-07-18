@@ -95,7 +95,7 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
  *  @route GET /api/board
  *  @group Board
  *  @returns {Object} 200 - 글 미리보기
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
 const getBoardList = async (req, res, next) => {
     try {
@@ -103,7 +103,7 @@ const getBoardList = async (req, res, next) => {
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const boardList = await boards.findOne({
@@ -129,7 +129,7 @@ const getBoardList = async (req, res, next) => {
  *  @route GET /api/board/:boardId
  *  @group Board
  *  @returns {Object, Array} 200 - 글 정보, 댓글 리스트
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_LOGIN - no login
  *  @returns {Error} NO_AUTH - unauthorized
  */
@@ -139,7 +139,7 @@ const getBoard = async (req, res, next) => {
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const { level } = await boards.findOne({
@@ -278,7 +278,6 @@ const postBoard = async (req, res, next) => {
  *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
  *  @returns {Object} 200 - 빈 객체
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
- *  @returns {Error} DELETED - already deleted
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const reviseBoard = async (req, res, next) => {
@@ -294,7 +293,7 @@ const reviseBoard = async (req, res, next) => {
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkWriter = await isWriterBoard(boardId, userId);
@@ -327,7 +326,7 @@ const reviseBoard = async (req, res, next) => {
  *  @route DELETE /api/board/:boardId
  *  @group Board
  *  @returns {Object} 200 - 빈 객체
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const deleteBoard = async (req, res, next) => {
@@ -337,7 +336,7 @@ const deleteBoard = async (req, res, next) => {
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkWriter = await isWriterBoard(boardId, userId);
@@ -361,7 +360,7 @@ const deleteBoard = async (req, res, next) => {
  *  @route POST /api/board/:boardId/recommend
  *  @group Board
  *  @returns {Object} 200 - 빈 객체
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendBoard = async (req, res, next) => {
@@ -371,7 +370,7 @@ const recommendBoard = async (req, res, next) => {
 
         const checkExists = await existsBoard(boardId);
         if (!checkExists) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkAuth = await hasAuth(userId);
@@ -423,7 +422,6 @@ const recommendBoard = async (req, res, next) => {
  *  @returns {Object} 200 - 빈 객체
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
- *  @returns {Error} DELETED - already deleted
  */
 const postComment = async (req, res, next) => {
     try {
@@ -444,7 +442,7 @@ const postComment = async (req, res, next) => {
         /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkExistsBoard = await existsBoard(boardId);
         if (!checkExistsBoard) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         /* ISSUE: 중간 댓글을 삭제했을때, 번호 붙이기 오류 */
@@ -481,7 +479,6 @@ const postComment = async (req, res, next) => {
  *  @returns {Object} 200 - 빈 객체
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
- *  @returns {Error} DELETED - already deleted
  */
 const reviseComment = async (req, res, next) => {
     try {
@@ -497,7 +494,7 @@ const reviseComment = async (req, res, next) => {
         const checkExistsBoard = await existsBoard(boardId);
         const checkExistsComment = await existsComment(boardId, commentId);
         if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkWriter = await isWriterComment(commentId, userId);
@@ -522,7 +519,7 @@ const reviseComment = async (req, res, next) => {
  *  @route DELETE /api/board/:boardId/comment/:commentId
  *  @group Board
  *  @returns {Object} 200 - 빈 객체
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const deleteComment = async (req, res, next) => {
@@ -533,7 +530,7 @@ const deleteComment = async (req, res, next) => {
         const checkExistsBoard = await existsBoard(boardId);
         const checkExistsComment = await existsComment(boardId, commentId);
         if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkWriter = await isWriterComment(commentId, userId);
@@ -562,7 +559,7 @@ const deleteComment = async (req, res, next) => {
  *  @route POST /api/board/:boardId/comment/:commentId/recommend
  *  @group Board
  *  @returns {Object} 200 - 빈 객체
- *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} INVALID_PARAMETERS - invalid parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendComment = async (req, res, next) => {
@@ -573,7 +570,7 @@ const recommendComment = async (req, res, next) => {
         const checkExistsBoard = await existsBoard(boardId);
         const checkExistsComment = await existsComment(boardId, commentId);
         if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('DELETED');
+            throw new Error('INVALID_PARAMETERS');
         }
 
         const checkAuth = await hasAuth(userId);
