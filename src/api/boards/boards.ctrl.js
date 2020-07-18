@@ -376,6 +376,7 @@ const recommendBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkRecommended = await recommendedBoard(boardId, userId);
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
@@ -437,6 +438,7 @@ const postComment = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkExistsBoard = await existsBoard(boardId);
         if (!checkExistsBoard) {
             throw new Error('DELETED');
@@ -499,6 +501,7 @@ const reviseComment = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        /* TODO: 보기 권한과 동일한 권한 check 추가 */
         await boardComments.update(
             { body },
             { where: { boardCommentsNo: commentId } },
@@ -574,6 +577,7 @@ const recommendComment = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
+        /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkRecommended = await recommendedComment(commentId, userId);
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
