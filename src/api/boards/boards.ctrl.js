@@ -86,12 +86,32 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     return recommended;
 };
 
+/**
+ *  글 미리보기 정보 가져오기
+ *  @route GET /api/board
+ *  @group Board
+ *  @returns {Object} 200 - 글 미리보기
+ *  @returns {Error} DELETED - already deleted
+ */
 const getBoardList = async (req, res, next) => {
     try {
-        /* TODO: index별 미리보기 구현으로 변경 */
+        const { boardId } = req.query;
+
+        const checkExists = await existsBoard(boardId);
+        if (!checkExists) {
+            throw new Error('DELETED');
+        }
+
         const boardList = await boards.findAll({
             where: { type: 'board' },
-            attributes: ['boardNo', 'title', 'hit', 'commentCount'],
+            attributes: [
+                'boardNo',
+                'title',
+                'commentCount',
+                'hit',
+                'updatedAt',
+                'body',
+            ],
             order: [['boardNo', 'DESC']],
         });
 
