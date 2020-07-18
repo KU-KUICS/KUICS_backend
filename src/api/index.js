@@ -6,6 +6,7 @@ const board = require('./boards');
 const notice = require('./notices');
 const search = require('./search');
 const intro = require('./intro');
+const challenge = require('./challenge');
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/board', board);
 router.use('/notice', notice);
 router.use('/search', search);
 router.use('/intro', intro);
+router.use('/challenge', challenge);
 
 module.exports = router;
