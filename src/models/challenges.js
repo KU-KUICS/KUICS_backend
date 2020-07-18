@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true,
         },
+        // 플래그
+        flag: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         // 푼 사람
         solvers: {
             type: DataTypes.INTEGER,
