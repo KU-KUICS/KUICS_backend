@@ -18,7 +18,7 @@ const getChallenges = async (req, res, next) => {
         if (!checkMember) throw new Error('NOT_KUICS');
 
         const challengeList = await challenges.findAll({
-            attributes: ['category', 'score', 'title'],
+            attributes: ['challNo', 'category', 'score', 'title'],
         });
 
         res.json({ challengeList });
@@ -37,7 +37,9 @@ const getChallengesDesc = async (req, res, next) => {
 
         const challenge = await challenges.findOne({
             where: { challNo: value },
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: {
+                exclude: ['challNo', 'createdAt', 'updatedAt', 'flag'],
+            },
         });
 
         res.json({ challenge });
