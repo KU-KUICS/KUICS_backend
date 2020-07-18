@@ -97,7 +97,7 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
  *  @returns {Object} 200 - 글 미리보기
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
-const getBoardList = async (req, res, next) => {
+const getBoardExcerpt = async (req, res, next) => {
     try {
         const { boardId } = req.query;
 
@@ -615,7 +615,7 @@ const recommendComment = async (req, res, next) => {
 };
 
 module.exports = {
-    getBoardList,
+    getBoardExcerpt,
     getBoard,
     postBoard,
     reviseBoard,
