@@ -475,7 +475,6 @@ const reviseComment = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
-        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
         await boardComments.update(
             { body },
             { where: { boardCommentsNo: commentId } },
@@ -487,14 +486,32 @@ const reviseComment = async (req, res, next) => {
     }
 };
 
+/**
+ *  댓글 삭제하기
+ *  @route DELETE /api/board/:boardId/comment/:commentId
+ *  @group Board
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} DELETED - already deleted
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const deleteComment = async (req, res, next) => {
     try {
-        // const { userId } = req.query;
+        const { userId } = req.query;
         const { boardId, commentId } = req.params;
 
-        /* TODO: boardId 확인 */
-        /* TODO: 권한 확인, 삭제 여부 확인, error handling */
-        /* 관리자 삭제 가능 */
+        const checkExistsBoard = await existsBoard(boardId);
+        const checkExistsComment = await existsComment(boardId, commentId);
+        if (!checkExistsBoard || !checkExistsComment) {
+            throw new Error('DELETED');
+        }
+
+        const checkWriter = await isWriterComment(boardId, userId);
+        const checkAdmin = await isAdmin(userId);
+        const checkAuth = await hasAuth(userId);
+        if ((!checkWriter && !checkAdmin) || !checkAuth) {
+            throw new Error('NO_AUTH');
+        }
+
         await boardComments.destroy({ where: { boardCommentsNo: commentId } });
 
         await boards.decrement('commentCount', {
