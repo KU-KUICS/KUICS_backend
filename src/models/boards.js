@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.TEXT,
                 allowNull: true,
             },
+            // 발췌 (미리보기)
+            excerpt: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
             // 조회 수
             hit: {
                 type: DataTypes.INTEGER,
