@@ -88,6 +88,7 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
 
 /* TODO: 게시글에 tag 붙이기 */
 /* TODO: auth 관련 함수 통일 */
+/* TODO: transaction 판단 */
 /* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 /**
  *  글 미리보기 정보 가져오기
@@ -309,7 +310,6 @@ const reviseBoard = async (req, res, next) => {
 
         const excerpt = body.substring(0, 150);
 
-        /* TODO: excerpt 처리 */
         await boards.update(
             { title, body, excerpt, level },
             { where: { boardNo: boardId } },
