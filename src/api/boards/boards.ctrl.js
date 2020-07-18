@@ -86,6 +86,9 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     return recommended;
 };
 
+/* TODO: 게시글에 tag 붙이기 */
+/* TODO: auth 관련 함수 통일 */
+/* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 /**
  *  글 미리보기 정보 가져오기
  *  @route GET /api/board
@@ -205,7 +208,7 @@ const getBoard = async (req, res, next) => {
             order: [['boardCommentsNo', 'ASC']],
         });
 
-        /* TODO: 이미지, 파일 정보 추가 */
+        /* TODO: 이미지, 파일 정보 추가 -> hashing */
         /* TODO: 작성자 정보 추가 (게시글, 댓글) */
 
         res.json({ board, commentList });
@@ -444,6 +447,7 @@ const postComment = async (req, res, next) => {
             throw new Error('DELETED');
         }
 
+        /* ISSUE: 중간 댓글을 삭제했을때, 번호 붙이기 오류 */
         const { commentCount } = await boards.findOne({
             where: { boardNo: boardId },
             raw: true,
