@@ -1,12 +1,14 @@
 const Express = require('express');
 const methodOverride = require('method-override');
+const cors = require('cors');
 const morgan = require('morgan');
 const cookieSession = require('cookie-session');
 const handleError = require('./lib/errorHandler');
 const activateSwagger = require('./lib/swagger');
 const { logger, stream } = require('./lib/logger');
 const { passport } = require('./api/auth/passport');
-const { AUTH_KEY } = require('../config/config.json');
+
+const { AUTH_KEY } = process.env;
 
 const api = require('./api');
 
@@ -16,6 +18,7 @@ const { NODE_ENV } = process.env;
 
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
+app.use(cors());
 app.use(methodOverride('_method'));
 app.use(
     cookieSession({
@@ -39,7 +42,7 @@ app.use(handleError);
 
 activateSwagger(app);
 
-const models = require('../models');
+const models = require('./models');
 
 models.sequelize
     .sync({ alter: true })

@@ -5,6 +5,7 @@ const auth = require('./auth');
 const board = require('./boards');
 const notice = require('./notices');
 const search = require('./search');
+const intro = require('./intro');
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use('/auth', auth);
 router.use('/board', board);
 router.use('/notice', notice);
 router.use('/search', search);
+router.use('/intro', intro);
 
 module.exports = router;

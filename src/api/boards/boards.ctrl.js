@@ -1,4 +1,4 @@
-const { boards } = require('../../../models');
+const { boards } = require('../../models');
 
 const getBoardList = async (req, res, next) => {
     try {

@@ -23,14 +23,30 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.TEXT,
                 allowNull: true,
             },
+            // 발췌 (미리보기)
+            excerpt: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
             // 조회 수
             hit: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+            },
+            // 추천수
+            recommendedTime: {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
             },
             // 댓글 수
             commentCount: {
                 type: DataTypes.INTEGER,
+                defaultValue: 0,
+            },
+            // 읽기 권한; 0: 전체 | 1: 회원만 | 2: 정회원만
+            level: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
                 defaultValue: 0,
             },
         },

@@ -21,6 +21,11 @@ const exceptions = {
         errorCode: 2,
         msg: 'NOT MEMBER OF KUICS',
     },
+    NOT_ADMIN: {
+        statusCode: 403,
+        errorCode: 4,
+        msg: 'NOT ADMIN',
+    },
 };
 
 const handleError = (err, req, res, next) => {

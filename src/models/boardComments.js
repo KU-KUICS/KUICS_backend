@@ -8,14 +8,15 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            // 각 게시물 댓글 번호
+            commentsNo: {
+                type: DataTypes.INTEGER,
+                defaultValue: 1,
+            },
             // 내용
             body: {
                 type: DataTypes.STRING,
                 allowNull: false,
-            },
-            // 작성날짜
-            writtenAt: {
-                type: DataTypes.DATE,
             },
             // 추천수
             recommendedTime: {

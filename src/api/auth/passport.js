@@ -1,11 +1,8 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { users } = require('../../../models');
+const { users } = require('../../models');
 
-const {
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-} = require('../../../config/config.json');
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 
 passport.serializeUser((user, done) => {
     done(null, user);
@@ -22,7 +19,7 @@ passport.use(
             clientSecret: GOOGLE_CLIENT_SECRET,
             callbackURL:
                 /* TODO: 나중에 product 서버로 바꾸기 */
-                'http://ec2-3-23-128-147.us-east-2.compute.amazonaws.com:4000/api/auth/login/google/callback',
+                'http://test.kuics.kro.kr:4000/api/auth/login/callback',
             scope: ['profile', 'email'],
         },
         (accessToken, refreshToken, profile, cb) => {
