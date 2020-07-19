@@ -4,6 +4,10 @@ node_modules
 # Log file
 /log/*
 */**.log
+yarn-error.log
 
-# Config Folder
-config
+# Environment file
+.env*
+
+# macOS
+.DS_Store
