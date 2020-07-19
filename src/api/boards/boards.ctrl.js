@@ -5,6 +5,7 @@ const {
     users,
     recommendBoards,
     recommendComments,
+    sequelize,
 } = require('../../models');
 
 const titleScheme = Joi.string().min(3).required();
@@ -373,33 +374,51 @@ const recommendBoard = async (req, res, next) => {
 
         /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkRecommended = await recommendedBoard(boardId, userId);
+
+        const t = await sequelize.transaction();
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
-            await recommendBoards.create({
-                boardBoardNo: boardId,
-                userUserNo: userId,
-            });
-
-            await boards.increment('recommendedTime', {
-                by: 1,
-                where: { boardNo: boardId },
-                silent: true,
-            });
-        } else {
-            /* 이미 추천한 경우, 추천 취소하기 */
-            await recommendBoards.destroy({
-                where: {
+            await recommendBoards.create(
+                {
                     boardBoardNo: boardId,
                     userUserNo: userId,
                 },
-            });
+                { transaction: t },
+            );
 
-            await boards.decrement('recommendedTime', {
-                by: 1,
-                where: { boardNo: boardId },
-                silent: true,
-            });
+            await boards.increment(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardNo: boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        } else {
+            /* 이미 추천한 경우, 추천 취소하기 */
+            await recommendBoards.destroy(
+                {
+                    where: {
+                        boardBoardNo: boardId,
+                        userUserNo: userId,
+                    },
+                },
+                { transaction: t },
+            );
+
+            await boards.decrement(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardNo: boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
         }
+
+        await t.commit();
 
         res.json({});
     } catch (err) {
@@ -585,33 +604,51 @@ const recommendComment = async (req, res, next) => {
 
         /* TODO: 보기 권한과 동일한 권한 check 추가 */
         const checkRecommended = await recommendedComment(commentId, userId);
+
+        const t = sequelize.transaction();
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
-            await recommendComments.create({
-                boardCommentBoardCommentsNo: commentId,
-                userUserNo: userId,
-            });
-
-            await boardComments.increment('recommendedTime', {
-                by: 1,
-                where: { boardCommentsNo: commentId },
-                silent: true,
-            });
-        } else {
-            /* 이미 추천한 경우, 추천 취소하기 */
-            await recommendComments.destroy({
-                where: {
+            await recommendComments.create(
+                {
                     boardCommentBoardCommentsNo: commentId,
                     userUserNo: userId,
                 },
-            });
+                { transaction: t },
+            );
 
-            await boardComments.decrement('recommendedTime', {
-                by: 1,
-                where: { boardCommentsNo: commentId },
-                silent: true,
-            });
+            await boardComments.increment(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardCommentsNo: commentId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        } else {
+            /* 이미 추천한 경우, 추천 취소하기 */
+            await recommendComments.destroy(
+                {
+                    where: {
+                        boardCommentBoardCommentsNo: commentId,
+                        userUserNo: userId,
+                    },
+                },
+                { transaction: t },
+            );
+
+            await boardComments.decrement(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardCommentsNo: commentId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
         }
+
+        await t.commit();
 
         res.json({});
     } catch (err) {
