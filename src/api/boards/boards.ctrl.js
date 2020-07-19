@@ -25,7 +25,7 @@ const commentScheme = Joi.object({
 const checkUser = async (userNo) => {
     const user = await users.findOne({
         where: { userNo, state: 0, level: [1, 2, 999] },
-        attributes: ['userNo', 'level'],
+        attributes: ['userNo', ['level', 'userLevel']],
         raw: true,
     });
     return user;
@@ -125,8 +125,8 @@ const test = async (req, res, next) => {
         const user = await checkUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, level } = user;
-        console.log(userNo, level);
+        const { userNo, userLevel } = user;
+        console.log(userNo, userLevel);
 
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
@@ -140,6 +140,20 @@ const test = async (req, res, next) => {
         const { writerCommentNo } = comment;
         console.log(writerCommentNo);
 
+        const writeLevel = 1;
+        const isWriterBoard = userNo === writerBoardNo;
+        const isWriterComment = userNo === writerCommentNo;
+        const isAdmin = userLevel === 999;
+        const writeAuth = writeLevel <= userLevel;
+        const readAuth = readLevel <= userLevel;
+
+        console.log(
+            isWriterBoard,
+            isWriterComment,
+            isAdmin,
+            writeAuth,
+            readAuth,
+        );
         res.json({});
     } catch (err) {
         console.log(err);
