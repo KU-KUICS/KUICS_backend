@@ -53,62 +53,11 @@ const checkComment = async (boardBoardNo, boardCommentsNo) => {
     return comment;
 };
 
-const existsBoard = async (boardNo) => {
-    const board = await boards.findOne({
-        where: { boardNo, deletedAt: null },
-        paranoid: false,
-    });
-    return board;
-};
-
-const isWriterBoard = async (boardNo, userUserNo) => {
-    const board = await boards.findOne({
-        where: { boardNo, userUserNo },
-    });
-    return board;
-};
-
-const hasAuth = async (userNo) => {
-    const auth = await users.findOne({
-        where: { userNo, state: 0, level: [1, 2, 999] },
-    });
-    return auth;
-};
-
-const isRegularMember = async (userNo) => {
-    const regular = await users.findOne({
-        where: { userNo, level: [2, 999] },
-    });
-    return regular;
-};
-
-const isAdmin = async (userNo) => {
-    const admin = await users.findOne({
-        where: { userNo, level: 999 },
-    });
-    return admin;
-};
-
 const recommendedBoard = async (boardBoardNo, userUserNo) => {
     const recommended = await recommendBoards.findOne({
         where: { boardBoardNo, userUserNo },
     });
     return recommended;
-};
-
-const existsComment = async (boardBoardNo, boardCommentsNo) => {
-    const comment = await boardComments.findOne({
-        where: { boardBoardNo, boardCommentsNo, deletedAt: null },
-        paranoid: false,
-    });
-    return comment;
-};
-
-const isWriterComment = async (boardCommentsNo, userUserNo) => {
-    const comment = await boardComments.findOne({
-        where: { boardCommentsNo, userUserNo },
-    });
-    return comment;
 };
 
 const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
@@ -118,52 +67,9 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     return recommended;
 };
 
-const test = async (req, res, next) => {
-    try {
-        const { userId, boardId, commentId } = req.params;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { userNo, userLevel } = user;
-        console.log(userNo, userLevel);
-
-        const board = await checkBoard(boardId);
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { writerBoardNo, readLevel } = board;
-        console.log(writerBoardNo, readLevel);
-
-        const comment = await checkComment(boardId, commentId);
-        if (!comment) throw new Error('INVALID_PARAMETERS');
-
-        const { writerCommentNo } = comment;
-        console.log(writerCommentNo);
-
-        const writeLevel = 1;
-        const isWriterBoard = userNo === writerBoardNo;
-        const isWriterComment = userNo === writerCommentNo;
-        const isAdmin = userLevel === 999;
-        const writeAuth = writeLevel <= userLevel;
-        const readAuth = readLevel <= userLevel;
-
-        console.log(
-            isWriterBoard,
-            isWriterComment,
-            isAdmin,
-            writeAuth,
-            readAuth,
-        );
-        res.json({});
-    } catch (err) {
-        console.log(err);
-        next(err);
-    }
-};
 /* TODO: 게시글에 tag 붙이기 */
-/* TODO: auth 관련 함수 통일 */
-/* TODO: transaction 판단 */
 /* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
+
 /**
  *  글 미리보기 정보 가져오기
  *  @route GET /api/board
@@ -176,10 +82,8 @@ const getBoardExcerpt = async (req, res, next) => {
     try {
         const { boardId } = req.query;
 
-        const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
 
         const boardList = await boards.findOne({
             where: { type: 'board', boardNo: boardId },
@@ -211,43 +115,21 @@ const getBoardExcerpt = async (req, res, next) => {
  */
 const getBoard = async (req, res, next) => {
     try {
+        const { userId } = req.query;
         const { boardId } = req.params;
 
-        const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { level } = await boards.findOne({
-            where: { boardNo: boardId },
-            raw: true,
-        });
+        const { userLevel } = user;
 
-        /* 읽기 권한이 필요한 경우 권한 검증 */
-        if (level !== 0) {
-            const { userId } = req.query;
-            if (!userId) throw new Error('NO_LOGIN');
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
 
-            const checkRegularMember = await isRegularMember(userId);
-            const checkAuth = await hasAuth(userId);
-            const checkAdmin = await isAdmin(userId);
-            const checkWriter = await isWriterBoard(boardId, userId);
+        const { readLevel } = board;
 
-            switch (level) {
-                case 1:
-                    if (!checkAuth) throw new Error('NO_AUTH');
-                    break;
-                case 2:
-                    if (!checkAuth || !checkRegularMember)
-                        throw new Error('NO_AUTH');
-                    break;
-                case 999:
-                    if (!checkAdmin && !checkWriter) throw new Error('NO_AUTH');
-                    break;
-                default:
-                    break;
-            }
-        }
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
 
         await boards.increment('hit', {
             by: 1,
@@ -255,7 +137,7 @@ const getBoard = async (req, res, next) => {
             silent: true,
         });
 
-        const board = await boards.findAll({
+        const boardData = await boards.findAll({
             where: { boardNo: boardId },
             /* attributes: [], */
         });
@@ -276,7 +158,7 @@ const getBoard = async (req, res, next) => {
         /* TODO: 이미지, 파일 정보 추가 -> hashing */
         /* TODO: 작성자 정보 추가 (게시글, 댓글) */
 
-        res.json({ board, commentList });
+        res.json({ boardData, commentList });
     } catch (err) {
         next(err);
     }
@@ -303,16 +185,17 @@ const postBoard = async (req, res, next) => {
         const { userId } = req.query;
 
         const { error, value } = boardScheme.validate(req.body);
-        if (error) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        if (error) throw new Error('INVALID_PARAMETERS');
+
         const { title, body, level } = value;
 
-        const checkAuth = await hasAuth(userId);
-        const checkRegularMember = await isRegularMember(userId);
-        if (!checkAuth || (!checkRegularMember && level === 2)) {
-            throw new Error('NO_AUTH');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { userLevel } = user;
+
+        const writeAuth = level <= userLevel;
+        if (!writeAuth) throw new Error('NO_AUTH');
 
         const excerpt = body.substring(0, 150);
 
@@ -351,26 +234,24 @@ const reviseBoard = async (req, res, next) => {
         const { boardId } = req.params;
 
         const { error, value } = boardScheme.validate(req.body);
-        if (error) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        if (error) throw new Error('INVALID_PARAMETERS');
         const { title, body, level } = value;
 
-        const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkWriter = await isWriterBoard(boardId, userId);
-        if (!checkWriter) {
-            throw new Error('NO_AUTH');
-        }
+        const { userNo, userLevel } = user;
 
-        const checkAuth = await hasAuth(userId);
-        const checkRegularMember = await isRegularMember(userId);
-        if (!checkAuth || (!checkRegularMember && level === 2)) {
-            throw new Error('NO_AUTH');
-        }
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { writerBoardNo } = board;
+
+        const isWriterBoard = userNo === writerBoardNo;
+        if (!isWriterBoard) throw new Error('NO_AUTH');
+
+        const writeAuth = level <= userLevel;
+        if (!writeAuth) throw new Error('NO_AUTH');
 
         const excerpt = body.substring(0, 150);
 
@@ -400,17 +281,19 @@ const deleteBoard = async (req, res, next) => {
         const { boardId } = req.params;
         const { userId } = req.query;
 
-        const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkWriter = await isWriterBoard(boardId, userId);
-        const checkAdmin = await isAdmin(userId);
-        const checkAuth = await hasAuth(userId);
-        if ((!checkWriter && !checkAdmin) || !checkAuth) {
-            throw new Error('NO_AUTH');
-        }
+        const { userNo, userLevel } = user;
+
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { writerBoardNo } = board;
+
+        const isWriterBoard = userNo === writerBoardNo;
+        const isAdmin = userLevel === 999;
+        if (!isWriterBoard && !isAdmin) throw new Error('NO_AUTH');
 
         await boards.destroy({ where: { boardNo: boardId, type: 'board' } });
 
@@ -435,17 +318,19 @@ const recommendBoard = async (req, res, next) => {
         const { boardId } = req.params;
         const { userId } = req.query;
 
-        const checkExists = await existsBoard(boardId);
-        if (!checkExists) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkAuth = await hasAuth(userId);
-        if (!checkAuth) {
-            throw new Error('NO_AUTH');
-        }
+        const { userLevel } = user;
 
-        /* TODO: 보기 권한과 동일한 권한 check 추가 */
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
         const checkRecommended = await recommendedBoard(boardId, userId);
 
         const t = await sequelize.transaction();
@@ -520,21 +405,22 @@ const postComment = async (req, res, next) => {
         const { boardId } = req.params;
 
         const { error, value } = commentScheme.validate(req.body);
-        if (error) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        if (error) throw new Error('INVALID_PARAMETERS');
+
         const { body } = value;
 
-        const checkAuth = await hasAuth(userId);
-        if (!checkAuth) {
-            throw new Error('NO_AUTH');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        /* TODO: 보기 권한과 동일한 권한 check 추가 */
-        const checkExistsBoard = await existsBoard(boardId);
-        if (!checkExistsBoard) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const { userLevel } = user;
+
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
 
         const count = await boardComments.count({
             where: { boardBoardNo: boardId },
@@ -579,23 +465,31 @@ const reviseComment = async (req, res, next) => {
         const { boardId, commentId } = req.params;
 
         const { error, value } = commentScheme.validate(req.body);
-        if (error) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        if (error) throw new Error('INVALID_PARAMETERS');
+
         const { body } = value;
 
-        const checkExistsBoard = await existsBoard(boardId);
-        const checkExistsComment = await existsComment(boardId, commentId);
-        if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkWriter = await isWriterComment(commentId, userId);
-        if (!checkWriter) {
-            throw new Error('NO_AUTH');
-        }
+        const { userNo, userLevel } = user;
 
-        /* TODO: 보기 권한과 동일한 권한 check 추가 */
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const comment = await checkComment(boardId, commentId);
+        if (!comment) throw new Error('INVALID_PARAMETERS');
+
+        const { writerCommentNo } = comment;
+
+        const isWriterComment = userNo === writerCommentNo;
+        if (!isWriterComment) throw new Error('NO_AUTH');
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
         await boardComments.update(
             { body },
             { where: { boardCommentsNo: commentId } },
@@ -622,18 +516,27 @@ const deleteComment = async (req, res, next) => {
         const { userId } = req.query;
         const { boardId, commentId } = req.params;
 
-        const checkExistsBoard = await existsBoard(boardId);
-        const checkExistsComment = await existsComment(boardId, commentId);
-        if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkWriter = await isWriterComment(commentId, userId);
-        const checkAdmin = await isAdmin(userId);
-        const checkAuth = await hasAuth(userId);
-        if ((!checkWriter && !checkAdmin) || !checkAuth) {
-            throw new Error('NO_AUTH');
-        }
+        const { userNo, userLevel } = user;
+
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const comment = await checkComment(boardId, commentId);
+        if (!comment) throw new Error('INVALID_PARAMETERS');
+
+        const { writerCommentNo } = comment;
+
+        const isWriterComment = userNo === writerCommentNo;
+        const isAdmin = userLevel === 999;
+        if (!isWriterComment && !isAdmin) throw new Error('NO_AUTH');
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
 
         await boardComments.destroy({ where: { boardCommentsNo: commentId } });
 
@@ -664,18 +567,22 @@ const recommendComment = async (req, res, next) => {
         const { boardId, commentId } = req.params;
         const { userId } = req.query;
 
-        const checkExistsBoard = await existsBoard(boardId);
-        const checkExistsComment = await existsComment(boardId, commentId);
-        if (!checkExistsBoard || !checkExistsComment) {
-            throw new Error('INVALID_PARAMETERS');
-        }
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const checkAuth = await hasAuth(userId);
-        if (!checkAuth) {
-            throw new Error('NO_AUTH');
-        }
+        const { userLevel } = user;
 
-        /* TODO: 보기 권한과 동일한 권한 check 추가 */
+        const board = await checkBoard(boardId);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const comment = await checkComment(boardId, commentId);
+        if (!comment) throw new Error('INVALID_PARAMETERS');
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
         const checkRecommended = await recommendedComment(commentId, userId);
 
         const t = sequelize.transaction();
@@ -740,5 +647,4 @@ module.exports = {
     reviseComment,
     deleteComment,
     recommendComment,
-    test,
 };
