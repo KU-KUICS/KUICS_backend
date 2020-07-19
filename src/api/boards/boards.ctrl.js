@@ -99,7 +99,12 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
 const test = async (req, res, next) => {
     try {
         const { userId } = req.params;
-        console.log(await checkUser(userId));
+
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { level } = user;
+        console.log(level);
 
         res.json({});
     } catch (err) {
