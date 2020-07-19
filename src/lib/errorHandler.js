@@ -26,6 +26,11 @@ const exceptions = {
         errorCode: 4,
         msg: 'NOT ADMIN',
     },
+    ALREADY_SOLVED: {
+        statusCode: 403,
+        errorCode: 5,
+        msg: 'ALREADY SOLVED PROBLEM',
+    },
 };
 
 const handleError = (err, req, res, next) => {

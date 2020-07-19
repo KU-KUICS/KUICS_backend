@@ -15,7 +15,7 @@ const flagSubmitSchema = Joi.object({
 const isMember = async (email) => {
     const member = await users.findOne({
         where: { email, state: 0, level: { [Op.gte]: 1 } },
-        attributes: ['userNo'],
+        attributes: ['userNo', 'score'],
     });
     return member;
 };
@@ -90,9 +90,16 @@ const postSubmitFlag = async (req, res, next) => {
         if (!challenge) throw new Error('INVALID_PARAMETERS');
 
         if (flag !== challenge.flag) throw new Error('INVALID_PARAMETERS');
-
         if (challenge.solvers === 0) {
-            challenge.userUserNo = checkMember.userNo;
+            challenge.userUserNo = checkMember.userNo; // 퍼스트 블러드
+        } else {
+            const isSolved = await solvers.findOne({
+                where: {
+                    userUserNo: checkMember.userNo,
+                    challengeChallNo: challNo,
+                },
+            });
+            if (isSolved) throw new Error('ALREADY_SOLVED');
         }
 
         challenge.solvers += 1;
