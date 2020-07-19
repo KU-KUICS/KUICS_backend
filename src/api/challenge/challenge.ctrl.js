@@ -27,10 +27,7 @@ const getChallenges = async (req, res, next) => {
 
         const challengeList = await challenges.findAll({
             attributes: ['challNo', 'category', 'score', 'title'],
-            order: [
-                ['category', 'ASC'],
-                ['challNo', 'ASC'],
-            ],
+            order: [['challNo', 'ASC']],
         });
 
         // 문제 분야별로 정렬
