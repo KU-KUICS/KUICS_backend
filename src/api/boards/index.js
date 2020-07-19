@@ -15,7 +15,7 @@ const {
 
 const router = Router();
 
-router.get('/:userId', test);
+router.get('/:userId/:boardId/:commentId', test);
 router.get('/', getBoardExcerpt);
 router.get('/:boardId', getBoard);
 router.post('/', postBoard);
