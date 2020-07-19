@@ -36,12 +36,21 @@ const checkBoard = async (boardNo) => {
         where: { boardNo, deletedAt: null },
         paranoid: false,
         attributes: [
-            ['userUserNo', 'writerNo'],
+            ['userUserNo', 'writerBoardNo'],
             ['level', 'readLevel'],
         ],
         raw: true,
     });
     return board;
+};
+const checkComment = async (boardBoardNo, boardCommentsNo) => {
+    const comment = await boardComments.findOne({
+        where: { boardBoardNo, boardCommentsNo, deletedAt: null },
+        paranoid: false,
+        attributes: [['userUserNo', 'writerCommentNo']],
+        raw: true,
+    });
+    return comment;
 };
 
 const existsBoard = async (boardNo) => {
@@ -122,8 +131,16 @@ const test = async (req, res, next) => {
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
-        const { writerNo, readLevel } = board;
-        console.log(writerNo, readLevel);
+        const { writerBoardNo, readLevel } = board;
+        console.log(writerBoardNo, readLevel);
+
+        const comment = await checkComment(boardId, commentId);
+        if (!comment) throw new Error('INVALID_PARAMETERS');
+
+        const { writerCommentNo } = comment;
+        console.log(writerCommentNo);
+
+        res.json({});
     } catch (err) {
         console.log(err);
         next(err);
