@@ -303,7 +303,7 @@ const reviseBoard = async (req, res, next) => {
 
         await boards.update(
             { title, body, excerpt, level },
-            { where: { boardNo: boardId } },
+            { where: { boardNo: boardId, type: 'board' } },
         );
 
         /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
@@ -339,7 +339,7 @@ const deleteBoard = async (req, res, next) => {
             throw new Error('NO_AUTH');
         }
 
-        await boards.destroy({ where: { boardNo: boardId } });
+        await boards.destroy({ where: { boardNo: boardId, type: 'board' } });
 
         /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
         res.json({});
