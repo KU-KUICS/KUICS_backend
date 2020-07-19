@@ -10,10 +10,12 @@ const {
     reviseComment,
     deleteComment,
     recommendComment,
+    test,
 } = require('./boards.ctrl');
 
 const router = Router();
 
+router.get('/:userId', test);
 router.get('/', getBoardExcerpt);
 router.get('/:boardId', getBoard);
 router.post('/', postBoard);

@@ -10,17 +10,26 @@ const {
 
 const titleScheme = Joi.string().min(3).required();
 const bodyScheme = Joi.string().required();
-const levelScheme = Joi.any().valid('0', '1', '2', '999').required();
+const boardLevelScheme = Joi.any().valid('1', '2').required();
 
 const boardScheme = Joi.object({
     title: titleScheme,
     body: bodyScheme,
-    level: levelScheme,
+    level: boardLevelScheme,
 });
 
 const commentScheme = Joi.object({
     body: bodyScheme,
 });
+
+const checkUser = async (userNo) => {
+    const user = await users.findOne({
+        where: { userNo, state: 0, level: [1, 2, 999] },
+        attributes: ['level'],
+        raw: true,
+    });
+    return user;
+};
 
 const existsBoard = async (boardNo) => {
     const board = await boards.findOne({
@@ -87,6 +96,17 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     return recommended;
 };
 
+const test = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        console.log(await checkUser(userId));
+
+        res.json({});
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+};
 /* TODO: 게시글에 tag 붙이기 */
 /* TODO: auth 관련 함수 통일 */
 /* TODO: transaction 판단 */
@@ -667,4 +687,5 @@ module.exports = {
     reviseComment,
     deleteComment,
     recommendComment,
+    test,
 };

@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
             },
-            // 읽기 권한; 0: 전체 | 1: 회원만 | 2: 정회원만
+            // 읽기 권한; 1: 회원 | 2: 정회원 이상
             level: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
