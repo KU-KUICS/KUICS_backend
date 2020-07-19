@@ -27,9 +27,26 @@ const getChallenges = async (req, res, next) => {
 
         const challengeList = await challenges.findAll({
             attributes: ['challNo', 'category', 'score', 'title'],
+            order: [
+                ['category', 'ASC'],
+                ['challNo', 'ASC'],
+            ],
         });
 
-        res.json({ challengeList });
+        // 문제 분야별로 정렬
+        const categories = ['PWN', 'REV', 'WEB', 'MISC'];
+        const challList = challengeList.reduce(
+            (acc, val) => {
+                acc[val.category].push(val);
+                return acc;
+            },
+            categories.reduce((acc, val) => {
+                acc[val] = [];
+                return acc;
+            }, {}),
+        );
+
+        res.json({ challList });
     } catch (err) {
         next(err);
     }
@@ -93,4 +110,26 @@ const postSubmitFlag = async (req, res, next) => {
     }
 };
 
-module.exports = { getChallenges, getChallengesDesc, postSubmitFlag };
+const getScoreboard = async (req, res, next) => {
+    try {
+        const checkMember = await isMember(req.user.emails[0].value);
+        if (!checkMember) throw new Error('NOT_KUICS');
+
+        const scoreboard = await users.findAll({
+            where: { state: 0 },
+            attributes: ['userName', 'score'],
+            order: [['score', 'DESC']],
+        });
+
+        res.json({ scoreboard });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = {
+    getChallenges,
+    getChallengesDesc,
+    postSubmitFlag,
+    getScoreboard,
+};
