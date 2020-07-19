@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 0,
         },
+        // CTF 점수
+        score: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
         // 0: 정상 | 1: 탈퇴
         state: {
             type: DataTypes.INTEGER(1),

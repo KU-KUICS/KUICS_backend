@@ -68,7 +68,7 @@ const postSubmitFlag = async (req, res, next) => {
         const { challNo, flag } = value;
         const challenge = await challenges.findOne({
             where: { challNo },
-            attributes: ['challNo', 'flag', 'solvers'],
+            attributes: ['challNo', 'score', 'flag', 'solvers'],
         });
         if (!challenge) throw new Error('INVALID_PARAMETERS');
 
@@ -84,6 +84,8 @@ const postSubmitFlag = async (req, res, next) => {
             userUserNo: checkMember.userNo,
             challengeChallNo: challNo,
         });
+        checkMember.score += challenge.score;
+        await checkMember.save();
 
         res.json({});
     } catch (err) {
