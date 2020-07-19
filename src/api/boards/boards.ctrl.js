@@ -35,7 +35,10 @@ const checkBoard = async (boardNo) => {
     const board = await boards.findOne({
         where: { boardNo, deletedAt: null },
         paranoid: false,
-        attributes: ['userUserNo'],
+        attributes: [
+            ['userUserNo', 'writerNo'],
+            ['level', 'readLevel'],
+        ],
         raw: true,
     });
     return board;
@@ -117,7 +120,10 @@ const test = async (req, res, next) => {
         console.log(userNo, level);
 
         const board = await checkBoard(boardId);
-        console.log(board);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { writerNo, readLevel } = board;
+        console.log(writerNo, readLevel);
     } catch (err) {
         console.log(err);
         next(err);
