@@ -463,10 +463,10 @@ const postComment = async (req, res, next) => {
             throw new Error('INVALID_PARAMETERS');
         }
 
-        /* ISSUE: 중간 댓글을 삭제했을때, 번호 붙이기 오류 */
-        const { commentCount } = await boards.findOne({
-            where: { boardNo: boardId },
+        const count = await boardComments.count({
+            where: { boardBoardNo: boardId },
             raw: true,
+            paranoid: false,
         });
 
         await boardComments.create({
@@ -474,7 +474,7 @@ const postComment = async (req, res, next) => {
             recommendedTime: 0,
             userUserNo: userId,
             boardBoardNo: boardId,
-            commentsNo: commentCount + 1,
+            commentsNo: count + 1,
         });
 
         await boards.increment('commentCount', {
