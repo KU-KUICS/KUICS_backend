@@ -67,6 +67,7 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
     return recommended;
 };
 
+/* TODO: 권한 확인 query, 데이터 요청 query 통합 */
 /* TODO: 게시글에 tag 붙이기 */
 /* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 
@@ -86,7 +87,7 @@ const getBoardExcerpt = async (req, res, next) => {
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const boardList = await boards.findOne({
-            where: { type: 'board', boardNo: boardId },
+            where: { boardNo: boardId },
             attributes: [
                 'boardNo',
                 'excerpt',
