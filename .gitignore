@@ -11,3 +11,7 @@ yarn-error.log
 
 # macOS
 .DS_Store
+
+# Editor Folders
+.vs
+.vscode
