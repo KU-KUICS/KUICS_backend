@@ -306,6 +306,12 @@ const postNotice = async (req, res, next) => {};
 const putEditNotice = async (req, res, next) => {};
 const deleteNotice = async (req, res, next) => {};
 
+const postChallenge = async (req, res, next) => {};
+
+const putChallenge = async (req, res, next) => {};
+
+const deleteChallenge = async (req, res, next) => {};
+
 module.exports = {
     getUser,
     postUser,
@@ -317,4 +323,7 @@ module.exports = {
     postIntro,
     updateIntro,
     deleteIntro,
+    postChallenge,
+    putChallenge,
+    deleteChallenge,
 };

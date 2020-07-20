@@ -11,6 +11,9 @@ const {
     postIntro,
     updateIntro,
     deleteIntro,
+    postChallenge,
+    putChallenge,
+    deleteChallenge,
 } = require('./admin.ctrl');
 
 const router = Router();
@@ -28,8 +31,8 @@ router.post('/intro', postIntro);
 router.put('/intro/:introNo', updateIntro);
 router.delete('/intro/:introNo', deleteIntro);
 
-router.post('/challenge', postIntro);
-router.put('/challenge', updateIntro);
-router.delete('/challenge/:challNo', deleteIntro);
+router.post('/challenge', postChallenge);
+router.put('/challenge', putChallenge);
+router.delete('/challenge/:challNo', deleteChallenge);
 
 module.exports = router;
