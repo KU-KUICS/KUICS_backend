@@ -86,7 +86,7 @@ const getBoardExcerpt = async (req, res, next) => {
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
-        const boardList = await boards.findOne({
+        const boardExcerpt = await boards.findOne({
             where: { boardNo: boardId },
             attributes: [
                 'boardNo',
@@ -98,7 +98,7 @@ const getBoardExcerpt = async (req, res, next) => {
             ],
         });
 
-        res.json({ boardList });
+        res.json({ boardExcerpt });
     } catch (err) {
         next(err);
     }
@@ -138,7 +138,7 @@ const getBoard = async (req, res, next) => {
             silent: true,
         });
 
-        const boardData = await boards.findAll({
+        const boardData = await boards.findOne({
             where: { boardNo: boardId },
             /* attributes: [], */
         });
@@ -258,7 +258,7 @@ const reviseBoard = async (req, res, next) => {
 
         await boards.update(
             { title, body, excerpt, level },
-            { where: { boardNo: boardId, type: 'board' } },
+            { where: { boardNo: boardId } },
         );
 
         /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
@@ -296,7 +296,7 @@ const deleteBoard = async (req, res, next) => {
         const isAdmin = userLevel === 999;
         if (!isWriterBoard && !isAdmin) throw new Error('NO_AUTH');
 
-        await boards.destroy({ where: { boardNo: boardId, type: 'board' } });
+        await boards.destroy({ where: { boardNo: boardId } });
 
         /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
         res.json({});
