@@ -53,7 +53,7 @@ const updateIntroScheme = Joi.object({
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
-        where: { email, level: 999 },
+        where: { email, state: 0, level: 999 },
     });
     return admin;
 };
@@ -143,10 +143,9 @@ const updateUserPermission = async (req, res, next) => {
 
         const { userNo, level } = value;
         const user = await users.findOne({
-            where: { userNo },
+            where: { userNo, state: 0 },
         });
         if (!user) throw new Error('INVALID_PARAMETERS');
-        if (user.dataValues.state) throw new Error('INVALID_PARAMETERS');
 
         await users.update({ level }, { where: { userNo } });
         res.json({});
@@ -173,9 +172,8 @@ const deleteUser = async (req, res, next) => {
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userNo } = value;
-        const user = await users.findOne({ where: { userNo } });
+        const user = await users.findOne({ where: { userNo, state: 0 } });
         if (!user) throw new Error('INVALID_PARAMETERS');
-        if (user.dataValues.state) throw new Error('INVALID_PARAMETERS');
 
         /* 삭제한 회원의 정보를 전부 해시 처리함 */
         const { userName, email, studentId } = user.dataValues;
