@@ -26,6 +26,11 @@ const exceptions = {
         errorCode: 4,
         msg: 'NOT ADMIN',
     },
+    NO_AUTH: {
+        statusCode: 401,
+        errorCode: 10,
+        msg: 'UNAUTHORIZED',
+    },
 };
 
 const handleError = (err, req, res, next) => {

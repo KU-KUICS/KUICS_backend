@@ -53,5 +53,8 @@
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.4.2",
     "winston-syslog": "^2.4.4"
+  },
+  "directories": {
+    "doc": "docs"
   }
 }

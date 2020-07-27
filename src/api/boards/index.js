@@ -1,9 +1,28 @@
 const { Router } = require('express');
-const { getBoardList, postBoard } = require('./boards.ctrl');
+const {
+    getBoardExcerpt,
+    getBoard,
+    postBoard,
+    reviseBoard,
+    deleteBoard,
+    recommendBoard,
+    postComment,
+    reviseComment,
+    deleteComment,
+    recommendComment,
+} = require('./boards.ctrl');
 
 const router = Router();
 
-router.get('/', getBoardList);
-router.post('/:userId', postBoard);
+router.get('/', getBoardExcerpt);
+router.get('/:boardId', getBoard);
+router.post('/', postBoard);
+router.put('/:boardId', reviseBoard);
+router.delete('/:boardId', deleteBoard);
+router.post('/:boardId/recommend', recommendBoard);
+router.post('/:boardId/comment', postComment);
+router.put('/:boardId/comment/:commentId', reviseComment);
+router.delete('/:boardId/comment/:commentId', deleteComment);
+router.post('/:boardId/comment/:commentId/recommend', recommendComment);
 
 module.exports = router;
