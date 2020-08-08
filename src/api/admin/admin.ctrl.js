@@ -28,7 +28,7 @@ const getUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        // TODO: 관리자 제외? || 탈퇴자 제외?
+        // 관리자 API라 관리자, 탈퇴자 모두 반환하도록 함.
         const userList = await users.findAll();
         res.json({ userList });
     } catch (err) {
@@ -210,18 +210,11 @@ const updateIntro = async (req, res, next) => {
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { introNo, title, content } = value;
-
-        const intro = await intros.findOne({
-            where: {
-                introNo,
-            },
-        });
-
+        const intro = await intros.findOne({ where: { introNo } });
         if (!intro) throw new Error('INVALID_PARAMETERS');
 
         intro.title = title;
         intro.content = content;
-
         await intro.save();
 
         res.json({});
@@ -248,12 +241,7 @@ const deleteIntro = async (req, res, next) => {
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const introNo = value;
-
-        const intro = await intros.findOne({
-            where: {
-                introNo,
-            },
-        });
+        const intro = await intros.findOne({ where: { introNo } });
         if (!intro) throw new Error('INVALID_PARAMETERS');
 
         await intro.destroy();
