@@ -22,47 +22,50 @@ const commentScheme = Joi.object({
     body: bodyScheme,
 });
 
-const checkUser = async (userNo) => {
+const checkUser = async (userId) => {
     const user = await users.findOne({
-        where: { userNo, state: 0, level: [1, 2, 999] },
-        attributes: ['userNo', ['level', 'userLevel']],
+        where: { userId, state: 0, level: [1, 2, 999] },
+        attributes: [
+            ['userId', 'checkedId'],
+            ['level', 'userLevel'],
+        ],
         raw: true,
     });
     return user;
 };
 
-const checkBoard = async (boardNo) => {
+const checkBoard = async (boardId) => {
     const board = await boards.findOne({
-        where: { boardNo, deletedAt: null },
+        where: { boardId, deletedAt: null },
         paranoid: false,
         attributes: [
-            ['userUserNo', 'writerBoardNo'],
+            ['userUserId', 'writerBoardId'],
             ['level', 'readLevel'],
         ],
         raw: true,
     });
     return board;
 };
-const checkComment = async (boardBoardNo, boardCommentsNo) => {
+const checkComment = async (boardBoardId, commentId) => {
     const comment = await boardComments.findOne({
-        where: { boardBoardNo, boardCommentsNo, deletedAt: null },
+        where: { boardBoardId, commentId, deletedAt: null },
         paranoid: false,
-        attributes: [['userUserNo', 'writerCommentNo']],
+        attributes: [['userUserId', 'writerCommentId']],
         raw: true,
     });
     return comment;
 };
 
-const recommendedBoard = async (boardBoardNo, userUserNo) => {
+const recommendedBoard = async (boardBoardId, userUserId) => {
     const recommended = await recommendBoards.findOne({
-        where: { boardBoardNo, userUserNo },
+        where: { boardBoardId, userUserId },
     });
     return recommended;
 };
 
-const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
+const recommendedComment = async (boardCommentCommentId, userUserId) => {
     const recommended = await recommendComments.findOne({
-        where: { boardCommentBoardCommentsNo, userUserNo },
+        where: { boardCommentCommentId, userUserId },
     });
     return recommended;
 };
@@ -90,9 +93,9 @@ const getBoardList = async (req, res, next) => {
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const boardExcerpt = await boards.findOne({
-            where: { boardNo: boardId },
+            where: { boardId },
             attributes: [
-                'boardNo',
+                'boardId',
                 'excerpt',
                 'title',
                 'commentCount',
@@ -139,26 +142,26 @@ const getBoard = async (req, res, next) => {
 
         await boards.increment('hit', {
             by: 1,
-            where: { boardNo: boardId },
+            where: { boardId },
             silent: true,
         });
 
         const boardData = await boards.findOne({
-            where: { boardNo: boardId },
+            where: { boardId },
             /* attributes: [], */
         });
 
         const commentList = await boardComments.findAll({
-            where: { boardBoardNo: boardId },
+            where: { boardBoardId: boardId },
             attributes: [
-                'boardCommentsNo',
+                'commentId',
                 'body',
                 'recommendedTime',
                 'createdAt',
                 'updatedAt',
-                'userUserNo',
+                'userUserId',
             ],
-            order: [['boardCommentsNo', 'ASC']],
+            order: [['commentId', 'ASC']],
         });
 
         /* TODO: 이미지, 파일 정보 추가 -> hashing */
@@ -205,7 +208,7 @@ const postBoard = async (req, res, next) => {
 
         const excerpt = body.substring(0, 150);
 
-        /* ISSUE: 에러 발생하는 경우에 boardNo 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
+        /* ISSUE: 에러 발생하는 경우에 boardId 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         await boards.create({
             title,
             body,
@@ -213,7 +216,7 @@ const postBoard = async (req, res, next) => {
             type: 'board',
             hit: 0,
             commentCount: 0,
-            userUserNo: userId,
+            userUserId: userId,
             level,
         });
 
@@ -246,14 +249,14 @@ const reviseBoard = async (req, res, next) => {
         const user = await checkUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, userLevel } = user;
+        const { checkedId, userLevel } = user;
 
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
-        const { writerBoardNo } = board;
+        const { writerBoardId } = board;
 
-        const isWriterBoard = userNo === writerBoardNo;
+        const isWriterBoard = checkedId === writerBoardId;
         if (!isWriterBoard) throw new Error('NO_AUTH');
 
         const writeAuth = level <= userLevel;
@@ -263,7 +266,7 @@ const reviseBoard = async (req, res, next) => {
 
         await boards.update(
             { title, body, excerpt, level },
-            { where: { boardNo: boardId } },
+            { where: { boardId } },
         );
 
         /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
@@ -290,18 +293,18 @@ const deleteBoard = async (req, res, next) => {
         const user = await checkUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, userLevel } = user;
+        const { checkedId, userLevel } = user;
 
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
-        const { writerBoardNo } = board;
+        const { writerBoardId } = board;
 
-        const isWriterBoard = userNo === writerBoardNo;
+        const isWriterBoard = checkedId === writerBoardId;
         const isAdmin = userLevel === 999;
         if (!isWriterBoard && !isAdmin) throw new Error('NO_AUTH');
 
-        await boards.destroy({ where: { boardNo: boardId } });
+        await boards.destroy({ where: { boardId } });
 
         /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
         res.json({});
@@ -344,8 +347,8 @@ const recommendBoard = async (req, res, next) => {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendBoards.create(
                 {
-                    boardBoardNo: boardId,
-                    userUserNo: userId,
+                    boardBoardId: boardId,
+                    userUserId: userId,
                 },
                 { transaction: t },
             );
@@ -354,7 +357,7 @@ const recommendBoard = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardNo: boardId },
+                    where: { boardId },
                     silent: true,
                 },
                 { transaction: t },
@@ -364,8 +367,8 @@ const recommendBoard = async (req, res, next) => {
             await recommendBoards.destroy(
                 {
                     where: {
-                        boardBoardNo: boardId,
-                        userUserNo: userId,
+                        boardBoardId: boardId,
+                        userUserId: userId,
                     },
                 },
                 { transaction: t },
@@ -375,7 +378,7 @@ const recommendBoard = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardNo: boardId },
+                    where: { boardId },
                     silent: true,
                 },
                 { transaction: t },
@@ -428,23 +431,16 @@ const postComment = async (req, res, next) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        const count = await boardComments.count({
-            where: { boardBoardNo: boardId },
-            raw: true,
-            paranoid: false,
-        });
-
         await boardComments.create({
             body,
             recommendedTime: 0,
-            userUserNo: userId,
-            boardBoardNo: boardId,
-            commentsNo: count + 1,
+            userUserId: userId,
+            boardBoardId: boardId,
         });
 
         await boards.increment('commentCount', {
             by: 1,
-            where: { boardNo: boardId },
+            where: { boardId },
             silent: true,
         });
 
@@ -478,7 +474,7 @@ const reviseComment = async (req, res, next) => {
         const user = await checkUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, userLevel } = user;
+        const { checkedId, userLevel } = user;
 
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
@@ -488,18 +484,15 @@ const reviseComment = async (req, res, next) => {
         const comment = await checkComment(boardId, commentId);
         if (!comment) throw new Error('INVALID_PARAMETERS');
 
-        const { writerCommentNo } = comment;
+        const { writerCommentId } = comment;
 
-        const isWriterComment = userNo === writerCommentNo;
+        const isWriterComment = checkedId === writerCommentId;
         if (!isWriterComment) throw new Error('NO_AUTH');
 
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        await boardComments.update(
-            { body },
-            { where: { boardCommentsNo: commentId } },
-        );
+        await boardComments.update({ body }, { where: { commentId } });
 
         res.json({});
     } catch (err) {
@@ -525,7 +518,7 @@ const deleteComment = async (req, res, next) => {
         const user = await checkUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, userLevel } = user;
+        const { checkedId, userLevel } = user;
 
         const board = await checkBoard(boardId);
         if (!board) throw new Error('INVALID_PARAMETERS');
@@ -535,20 +528,20 @@ const deleteComment = async (req, res, next) => {
         const comment = await checkComment(boardId, commentId);
         if (!comment) throw new Error('INVALID_PARAMETERS');
 
-        const { writerCommentNo } = comment;
+        const { writerCommentId } = comment;
 
-        const isWriterComment = userNo === writerCommentNo;
+        const isWriterComment = checkedId === writerCommentId;
         const isAdmin = userLevel === 999;
         if (!isWriterComment && !isAdmin) throw new Error('NO_AUTH');
 
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        await boardComments.destroy({ where: { boardCommentsNo: commentId } });
+        await boardComments.destroy({ where: { commentId } });
 
         await boards.decrement('commentCount', {
             by: 1,
-            where: { boardNo: boardId },
+            where: { boardId },
             silent: true,
         });
 
@@ -591,13 +584,13 @@ const recommendComment = async (req, res, next) => {
 
         const checkRecommended = await recommendedComment(commentId, userId);
 
-        const t = sequelize.transaction();
+        const t = await sequelize.transaction();
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendComments.create(
                 {
-                    boardCommentBoardCommentsNo: commentId,
-                    userUserNo: userId,
+                    boardCommentCommentId: commentId,
+                    userUserId: userId,
                 },
                 { transaction: t },
             );
@@ -606,7 +599,7 @@ const recommendComment = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardCommentsNo: commentId },
+                    where: { commentId },
                     silent: true,
                 },
                 { transaction: t },
@@ -616,8 +609,8 @@ const recommendComment = async (req, res, next) => {
             await recommendComments.destroy(
                 {
                     where: {
-                        boardCommentBoardCommentsNo: commentId,
-                        userUserNo: userId,
+                        boardCommentCommentId: commentId,
+                        userUserId: userId,
                     },
                 },
                 { transaction: t },
@@ -627,7 +620,7 @@ const recommendComment = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardCommentsNo: commentId },
+                    where: { commentId },
                     silent: true,
                 },
                 { transaction: t },
