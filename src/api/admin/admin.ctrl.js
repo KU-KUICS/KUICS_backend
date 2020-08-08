@@ -1,55 +1,13 @@
-const Joi = require('@hapi/joi');
 const crypto = require('crypto');
-const { users, intros, boards } = require('../../models');
-
-/* 검증 스키마 */
-const numberSchema = Joi.string()
-    .pattern(/^[0-9]+$/)
-    .required();
-
-// FIXME: 한글 4글자 초과도 허용됨
-const nameSchema = Joi.string()
-    .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
-    .required();
-
-const emailSchema = Joi.string()
-    .pattern(
-        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
-    )
-    .required();
-
-const studentIdSchema = Joi.string()
-    .pattern(/^[0-9]{10}$/)
-    .required();
-
-const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
-
-const userNoSchema = Joi.object({ userNo: numberSchema });
-
-const userSchema = Joi.object({
-    userName: nameSchema,
-    email: emailSchema,
-    studentId: studentIdSchema,
-});
-
-const introNoScheme = Joi.number();
-const titleScheme = Joi.string().min(3).required();
-const contentScheme = Joi.array().items(Joi.string()).required();
-const introScheme = Joi.object({
-    title: titleScheme,
-    content: contentScheme,
-});
-
-const permSchema = Joi.object({
-    userNo: numberSchema,
-    level: levelSchema,
-});
-
-const updateIntroScheme = Joi.object({
-    introNo: introNoScheme,
-    title: titleScheme,
-    content: contentScheme,
-});
+const { users, intros } = require('../../models');
+const {
+    userScheme,
+    introNoScheme,
+    introScheme,
+    updateIntroScheme,
+    permScheme,
+    userNoScheme,
+} = require('../../lib/schemes');
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
@@ -99,7 +57,7 @@ const postUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = userSchema.validate(req.body);
+        const { error, value } = userScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userName, email, studentId } = value;
@@ -138,7 +96,7 @@ const updateUserPermission = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = permSchema.validate(req.body);
+        const { error, value } = permScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userNo, level } = value;
@@ -168,7 +126,7 @@ const deleteUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = userNoSchema.validate(req.params);
+        const { error, value } = userNoScheme.validate(req.params.userNo);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { userNo } = value;
@@ -214,7 +172,9 @@ const deleteUser = async (req, res, next) => {
  */
 const postIntro = async (req, res, next) => {
     try {
-        // TODO: 어드민 체크 로직
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
         const { error, value } = introScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
@@ -240,7 +200,9 @@ const postIntro = async (req, res, next) => {
  */
 const updateIntro = async (req, res, next) => {
     try {
-        // TODO: 어드민 체크
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
         const { error, value } = updateIntroScheme.validate({
             ...req.body,
             introNo: req.params.introNo,
@@ -279,7 +241,9 @@ const updateIntro = async (req, res, next) => {
  */
 const deleteIntro = async (req, res, next) => {
     try {
-        // TODO: 어드민 체크
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
         const { error, value } = introNoScheme.validate(req.params.introNo);
         if (error) throw new Error('INVALID_PARAMETERS');
 

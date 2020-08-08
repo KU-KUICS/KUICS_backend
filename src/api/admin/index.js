@@ -24,8 +24,8 @@ router.post('/notice', isAuthenticated, postNotice); // 공지 작성
 router.put('/notice/:notice_id', isAuthenticated, putEditNotice); // 공지 수정
 router.delete('/notice/:notice_id', isAuthenticated, deleteNotice); // 공지 삭제
 
-router.post('/intro', postIntro);
-router.put('/intro/:introNo', updateIntro);
-router.delete('/intro/:introNo', deleteIntro);
+router.post('/intro', isAuthenticated, postIntro);
+router.put('/intro/:introNo', isAuthenticated, updateIntro);
+router.delete('/intro/:introNo', isAuthenticated, deleteIntro);
 
 module.exports = router;
