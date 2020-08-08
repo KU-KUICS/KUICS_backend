@@ -24,10 +24,16 @@ const studentIdScheme = Joi.string()
     .pattern(/^[0-9]{10}$/)
     .required();
 
-const titleScheme = Joi.string().min(3).required();
+const stringScheme = Joi.string().min(3).required();
+
+const searchTargetScheme = Joi.string()
+    .valid('title', 'body', 'titleAndBody')
+    .required();
 
 /**
  * Scheme wrappers
+ * 1. Admin API
+ * 2. Search API
  */
 const userScheme = Joi.object({
     userName: nameScheme,
@@ -41,14 +47,20 @@ const permScheme = Joi.object({
 });
 
 const introScheme = Joi.object({
-    title: titleScheme,
+    title: stringScheme,
     content: contentScheme,
 });
 
 const updateIntroScheme = Joi.object({
     introNo: numberScheme,
-    title: titleScheme,
+    title: stringScheme,
     content: contentScheme,
+});
+
+/* Search API */
+const searchInputScheme = Joi.object({
+    key: stringScheme,
+    target: searchTargetScheme,
 });
 
 module.exports = {
@@ -56,4 +68,5 @@ module.exports = {
     introScheme,
     permScheme,
     updateIntroScheme,
+    searchInputScheme,
 };
