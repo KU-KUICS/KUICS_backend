@@ -2,11 +2,11 @@ const crypto = require('crypto');
 const { users, intros } = require('../../models');
 const {
     userScheme,
-    introNoScheme,
+    introIdScheme,
     introScheme,
     updateIntroScheme,
     permScheme,
-    userNoScheme,
+    userIdScheme,
 } = require('../../lib/schemes');
 
 const isAdmin = async (email) => {

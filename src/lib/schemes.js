@@ -42,7 +42,7 @@ const userScheme = Joi.object({
 });
 
 const permScheme = Joi.object({
-    userNo: numberScheme,
+    userId: numberScheme,
     level: levelScheme,
 });
 
@@ -52,7 +52,7 @@ const introScheme = Joi.object({
 });
 
 const updateIntroScheme = Joi.object({
-    introNo: numberScheme,
+    introId: numberScheme,
     title: stringScheme,
     content: contentScheme,
 });
