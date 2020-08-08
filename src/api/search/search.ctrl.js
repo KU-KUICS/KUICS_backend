@@ -52,7 +52,9 @@ const getSearchResult = async (req, res, next) => {
                     body: {
                         [Op.like]: searchBody,
                     },
-                    duration: {},
+                    duration: {
+                        [Op.between]: [searchDuration[0], searchDuration[1]],
+                    },
                     userName: searchUserName,
                     tag: searchTag,
                 },
