@@ -14,7 +14,7 @@ const {
 
 const router = Router();
 
-router.get('/:page/:count', getBoardList);
+router.get('/:page', getBoardList);
 router.get('/:boardId', getBoard);
 router.post('/', postBoard);
 router.put('/:boardId', reviseBoard);

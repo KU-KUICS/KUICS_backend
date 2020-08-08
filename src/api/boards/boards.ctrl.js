@@ -7,6 +7,8 @@ const {
     recommendComments,
     sequelize,
 } = require('../../models');
+/* TODO: scheme library로 이동 */
+// const { } = require('../../lib/schemes');
 
 const titleScheme = Joi.string().min(3).required();
 const bodyScheme = Joi.string().required();
@@ -21,6 +23,8 @@ const boardScheme = Joi.object({
 const commentScheme = Joi.object({
     body: bodyScheme,
 });
+
+const numberScheme = Joi.number().positive();
 
 const checkUser = async (userId) => {
     const user = await users.findOne({
@@ -86,6 +90,11 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 const getBoardList = async (req, res, next) => {
     try {
         // TODO: page 형식으로 구현;
+        const { error, value } = numberScheme.validate(req.params.page);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const page = value;
+        console.log(page, value);
         /*
         const { boardId } = req.query;
 
@@ -108,6 +117,7 @@ const getBoardList = async (req, res, next) => {
         */
         res.json({});
     } catch (err) {
+        console.log(err);
         next(err);
     }
 };
