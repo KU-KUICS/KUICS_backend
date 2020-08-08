@@ -579,7 +579,7 @@ const recommendComment = async (req, res, next) => {
 
         const checkRecommended = await recommendedComment(commentId, userId);
 
-        const t = sequelize.transaction();
+        const t = await sequelize.transaction();
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendComments.create(
