@@ -3,13 +3,13 @@ module.exports = (sequelize, DataTypes) => {
         'boardComments',
         {
             // Primary Key
-            boardCommentsNo: {
+            boardCommentNo: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
             },
             // 각 게시물 댓글 번호
-            commentsNo: {
+            commentNo: {
                 type: DataTypes.INTEGER,
                 defaultValue: 1,
             },

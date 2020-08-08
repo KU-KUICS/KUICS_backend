@@ -43,9 +43,9 @@ const checkBoard = async (boardNo) => {
     });
     return board;
 };
-const checkComment = async (boardBoardNo, boardCommentsNo) => {
+const checkComment = async (boardBoardNo, boardCommentNo) => {
     const comment = await boardComments.findOne({
-        where: { boardBoardNo, boardCommentsNo, deletedAt: null },
+        where: { boardBoardNo, boardCommentNo, deletedAt: null },
         paranoid: false,
         attributes: [['userUserNo', 'writerCommentNo']],
         raw: true,
@@ -60,9 +60,9 @@ const recommendedBoard = async (boardBoardNo, userUserNo) => {
     return recommended;
 };
 
-const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
+const recommendedComment = async (boardCommentboardCommentNo, userUserNo) => {
     const recommended = await recommendComments.findOne({
-        where: { boardCommentBoardCommentsNo, userUserNo },
+        where: { boardCommentboardCommentNo, userUserNo },
     });
     return recommended;
 };
@@ -146,14 +146,14 @@ const getBoard = async (req, res, next) => {
         const commentList = await boardComments.findAll({
             where: { boardBoardNo: boardId },
             attributes: [
-                'boardCommentsNo',
+                'boardCommentNo',
                 'body',
                 'recommendedTime',
                 'createdAt',
                 'updatedAt',
                 'userUserNo',
             ],
-            order: [['boardCommentsNo', 'ASC']],
+            order: [['boardCommentNo', 'ASC']],
         });
 
         /* TODO: 이미지, 파일 정보 추가 -> hashing */
@@ -434,7 +434,7 @@ const postComment = async (req, res, next) => {
             recommendedTime: 0,
             userUserNo: userId,
             boardBoardNo: boardId,
-            commentsNo: count + 1,
+            commentNo: count + 1,
         });
 
         await boards.increment('commentCount', {
@@ -493,7 +493,7 @@ const reviseComment = async (req, res, next) => {
 
         await boardComments.update(
             { body },
-            { where: { boardCommentsNo: commentId } },
+            { where: { boardCommentNo: commentId } },
         );
 
         res.json({});
@@ -539,7 +539,7 @@ const deleteComment = async (req, res, next) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        await boardComments.destroy({ where: { boardCommentsNo: commentId } });
+        await boardComments.destroy({ where: { boardCommentNo: commentId } });
 
         await boards.decrement('commentCount', {
             by: 1,
@@ -591,7 +591,7 @@ const recommendComment = async (req, res, next) => {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendComments.create(
                 {
-                    boardCommentBoardCommentsNo: commentId,
+                    boardCommentboardCommentNo: commentId,
                     userUserNo: userId,
                 },
                 { transaction: t },
@@ -601,7 +601,7 @@ const recommendComment = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardCommentsNo: commentId },
+                    where: { boardCommentNo: commentId },
                     silent: true,
                 },
                 { transaction: t },
@@ -611,7 +611,7 @@ const recommendComment = async (req, res, next) => {
             await recommendComments.destroy(
                 {
                     where: {
-                        boardCommentBoardCommentsNo: commentId,
+                        boardCommentboardCommentNo: commentId,
                         userUserNo: userId,
                     },
                 },
@@ -622,7 +622,7 @@ const recommendComment = async (req, res, next) => {
                 'recommendedTime',
                 {
                     by: 1,
-                    where: { boardCommentsNo: commentId },
+                    where: { boardCommentNo: commentId },
                     silent: true,
                 },
                 { transaction: t },
