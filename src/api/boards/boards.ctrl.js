@@ -7,6 +7,7 @@ const {
     recommendComments,
     sequelize,
 } = require('../../models');
+
 /* TODO: scheme library로 이동 */
 // const { } = require('../../lib/schemes');
 
@@ -85,7 +86,7 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 /* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 
 /**
- *  글 미리보기 정보 가져오기
+ *  page에 해당하는 글 리스트 가져오기
  *  @route GET /api/board/page/{page}
  *  @group Board
  *  @param {number} page.path.required - 페이지 번호
@@ -124,7 +125,6 @@ const getBoardList = async (req, res, next) => {
 
         res.json({ boardList });
     } catch (err) {
-        console.log(err);
         next(err);
     }
 };
