@@ -18,7 +18,7 @@ const nameScheme = Joi.string()
     .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
     .required();
 
-const numberScheme = Joi.number().positive;
+const numberScheme = Joi.number().positive();
 
 const studentIdScheme = Joi.string()
     .pattern(/^[0-9]{10}$/)
