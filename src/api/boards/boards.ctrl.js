@@ -24,7 +24,13 @@ const commentScheme = Joi.object({
     body: bodyScheme,
 });
 
-const numberScheme = Joi.number().positive();
+const numberScheme = Joi.number().positive().required();
+const numberSchemeOptional = Joi.number().positive().optional();
+
+const boardListScheme = Joi.object({
+    page: numberScheme,
+    count: numberSchemeOptional,
+});
 
 const checkUser = async (userId) => {
     const user = await users.findOne({
@@ -80,29 +86,32 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 
 /**
  *  글 미리보기 정보 가져오기
- *  @route GET /api/board/{page}/{count}
+ *  @route GET /api/board/page/{page}
  *  @group Board
  *  @param {number} page.path.required - 페이지 번호
- *  @param {number} count.path.required - 글 개수
+ *  @param {number} count.query - 글 개수
  *  @returns {Object} 200 - 글 미리보기
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
 const getBoardList = async (req, res, next) => {
     try {
-        // TODO: page 형식으로 구현;
-        const { error, value } = numberScheme.validate(req.params.page);
+        /*
+        const pageCount = 10;
+        const limit = 10;
+        */
+        const { error, value } = boardListScheme.validate({
+            page: req.params.page,
+            count: req.query.count,
+        });
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const page = value;
-        console.log(page, value);
+        const { page, count } = value;
+        res.json({ page, count });
         /*
-        const { boardId } = req.query;
-
-        const board = await checkBoard(boardId);
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const boardExcerpt = await boards.findOne({
-            where: { boardId },
+        const boardList = await boards.findAll({
+            offset,
+            limit,
+            order: [['boardId', 'DESC']],
             attributes: [
                 'boardId',
                 'excerpt',
@@ -113,9 +122,8 @@ const getBoardList = async (req, res, next) => {
             ],
         });
 
-        res.json({ boardExcerpt });
+        res.json({ boardList });
         */
-        res.json({});
     } catch (err) {
         console.log(err);
         next(err);
