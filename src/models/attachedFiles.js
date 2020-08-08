@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         'attachedFile',
         {
             // Primary Key
-            fileNo: {
+            fileId: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,

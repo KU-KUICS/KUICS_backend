@@ -3,15 +3,10 @@ module.exports = (sequelize, DataTypes) => {
         'boardComments',
         {
             // Primary Key
-            boardCommentNo: {
+            commentId: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
-            },
-            // 각 게시물 댓글 번호
-            commentNo: {
-                type: DataTypes.INTEGER,
-                defaultValue: 1,
             },
             // 내용
             body: {

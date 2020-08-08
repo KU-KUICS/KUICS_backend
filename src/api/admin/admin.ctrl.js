@@ -24,7 +24,7 @@ const studentIdSchema = Joi.string()
 
 const levelSchema = Joi.any().valid('0', '1', '2', '999').required();
 
-const userNoSchema = Joi.object({ userNo: numberSchema });
+const userIdSchema = Joi.object({ userId: numberSchema });
 
 const userSchema = Joi.object({
     userName: nameSchema,
@@ -32,7 +32,7 @@ const userSchema = Joi.object({
     studentId: studentIdSchema,
 });
 
-const introNoScheme = Joi.number();
+const introIdScheme = Joi.number();
 const titleScheme = Joi.string().min(3).required();
 const contentScheme = Joi.array().items(Joi.string()).required();
 const introScheme = Joi.object({
@@ -41,12 +41,12 @@ const introScheme = Joi.object({
 });
 
 const permSchema = Joi.object({
-    userNo: numberSchema,
+    userId: numberSchema,
     level: levelSchema,
 });
 
 const updateIntroScheme = Joi.object({
-    introNo: introNoScheme,
+    introId: introIdScheme,
     title: titleScheme,
     content: contentScheme,
 });
@@ -120,7 +120,7 @@ const postUser = async (req, res, next) => {
 
 /**
  * @typedef UserPermision
- * @property {number} userNo.required
+ * @property {number} userId.required
  * @property {number} level.required
  */
 
@@ -141,13 +141,13 @@ const updateUserPermission = async (req, res, next) => {
         const { error, value } = permSchema.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo, level } = value;
+        const { userId, level } = value;
         const user = await users.findOne({
-            where: { userNo, state: 0 },
+            where: { userId, state: 0 },
         });
         if (!user) throw new Error('INVALID_PARAMETERS');
 
-        await users.update({ level }, { where: { userNo } });
+        await users.update({ level }, { where: { userId } });
         res.json({});
     } catch (err) {
         next(err);
@@ -156,9 +156,9 @@ const updateUserPermission = async (req, res, next) => {
 
 /**
  *  유저 삭제
- *  @route DELETE /api/admin/user/{userNo}
+ *  @route DELETE /api/admin/user/{userId}
  *  @group Admin
- *  @param {number} userNo.required - 유저 넘버
+ *  @param {number} userId.required - 유저 넘버
  *  @returns {object} 200 - 빈 객체
  *  @returns {Error} NOT_ADMIN - NOT_ADMIN
  *  @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
@@ -168,11 +168,11 @@ const deleteUser = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = userNoSchema.validate(req.params);
+        const { error, value } = userIdSchema.validate(req.params);
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const { userNo } = value;
-        const user = await users.findOne({ where: { userNo, state: 0 } });
+        const { userId } = value;
+        const user = await users.findOne({ where: { userId, state: 0 } });
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         /* 삭제한 회원의 정보를 전부 해시 처리함 */
@@ -188,7 +188,7 @@ const deleteUser = async (req, res, next) => {
                 level: 0,
                 state: 1,
             },
-            { where: { userNo } },
+            { where: { userId } },
         );
         res.json({});
     } catch (err) {
@@ -232,7 +232,7 @@ const postIntro = async (req, res, next) => {
  * 소개글 수정
  * @route PUT /api/admin/intro
  * @group Admin
- * @param {number} introNo.path.required - 수정할 소개글 ID
+ * @param {number} introId.path.required - 수정할 소개글 ID
  * @param {Intro.model} intro.body.required - 소개글 수정
  * @returns {object} 200 - 빈 객체
  * @returns {Error} NOT_ADMIN - NOT_ADMIN
@@ -243,15 +243,15 @@ const updateIntro = async (req, res, next) => {
         // TODO: 어드민 체크
         const { error, value } = updateIntroScheme.validate({
             ...req.body,
-            introNo: req.params.introNo,
+            introId: req.params.introId,
         });
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const { introNo, title, content } = value;
+        const { introId, title, content } = value;
 
         const intro = await intros.findOne({
             where: {
-                introNo,
+                introId,
             },
         });
 
@@ -272,7 +272,7 @@ const updateIntro = async (req, res, next) => {
  * 소개글 삭제
  * @route DELETE /api/admin/intro
  * @group Admin
- * @param {number} introNo.path.required - 삭제할 소개글 ID
+ * @param {number} introId.path.required - 삭제할 소개글 ID
  * @returns {object} 200 - 빈 객체
  * @returns {Error} NOT_ADMIN - NOT_ADMIN
  * @returns {Error} INVALID_PARAMETERS - INVALID_PARAMETERS
@@ -280,14 +280,14 @@ const updateIntro = async (req, res, next) => {
 const deleteIntro = async (req, res, next) => {
     try {
         // TODO: 어드민 체크
-        const { error, value } = introNoScheme.validate(req.params.introNo);
+        const { error, value } = introIdScheme.validate(req.params.introId);
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const introNo = value;
+        const introId = value;
 
         const intro = await intros.findOne({
             where: {
-                introNo,
+                introId,
             },
         });
         if (!intro) throw new Error('INVALID_PARAMETERS');
