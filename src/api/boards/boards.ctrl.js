@@ -73,14 +73,17 @@ const recommendedComment = async (boardCommentBoardCommentsNo, userUserNo) => {
 
 /**
  *  글 미리보기 정보 가져오기
- *  @route GET /api/board
+ *  @route GET /api/board/{page}/{count}
  *  @group Board
- *  @param {number} boardId.query.required - 글 번호
+ *  @param {number} page.path.required - 페이지 번호
+ *  @param {number} count.path.required - 글 개수
  *  @returns {Object} 200 - 글 미리보기
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
-const getBoardExcerpt = async (req, res, next) => {
+const getBoardList = async (req, res, next) => {
     try {
+        // TODO: page 형식으로 구현;
+        /*
         const { boardId } = req.query;
 
         const board = await checkBoard(boardId);
@@ -99,6 +102,8 @@ const getBoardExcerpt = async (req, res, next) => {
         });
 
         res.json({ boardExcerpt });
+        */
+        res.json({});
     } catch (err) {
         next(err);
     }
@@ -638,7 +643,7 @@ const recommendComment = async (req, res, next) => {
 };
 
 module.exports = {
-    getBoardExcerpt,
+    getBoardList,
     getBoard,
     postBoard,
     reviseBoard,

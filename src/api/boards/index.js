@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const {
-    getBoardExcerpt,
+    getBoardList,
     getBoard,
     postBoard,
     reviseBoard,
@@ -14,7 +14,7 @@ const {
 
 const router = Router();
 
-router.get('/', getBoardExcerpt);
+router.get('/:page/:count', getBoardList);
 router.get('/:boardId', getBoard);
 router.post('/', postBoard);
 router.put('/:boardId', reviseBoard);
