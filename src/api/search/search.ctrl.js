@@ -45,19 +45,20 @@ const getSearchResult = async (req, res, next) => {
 
         const searchResult = await boards.findAll({
             where: {
-                [Op.or]: {
-                    title: {
-                        [Op.like]: searchTitle,
+                [Op.or]: [
+                    { title: { [Op.like]: searchTitle } },
+                    { body: { [Op.like]: searchBody } },
+                    {
+                        duration: {
+                            [Op.between]: [
+                                searchDuration[0],
+                                searchDuration[1],
+                            ],
+                        },
                     },
-                    body: {
-                        [Op.like]: searchBody,
-                    },
-                    duration: {
-                        [Op.between]: [searchDuration[0], searchDuration[1]],
-                    },
-                    userName: searchUserName,
-                    tag: searchTag,
-                },
+                    { userName: searchUserName },
+                    { tag: searchTag },
+                ],
             },
         });
 
