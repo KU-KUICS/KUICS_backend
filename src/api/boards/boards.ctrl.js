@@ -12,7 +12,7 @@ const {
 // const { } = require('../../lib/schemes');
 
 const titleScheme = Joi.string().min(3).required();
-const bodyScheme = Joi.string().required();
+const bodyScheme = Joi.array().items(Joi.string()).required();
 const boardLevelScheme = Joi.any().valid('1', '2').required();
 
 const boardScheme = Joi.object({
@@ -223,7 +223,7 @@ const postBoard = async (req, res, next) => {
         const writeAuth = level <= userLevel;
         if (!writeAuth) throw new Error('NO_AUTH');
 
-        const excerpt = body.substring(0, 150);
+        const excerpt = body.join(' ').substring(0, 150);
 
         /* ISSUE: 에러 발생하는 경우에 boardId 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         await boards.create({
