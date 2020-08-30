@@ -1,18 +1,6 @@
-const Joi = require('@hapi/joi');
 const { Op } = require('sequelize');
-
 const { boards } = require('../../models');
-
-const searchKeyScheme = Joi.string();
-const searchDurationScheme = Joi.array().items(Joi.string());
-
-const searchInputScheme = Joi.object({
-    title: searchKeyScheme,
-    body: searchKeyScheme,
-    duration: searchDurationScheme,
-    userName: searchKeyScheme,
-    tag: searchKeyScheme,
-});
+const { searchInputScheme } = require('../../lib/schemes');
 
 /**
  * 검색 결과를 가져옴
