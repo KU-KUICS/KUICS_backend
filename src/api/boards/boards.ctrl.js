@@ -9,21 +9,7 @@ const {
 } = require('../../models');
 
 /* TODO: scheme library로 이동 */
-// const { } = require('../../lib/schemes');
-
-const titleScheme = Joi.string().min(3).required();
-const bodyScheme = Joi.array().items(Joi.string()).required();
-const boardLevelScheme = Joi.any().valid('1', '2').required();
-
-const boardScheme = Joi.object({
-    title: titleScheme,
-    body: bodyScheme,
-    level: boardLevelScheme,
-});
-
-const commentScheme = Joi.object({
-    body: bodyScheme,
-});
+const { boardScheme, commentScheme } = require('../../lib/schemes');
 
 const numberScheme = Joi.number().positive().required();
 const numberSchemeOptional = Joi.number().positive().optional();
