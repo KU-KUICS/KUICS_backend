@@ -20,7 +20,9 @@ const nameScheme = Joi.string()
     .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
     .required();
 
-const numberScheme = Joi.number().positive();
+const numberScheme = Joi.number().positive().required();
+
+const numberSchemeOptional = Joi.number().positive().optional();
 
 const studentIdScheme = Joi.string()
     .pattern(/^[0-9]{10}$/)
@@ -77,6 +79,11 @@ const commentScheme = Joi.object({
     body: stringScheme,
 });
 
+const boardListScheme = Joi.object({
+    page: numberScheme,
+    count: numberSchemeOptional,
+});
+
 module.exports = {
     userScheme,
     introScheme,
@@ -85,4 +92,5 @@ module.exports = {
     searchInputScheme,
     boardScheme,
     commentScheme,
+    boardListScheme,
 };

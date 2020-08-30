@@ -1,4 +1,3 @@
-const Joi = require('@hapi/joi');
 const {
     boards,
     boardComments,
@@ -8,16 +7,12 @@ const {
     sequelize,
 } = require('../../models');
 
-/* TODO: scheme library로 이동 */
-const { boardScheme, commentScheme } = require('../../lib/schemes');
-
-const numberScheme = Joi.number().positive().required();
-const numberSchemeOptional = Joi.number().positive().optional();
-
-const boardListScheme = Joi.object({
-    page: numberScheme,
-    count: numberSchemeOptional,
-});
+const {
+    boardScheme,
+    commentScheme,
+    boardListScheme,
+} = require('../../lib/schemes');
+/* TODO: vaildation 추가 */
 
 const checkUser = async (userId) => {
     const user = await users.findOne({
