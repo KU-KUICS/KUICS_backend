@@ -6,8 +6,6 @@ const { searchInputScheme } = require('../../lib/schemes');
  * 검색 결과를 가져옴
  * @route GET /api/search
  * @group Search
- * @param {string} key.query.required - 검색 키워드
- * @param {string} target.query.required - 검색 타겟(title, body, titleAndBody)
  * @returns {Array} 200 - 검색 결과
  * @returns {Error} INVALID_PARAM - INVALID_PARAM
  */
@@ -19,17 +17,17 @@ const getSearchResult = async (req, res, next) => {
 
         const { title, body, duration, userName, tag } = value;
 
-        const searchTitle = title ? `%${title}%` : ' ';
+        const searchTitle = title ? `%${title}%` : '%';
 
-        const searchBody = body ? `%${body}%` : ' ';
+        const searchBody = body ? `%${body}%` : '%';
 
         const searchDuration = duration
             ? [new Date(duration[0]), new Date(duration[1])]
-            : undefined;
+            : [new Date('2020'), new Date(Date.now())]; // 처음 글은 최소 2020년 1월에 작성
 
-        const searchUserName = userName ? `${userName}` : ' ';
+        const searchUserName = userName ? `${userName}` : '%';
 
-        const searchTag = tag ? `${tag}` : ' ';
+        const searchTag = tag ? `${tag}` : '%';
 
         const searchResult = await boards.findAll({
             where: {
@@ -37,15 +35,15 @@ const getSearchResult = async (req, res, next) => {
                     { title: { [Op.like]: searchTitle } },
                     { body: { [Op.like]: searchBody } },
                     {
-                        duration: {
+                        createdAt: {
                             [Op.between]: [
                                 searchDuration[0],
                                 searchDuration[1],
                             ],
                         },
                     },
-                    { userName: searchUserName },
-                    { tag: searchTag },
+                    { userName: searchUserName }, // user와 board Join 구현 필요
+                    { tag: searchTag }, // board에 아직 기능 추가 안 됨
                 ],
             },
         });

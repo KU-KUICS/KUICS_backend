@@ -26,9 +26,9 @@ const studentIdScheme = Joi.string()
 
 const stringScheme = Joi.string().min(3).required();
 
-const searchTargetScheme = Joi.string()
-    .valid('title', 'body', 'titleAndBody')
-    .required();
+const searchScheme = Joi.string().min(2);
+
+const searchDurationScheme = Joi.array();
 
 /**
  * Scheme wrappers
@@ -59,8 +59,11 @@ const updateIntroScheme = Joi.object({
 
 /* Search API */
 const searchInputScheme = Joi.object({
-    key: stringScheme,
-    target: searchTargetScheme,
+    title: searchScheme,
+    body: searchScheme,
+    duration: searchDurationScheme,
+    userName: searchScheme,
+    tag: searchScheme,
 });
 
 module.exports = {
