@@ -26,9 +26,9 @@ const studentIdScheme = Joi.string()
 
 const stringScheme = Joi.string().min(3).required();
 
-const searchScheme = Joi.string().min(2);
+const searchScheme = Joi.string().min(2); // search 검사 조건 구체화 필요
 
-const searchDurationScheme = Joi.array();
+const searchDurationScheme = Joi.array(); // Duration search 검사 조건 구체화 필요
 
 /**
  * Scheme wrappers

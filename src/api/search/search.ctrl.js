@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const { boards } = require('../../models');
 const { searchInputScheme } = require('../../lib/schemes');
+const users = require('../../models/users');
 
 /**
  * 검색 결과를 가져옴
@@ -29,6 +30,13 @@ const getSearchResult = async (req, res, next) => {
 
         const searchTag = tag ? `${tag}` : '%';
 
+        const searchUserID = await users.findAll({
+            attributes: ['userId'],
+            where: {
+                userName: searchUserName,
+            },
+        });
+
         const searchResult = await boards.findAll({
             where: {
                 [Op.or]: [
@@ -42,7 +50,7 @@ const getSearchResult = async (req, res, next) => {
                             ],
                         },
                     },
-                    { userName: searchUserName }, // user와 board Join 구현 필요
+                    { userID: searchUserID }, // user와 board Join 구현 필요
                     { tag: searchTag }, // board에 아직 기능 추가 안 됨
                 ],
             },
