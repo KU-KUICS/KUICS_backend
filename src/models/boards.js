@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             // 내용
             body: {
-                type: DataTypes.TEXT,
+                type: DataTypes.ARRAY(DataTypes.TEXT),
                 allowNull: true,
             },
             // 발췌 (미리보기)
