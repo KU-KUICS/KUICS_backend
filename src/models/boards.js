@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         'boards',
         {
             // Priamry Key
-            boardNo: {
+            boardId: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             // 내용
             body: {
-                type: DataTypes.TEXT,
+                type: DataTypes.ARRAY(DataTypes.TEXT),
                 allowNull: true,
             },
             // 발췌 (미리보기)
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
             },
-            // 읽기 권한; 0: 전체 | 1: 회원만 | 2: 정회원만
+            // 읽기 권한; 1: 회원 | 2: 정회원 이상
             level: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
