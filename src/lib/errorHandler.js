@@ -26,17 +26,15 @@ const exceptions = {
         errorCode: 4,
         msg: 'NOT ADMIN',
     },
-<<<<<<< HEAD
     ALREADY_SOLVED: {
         statusCode: 403,
         errorCode: 5,
         msg: 'ALREADY SOLVED PROBLEM',
-=======
+    },
     NO_AUTH: {
         statusCode: 401,
         errorCode: 10,
         msg: 'UNAUTHORIZED',
->>>>>>> develop
     },
 };
 
