@@ -38,7 +38,7 @@ const isAuthenticated = async (req, res, next) => {
         });
 
         if (!isMember) {
-            throw new Error('NOT_KUICS');
+            throw new Error('NO_AUTH');
         } else {
             next();
         }

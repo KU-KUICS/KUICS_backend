@@ -16,10 +16,10 @@ const exceptions = {
         errorCode: 3,
         msg: 'NO LOGIN',
     },
-    NOT_KUICS: {
-        statusCode: 403,
-        errorCode: 2,
-        msg: 'NOT MEMBER OF KUICS',
+    NO_AUTH: {
+        statusCode: 401,
+        errorCode: 10,
+        msg: 'UNAUTHORIZED',
     },
     NOT_ADMIN: {
         statusCode: 403,
@@ -30,11 +30,6 @@ const exceptions = {
         statusCode: 403,
         errorCode: 5,
         msg: 'ALREADY SOLVED PROBLEM',
-    },
-    NO_AUTH: {
-        statusCode: 401,
-        errorCode: 10,
-        msg: 'UNAUTHORIZED',
     },
 };
 

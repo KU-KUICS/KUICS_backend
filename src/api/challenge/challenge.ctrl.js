@@ -12,6 +12,7 @@ const flagSubmitSchema = Joi.object({
         .required(),
 });
 
+// TODO: 다른 API 멤버 체크 함수랑 통합
 const isMember = async (email) => {
     const member = await users.findOne({
         where: { email, state: 0, level: { [Op.gte]: 1 } },
@@ -23,7 +24,7 @@ const isMember = async (email) => {
 const getChallenges = async (req, res, next) => {
     try {
         const checkMember = await isMember(req.user.emails[0].value);
-        if (!checkMember) throw new Error('NOT_KUICS');
+        if (!checkMember) throw new Error('NO_AUTH');
 
         const challengeList = await challenges.findAll({
             attributes: ['challNo', 'category', 'score', 'title'],
@@ -52,7 +53,7 @@ const getChallenges = async (req, res, next) => {
 const getChallengesDesc = async (req, res, next) => {
     try {
         const checkMember = await isMember(req.user.emails[0].value);
-        if (!checkMember) throw new Error('NOT_KUICS');
+        if (!checkMember) throw new Error('NO_AUTH');
 
         const { error, value } = numberSchema.validate(req.params.challNo);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -74,7 +75,7 @@ const getChallengesDesc = async (req, res, next) => {
 const postSubmitFlag = async (req, res, next) => {
     try {
         const checkMember = await isMember(req.user.emails[0].value);
-        if (!checkMember) throw new Error('NOT_KUICS');
+        if (!checkMember) throw new Error('NO_AUTH');
 
         const { error, value } = flagSubmitSchema.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -117,7 +118,7 @@ const postSubmitFlag = async (req, res, next) => {
 const getScoreboard = async (req, res, next) => {
     try {
         const checkMember = await isMember(req.user.emails[0].value);
-        if (!checkMember) throw new Error('NOT_KUICS');
+        if (!checkMember) throw new Error('NO_AUTH');
 
         const scoreboard = await users.findAll({
             where: { state: 0 },
