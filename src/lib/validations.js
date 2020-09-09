@@ -6,6 +6,7 @@ const {
     recommendComments,
 } = require('../models');
 
+/* email 이용한 validation으로 수정 */
 const checkUser = async (userId) => {
     const user = await users.findOne({
         where: { userId, state: 0, level: [1, 2, 999] },
