@@ -71,14 +71,13 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
  *  @route GET /api/board/page/{page}
  *  @group Board
  *  @param {number} page.path.required - 페이지 번호
- *  @param {number} count.query - 글 개수
+ *  @param {number} count.query.optional - 글 개수
  *  @returns {Object} 200 - 글 리스트
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
 const getBoardList = async (req, res, next) => {
     try {
-        const pageCount = 10;
-        const baseLimit = 10;
+        const baseCount = 10;
 
         const { error, value } = boardListScheme.validate({
             page: req.params.page,
@@ -87,8 +86,9 @@ const getBoardList = async (req, res, next) => {
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { page, count } = value;
-        const offset = (page - 1) * pageCount;
-        const limit = count || baseLimit;
+
+        const limit = count || baseCount; // count 없는 경우 baseCount 사용
+        const offset = (page - 1) * limit;
 
         const boardList = await boards.findAll({
             offset,
