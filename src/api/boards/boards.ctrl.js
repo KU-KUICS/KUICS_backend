@@ -1,7 +1,6 @@
 const {
     boards,
     boardComments,
-    users,
     recommendBoards,
     recommendComments,
     sequelize,
@@ -12,55 +11,14 @@ const {
     commentScheme,
     boardListScheme,
 } = require('../../lib/schemes');
-/* TODO: vaildation 추가 */
 
-const checkUser = async (userId) => {
-    const user = await users.findOne({
-        where: { userId, state: 0, level: [1, 2, 999] },
-        attributes: [
-            ['userId', 'checkedId'],
-            ['level', 'userLevel'],
-        ],
-        raw: true,
-    });
-    return user;
-};
-
-const checkBoard = async (boardId) => {
-    const board = await boards.findOne({
-        where: { boardId, deletedAt: null },
-        paranoid: false,
-        attributes: [
-            ['userUserId', 'writerBoardId'],
-            ['level', 'readLevel'],
-        ],
-        raw: true,
-    });
-    return board;
-};
-const checkComment = async (boardBoardId, commentId) => {
-    const comment = await boardComments.findOne({
-        where: { boardBoardId, commentId, deletedAt: null },
-        paranoid: false,
-        attributes: [['userUserId', 'writerCommentId']],
-        raw: true,
-    });
-    return comment;
-};
-
-const recommendedBoard = async (boardBoardId, userUserId) => {
-    const recommended = await recommendBoards.findOne({
-        where: { boardBoardId, userUserId },
-    });
-    return recommended;
-};
-
-const recommendedComment = async (boardCommentCommentId, userUserId) => {
-    const recommended = await recommendComments.findOne({
-        where: { boardCommentCommentId, userUserId },
-    });
-    return recommended;
-};
+const {
+    checkUser,
+    checkBoard,
+    checkComment,
+    recommendedBoard,
+    recommendedComment,
+} = require('../../lib/validations');
 
 /* TODO: 권한 확인 query, 데이터 요청 query 통합 */
 /* TODO: 게시글에 tag 붙이기 */
