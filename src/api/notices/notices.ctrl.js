@@ -8,7 +8,15 @@ const {
     recommendCommentFunction,
 } = require('../../lib/postingFunctions');
 
-/** */
+/**
+ *  page에 해당하는 공지글 리스트 가져오기
+ *  @route GET /api/notice/page/{page}
+ *  @group Notice
+ *  @param {number} page.path.required - 페이지 번호
+ *  @param {number} count.query.optional - 글 개수
+ *  @returns {Object} 200 - 글 리스트
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ */
 const getNoticeList = async (req, res, next) => {
     try {
         getListFunction(req, res, next, 'notice');
@@ -18,9 +26,9 @@ const getNoticeList = async (req, res, next) => {
 };
 
 /**
- *  boardId에 해당하는 공지글 정보 가져오기
- *  @route GET /api/board/{boardId}
- *  @group Board
+ *  boardId에 해당하는 글 정보 가져오기
+ *  @route GET /api/notice/{boardId}
+ *  @group Notice
  *  @param {number} boardId.path.required - 글 번호
  *  @returns {Object, Array} 200 - 글 정보, 댓글 리스트
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters

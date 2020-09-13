@@ -44,34 +44,7 @@ const {
  */
 const getBoardList = async (req, res, next) => {
     try {
-        const baseCount = 10;
-
-        const { error, value } = boardListScheme.validate({
-            page: req.params.page,
-            count: req.query.count,
-        });
-        if (error) throw new Error('INVALID_PARAMETERS');
-
-        const { page, count } = value;
-
-        const limit = count || baseCount; // count 없는 경우 baseCount 사용
-        const offset = (page - 1) * limit;
-
-        const boardList = await boards.findAll({
-            offset,
-            limit,
-            order: [['boardId', 'DESC']],
-            attributes: [
-                'boardId',
-                'excerpt',
-                'title',
-                'commentCount',
-                'hit',
-                'updatedAt',
-            ],
-        });
-
-        res.json({ boardList });
+        getListFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
