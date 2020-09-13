@@ -20,9 +20,9 @@ router.post('/user', isAuthenticated, postUser); // 사용자 추가
 router.put('/user/permission', isAuthenticated, updateUserPermission); // 사용자 등급 변경
 router.delete('/user/:userId', isAuthenticated, deleteUser); // 사용자 삭제
 
-router.post('/notice', isAuthenticated, postNotice); // 공지 작성
-router.put('/notice/:notice_id', isAuthenticated, putEditNotice); // 공지 수정
-router.delete('/notice/:notice_id', isAuthenticated, deleteNotice); // 공지 삭제
+router.post('/notice', postNotice); // 공지 작성
+router.put('/notice/:notice_id', putEditNotice); // 공지 수정
+router.delete('/notice/:notice_id', deleteNotice); // 공지 삭제
 
 router.post('/intro', isAuthenticated, postIntro);
 router.put('/intro/:introId', isAuthenticated, updateIntro);
