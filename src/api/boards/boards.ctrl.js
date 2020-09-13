@@ -208,7 +208,7 @@ const deleteBoard = async (req, res, next) => {
  */
 const recommendBoard = async (req, res, next) => {
     try {
-        recommendFunction('notice');
+        recommendFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }

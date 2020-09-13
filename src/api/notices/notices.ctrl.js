@@ -11,7 +11,7 @@ const {
 /** */
 const getNoticeList = async (req, res, next) => {
     try {
-        getListFunction('notice');
+        getListFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -20,7 +20,7 @@ const getNoticeList = async (req, res, next) => {
 /** */
 const getNotice = async (req, res, next) => {
     try {
-        getFunction('notice');
+        getFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -37,7 +37,7 @@ const getNotice = async (req, res, next) => {
  */
 const recommendNotice = async (req, res, next) => {
     try {
-        recommendFunction('notice');
+        recommendFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -46,7 +46,7 @@ const recommendNotice = async (req, res, next) => {
 /** */
 const postCommentNotice = async (req, res, next) => {
     try {
-        postCommentFunction('notice');
+        postCommentFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -55,7 +55,7 @@ const postCommentNotice = async (req, res, next) => {
 /** */
 const reviseCommentNotice = async (req, res, next) => {
     try {
-        reviseCommentFunction('notice');
+        reviseCommentFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -64,7 +64,7 @@ const reviseCommentNotice = async (req, res, next) => {
 /** */
 const deleteCommentNotice = async (req, res, next) => {
     try {
-        deleteCommentFunction('notice');
+        deleteCommentFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
@@ -73,7 +73,7 @@ const deleteCommentNotice = async (req, res, next) => {
 /** */
 const recommendCommentNotice = async (req, res, next) => {
     try {
-        recommendCommentFunction('notice');
+        recommendCommentFunction(req, res, next, 'notice');
     } catch (err) {
         next(err);
     }
