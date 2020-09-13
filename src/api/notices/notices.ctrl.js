@@ -1,21 +1,82 @@
-const getNotice = (req, res) => {
-    const { user_id } = req.params;
-    res.json({
-        user_id,
-    });
+const {
+    getListFunction,
+    getFunction,
+    recommendFunction,
+    postCommentFunction,
+    reviseCommentFunction,
+    deleteCommentFunction,
+    recommendCommentFunction,
+} = require('../../lib/postingFunctions');
+
+/** */
+const getNoticeList = async (req, res, next) => {
+    try {
+        getListFunction('notice');
+    } catch (err) {
+        next(err);
+    }
 };
 
-const postNotice = (req, res) => {
-    const user_id = Number(req.body.user_id);
-    if (user_id !== 10) {
-        throw new Error('WRONG_USER_ID');
+/** */
+const getNotice = async (req, res, next) => {
+    try {
+        getFunction('notice');
+    } catch (err) {
+        next(err);
     }
-    res.json({
-        user_id,
-    });
+};
+
+/** */
+const recommendNotice = async (req, res, next) => {
+    try {
+        recommendFunction('notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** */
+const postCommentNotice = async (req, res, next) => {
+    try {
+        postCommentFunction('notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** */
+const reviseCommentNotice = async (req, res, next) => {
+    try {
+        reviseCommentFunction('notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** */
+const deleteCommentNotice = async (req, res, next) => {
+    try {
+        deleteCommentFunction('notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/** */
+const recommendCommentNotice = async (req, res, next) => {
+    try {
+        recommendCommentFunction('notice');
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports = {
+    getNoticeList,
     getNotice,
-    postNotice,
+    recommendNotice,
+    postCommentNotice,
+    reviseCommentNotice,
+    deleteCommentNotice,
+    recommendCommentNotice,
 };

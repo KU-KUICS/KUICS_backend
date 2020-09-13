@@ -108,8 +108,72 @@ const deleteFunction = async (req, res, next, type) => {
         next(err);
     }
 };
+
+const getListFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const recommendFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const postCommentFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const reviseCommentFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deleteCommentFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const recommendCommentFunction = async (req, res, next, type) => {
+    try {
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     postFunction,
     reviseFunction,
     deleteFunction,
+    getListFunction,
+    getFunction,
+    recommendFunction,
+    postCommentFunction,
+    reviseCommentFunction,
+    deleteCommentFunction,
+    recommendCommentFunction,
 };

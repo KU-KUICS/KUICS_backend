@@ -12,6 +12,13 @@ const {
     postFunction,
     reviseFunction,
     deleteFunction,
+    getListFunction,
+    getFunction,
+    recommendFunction,
+    postCommentFunction,
+    reviseCommentFunction,
+    deleteCommentFunction,
+    recommendCommentFunction,
 } = require('../../lib/postingFunctions');
 
 const {
