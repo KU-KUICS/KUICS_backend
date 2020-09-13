@@ -43,7 +43,21 @@ const recommendNotice = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ * @typedef commentScheme
+ * @property {string} body.required
+ */
+
+/**
+ *  공지글에 대한 댓글 작성하기
+ *  @route POST /api/notice/{boardId}/comment
+ *  @group Notice
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {commentScheme.model} commentScheme.body.required - 작성할 댓글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const postCommentNotice = async (req, res, next) => {
     try {
         postCommentFunction(req, res, next, 'notice');

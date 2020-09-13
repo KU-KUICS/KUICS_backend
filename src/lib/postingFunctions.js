@@ -210,6 +210,40 @@ const recommendFunction = async (req, res, next, type) => {
 
 const postCommentFunction = async (req, res, next, type) => {
     try {
+        const { userId } = req.query;
+        const { boardId } = req.params;
+
+        const { error, value } = commentScheme.validate(req.body);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const { body } = value;
+
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { userLevel } = user;
+
+        const board = await checkBoard(boardId, type);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
+        await boardComments.create({
+            body,
+            recommendedTime: 0,
+            userUserId: userId,
+            boardBoardId: boardId,
+        });
+
+        await boards.increment('commentCount', {
+            by: 1,
+            where: { boardId },
+            silent: true,
+        });
+
         res.json({});
     } catch (err) {
         next(err);

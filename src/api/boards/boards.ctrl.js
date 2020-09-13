@@ -220,7 +220,7 @@ const recommendBoard = async (req, res, next) => {
  */
 
 /**
- *  댓글 작성하기
+ *  글에 대한 댓글 작성하기
  *  @route POST /api/board/{boardId}/comment
  *  @group Board
  *  @param {number} boardId.path.required - 글 번호
@@ -231,41 +231,7 @@ const recommendBoard = async (req, res, next) => {
  */
 const postCommentBoard = async (req, res, next) => {
     try {
-        const { userId } = req.query;
-        const { boardId } = req.params;
-
-        const { error, value } = commentScheme.validate(req.body);
-        if (error) throw new Error('INVALID_PARAMETERS');
-
-        const { body } = value;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { userLevel } = user;
-
-        const board = await checkBoard(boardId, 'board');
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { readLevel } = board;
-
-        const readAuth = readLevel <= userLevel;
-        if (!readAuth) throw new Error('NO_AUTH');
-
-        await boardComments.create({
-            body,
-            recommendedTime: 0,
-            userUserId: userId,
-            boardBoardId: boardId,
-        });
-
-        await boards.increment('commentCount', {
-            by: 1,
-            where: { boardId },
-            silent: true,
-        });
-
-        res.json({});
+        postCommentFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
