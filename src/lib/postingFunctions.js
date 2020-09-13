@@ -1,8 +1,20 @@
-const { boards } = require('../models');
+const {
+    boards,
+    boardComments,
+    recommendBoards,
+    recommendComments,
+    sequelize,
+} = require('../models');
 
-const { boardScheme } = require('./schemes');
+const { boardScheme, commentScheme, boardListScheme } = require('./schemes');
 
-const { checkUser, checkBoard } = require('./validations');
+const {
+    checkUser,
+    checkBoard,
+    checkComment,
+    recommendedBoard,
+    recommendedComment,
+} = require('./validations');
 
 const postFunction = async (req, res, next, type) => {
     try {
@@ -127,6 +139,69 @@ const getFunction = async (req, res, next, type) => {
 
 const recommendFunction = async (req, res, next, type) => {
     try {
+        const { boardId } = req.params;
+        const { userId } = req.query;
+
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { userLevel } = user;
+
+        const board = await checkBoard(boardId, type);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
+        const checkRecommended = await recommendedBoard(boardId, userId);
+
+        const t = await sequelize.transaction();
+        if (!checkRecommended) {
+            /* 추천하지 않은 경우, 추천하기 */
+            await recommendBoards.create(
+                {
+                    boardBoardId: boardId,
+                    userUserId: userId,
+                },
+                { transaction: t },
+            );
+
+            await boards.increment(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        } else {
+            /* 이미 추천한 경우, 추천 취소하기 */
+            await recommendBoards.destroy(
+                {
+                    where: {
+                        boardBoardId: boardId,
+                        userUserId: userId,
+                    },
+                },
+                { transaction: t },
+            );
+
+            await boards.decrement(
+                'recommendedTime',
+                {
+                    by: 1,
+                    where: { boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        }
+
+        await t.commit();
+
         res.json({});
     } catch (err) {
         next(err);

@@ -26,7 +26,15 @@ const getNotice = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ *  boardId에 해당하는 공지글 추천하기
+ *  @route POST /api/board/notice/{boardId}/recommend
+ *  @group Notice
+ *  @param {number} boardId.path.required - 글 번호
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const recommendNotice = async (req, res, next) => {
     try {
         recommendFunction('notice');
