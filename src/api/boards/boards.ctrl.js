@@ -260,7 +260,7 @@ const reviseBoard = async (req, res, next) => {
         const writeAuth = level <= userLevel;
         if (!writeAuth) throw new Error('NO_AUTH');
 
-        const excerpt = body.substring(0, 150);
+        const excerpt = body.join(' ').substring(0, 150);
 
         await boards.update(
             { title, body, excerpt, level },
