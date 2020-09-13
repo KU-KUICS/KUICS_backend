@@ -17,7 +17,16 @@ const getNoticeList = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ *  boardId에 해당하는 공지글 정보 가져오기
+ *  @route GET /api/board/{boardId}
+ *  @group Board
+ *  @param {number} boardId.path.required - 글 번호
+ *  @returns {Object, Array} 200 - 글 정보, 댓글 리스트
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_LOGIN - no login
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const getNotice = async (req, res, next) => {
     try {
         getFunction(req, res, next, 'notice');

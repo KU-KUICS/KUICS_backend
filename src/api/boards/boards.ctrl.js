@@ -89,50 +89,7 @@ const getBoardList = async (req, res, next) => {
  */
 const getBoard = async (req, res, next) => {
     try {
-        const { userId } = req.query;
-        const { boardId } = req.params;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { userLevel } = user;
-
-        const board = await checkBoard(boardId, 'board');
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { readLevel } = board;
-
-        const readAuth = readLevel <= userLevel;
-        if (!readAuth) throw new Error('NO_AUTH');
-
-        await boards.increment('hit', {
-            by: 1,
-            where: { boardId },
-            silent: true,
-        });
-
-        const boardData = await boards.findOne({
-            where: { boardId },
-            /* attributes: [], */
-        });
-
-        const commentList = await boardComments.findAll({
-            where: { boardBoardId: boardId },
-            attributes: [
-                'commentId',
-                'body',
-                'recommendedTime',
-                'createdAt',
-                'updatedAt',
-                'userUserId',
-            ],
-            order: [['commentId', 'ASC']],
-        });
-
-        /* TODO: 이미지, 파일 정보 추가 -> hashing */
-        /* TODO: 작성자 정보 추가 (게시글, 댓글) */
-
-        res.json({ boardData, commentList });
+        getFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
