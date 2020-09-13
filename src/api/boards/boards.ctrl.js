@@ -86,7 +86,7 @@ const getBoard = async (req, res, next) => {
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -188,7 +188,7 @@ const deleteBoard = async (req, res, next) => {
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { writerBoardId } = board;
@@ -225,7 +225,7 @@ const recommendBoard = async (req, res, next) => {
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -316,7 +316,7 @@ const postCommentBoard = async (req, res, next) => {
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -369,7 +369,7 @@ const reviseCommentBoard = async (req, res, next) => {
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -413,7 +413,7 @@ const deleteCommentBoard = async (req, res, next) => {
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -464,7 +464,7 @@ const recommendCommentBoard = async (req, res, next) => {
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, 'board');
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;

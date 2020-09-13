@@ -56,7 +56,7 @@ const reviseFunction = async (req, res, next, type) => {
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId);
+        const board = await checkBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { writerBoardId } = board;

@@ -27,9 +27,9 @@ const checkUser = async (userId) => {
     return user;
 };
 
-const checkBoard = async (boardId) => {
+const checkBoard = async (boardId, type) => {
     const board = await boards.findOne({
-        where: { boardId, deletedAt: null },
+        where: { boardId, type, deletedAt: null },
         paranoid: false,
         attributes: [
             ['userUserId', 'writerBoardId'],
@@ -39,6 +39,7 @@ const checkBoard = async (boardId) => {
     });
     return board;
 };
+
 const checkComment = async (boardBoardId, commentId) => {
     const comment = await boardComments.findOne({
         where: { boardBoardId, commentId, deletedAt: null },
