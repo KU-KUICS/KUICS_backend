@@ -6,7 +6,15 @@ const {
     recommendComments,
 } = require('../models');
 
-/* email 이용한 validation으로 수정 */
+/* TODO: email 이용한 validation으로 수정 */
+const checkAdmin = async (userId) => {
+    const admin = await users.findOne({
+        where: { userId, state: 0, level: 999 },
+    });
+    return admin;
+};
+
+/* TODO: email 이용한 validation으로 수정 */
 const checkUser = async (userId) => {
     const user = await users.findOne({
         where: { userId, state: 0, level: [1, 2, 999] },
@@ -56,6 +64,7 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 };
 
 module.exports = {
+    checkAdmin,
     checkUser,
     checkBoard,
     checkComment,

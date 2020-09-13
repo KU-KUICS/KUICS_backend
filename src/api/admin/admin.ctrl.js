@@ -9,12 +9,16 @@ const {
     userIdScheme,
 } = require('../../lib/schemes');
 
+const { checkAdmin } = require('../../lib/validations');
+
+const { postFunction } = require('../../lib/postFunctions');
+
 const isAdmin = async (email) => {
     const admin = await users.findOne({
         where: { email, state: 0, level: 999 },
     });
     return admin;
-};
+}; // TODO: ../../lib/validations의 checkAdmin과 통합
 
 /**
  *  유저 정보를 읽어옴
@@ -25,8 +29,8 @@ const isAdmin = async (email) => {
  */
 const getUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         // 관리자 API라 관리자, 탈퇴자 모두 반환하도록 함.
         const userList = await users.findAll();
@@ -54,8 +58,8 @@ const getUser = async (req, res, next) => {
  */
 const postUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = userScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -93,8 +97,8 @@ const postUser = async (req, res, next) => {
  */
 const updateUserPermission = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = permScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -123,8 +127,8 @@ const updateUserPermission = async (req, res, next) => {
  */
 const deleteUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = userIdScheme.validate(req.params.userId);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -172,8 +176,8 @@ const deleteUser = async (req, res, next) => {
  */
 const postIntro = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = introScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -200,8 +204,8 @@ const postIntro = async (req, res, next) => {
  */
 const updateIntro = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = updateIntroScheme.validate({
             ...req.body,
@@ -235,8 +239,8 @@ const updateIntro = async (req, res, next) => {
 const deleteIntro = async (req, res, next) => {
     try {
         // TODO: 어드민 체크
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin(req.user.emails[0].value);
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = introIdScheme.validate(req.params.introId);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -253,7 +257,17 @@ const deleteIntro = async (req, res, next) => {
     }
 };
 
-const postNotice = async (req, res, next) => {};
+const postNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await isAdmin(req.query.userId);
+        if (!admin) throw new Error('NO_AUTH');
+
+        postFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
 const putEditNotice = async (req, res, next) => {};
 const deleteNotice = async (req, res, next) => {};
 

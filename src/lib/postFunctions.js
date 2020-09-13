@@ -18,9 +18,6 @@ const postFunction = async (req, res, next, type) => {
 
         const { userLevel } = user;
 
-        /* Admin check */
-        if (type === 'notice' && userLevel !== 999) throw new Error('NO_AUTH');
-
         const writeAuth = level <= userLevel;
         if (!writeAuth) throw new Error('NO_AUTH');
 
