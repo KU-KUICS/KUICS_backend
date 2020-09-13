@@ -6,13 +6,9 @@ const {
     sequelize,
 } = require('../../models');
 
-const {
-    boardScheme,
-    commentScheme,
-    boardListScheme,
-} = require('../../lib/schemes');
+const { commentScheme, boardListScheme } = require('../../lib/schemes');
 
-const { postFunction } = require('../../lib/postingFunctions');
+const { postFunction, reviseFunction } = require('../../lib/postingFunctions');
 
 const {
     checkUser,
@@ -167,38 +163,7 @@ const postBoard = async (req, res, next) => {
  */
 const reviseBoard = async (req, res, next) => {
     try {
-        const { userId } = req.query;
-        const { boardId } = req.params;
-
-        const { error, value } = boardScheme.validate(req.body);
-        if (error) throw new Error('INVALID_PARAMETERS');
-        const { title, body, level } = value;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { checkedId, userLevel } = user;
-
-        const board = await checkBoard(boardId);
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { writerBoardId } = board;
-
-        const isWriterBoard = checkedId === writerBoardId;
-        if (!isWriterBoard) throw new Error('NO_AUTH');
-
-        const writeAuth = level <= userLevel;
-        if (!writeAuth) throw new Error('NO_AUTH');
-
-        const excerpt = body.substring(0, 150);
-
-        await boards.update(
-            { title, body, excerpt, level },
-            { where: { boardId } },
-        );
-
-        /* TODO: 이미지, 파일 정보 수정 (추가, 삭제) */
-        res.json({});
+        reviseFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
