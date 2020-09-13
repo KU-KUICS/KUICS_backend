@@ -80,7 +80,36 @@ const reviseFunction = async (req, res, next, type) => {
         next(err);
     }
 };
+
+const deleteFunction = async (req, res, next, type) => {
+    try {
+        const { boardId } = req.params;
+        const { userId } = req.query;
+
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { checkedId, userLevel } = user;
+
+        const board = await checkBoard(boardId, type);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { writerBoardId } = board;
+
+        const isWriterBoard = checkedId === writerBoardId;
+        const isAdmin = userLevel === 999;
+        if (!isWriterBoard && !isAdmin) throw new Error('NO_AUTH');
+
+        await boards.destroy({ where: { boardId } });
+
+        /* TODO: 이미지, 파일 정보, 댓글 접근 불가능하도록 수정 */
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
 module.exports = {
     postFunction,
     reviseFunction,
+    deleteFunction,
 };

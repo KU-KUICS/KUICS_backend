@@ -11,7 +11,11 @@ const {
 
 const { checkAdmin } = require('../../lib/validations');
 
-const { postFunction, reviseFunction } = require('../../lib/postingFunctions');
+const {
+    postFunction,
+    reviseFunction,
+    deleteFunction,
+} = require('../../lib/postingFunctions');
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
@@ -306,7 +310,27 @@ const reviseNotice = async (req, res, next) => {
         next(err);
     }
 };
-const deleteNotice = async (req, res, next) => {};
+
+/**
+ *  boardId에 해당하는 글 삭제하기
+ *  @route DELETE /api/admin/notice/{boardId}
+ *  @group Admin
+ *  @param {number} boardId.path.required - 글 번호
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+const deleteNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await checkAdmin(req.query.userId);
+        if (!admin) throw new Error('NO_AUTH');
+
+        deleteFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
 
 module.exports = {
     getUser,
