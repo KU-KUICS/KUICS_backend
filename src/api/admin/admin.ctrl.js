@@ -257,6 +257,22 @@ const deleteIntro = async (req, res, next) => {
     }
 };
 
+/**
+ * @typedef boardScheme
+ * @property {string} title.required
+ * @property {string} body.required
+ * @property {number} level.required
+ */
+
+/**
+ *  공지글 작성하기
+ *  @route POST /api/admin/notice
+ *  @group Admin
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const postNotice = async (req, res, next) => {
     try {
         /* admin check */
@@ -268,6 +284,7 @@ const postNotice = async (req, res, next) => {
         next(err);
     }
 };
+
 const putEditNotice = async (req, res, next) => {};
 const deleteNotice = async (req, res, next) => {};
 
