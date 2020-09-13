@@ -66,7 +66,17 @@ const postCommentNotice = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ *  공지글에 대한 댓글 수정하기
+ *  @route PUT /api/notice/{boardId}/comment/{commentId}
+ *  @group Notice
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {number} commentId.path.required - 댓글 번호
+ *  @param {commentScheme.model} commentScheme.body.required - 작성할 댓글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const reviseCommentNotice = async (req, res, next) => {
     try {
         reviseCommentFunction(req, res, next, 'notice');

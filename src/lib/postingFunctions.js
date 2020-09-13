@@ -264,6 +264,37 @@ const postCommentFunction = async (req, res, next, type) => {
 
 const reviseCommentFunction = async (req, res, next, type) => {
     try {
+        const { userId } = req.query;
+        const { boardId, commentId } = req.params;
+
+        const { error, value } = commentScheme.validate(req.body);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const { body } = value;
+
+        const user = await checkUser(userId);
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { checkedId, userLevel } = user;
+
+        const board = await checkBoard(boardId, type);
+        if (!board) throw new Error('INVALID_PARAMETERS');
+
+        const { readLevel } = board;
+
+        const comment = await checkComment(boardId, commentId);
+        if (!comment) throw new Error('INVALID_PARAMETERS');
+
+        const { writerCommentId } = comment;
+
+        const isWriterComment = checkedId === writerCommentId;
+        if (!isWriterComment) throw new Error('NO_AUTH');
+
+        const readAuth = readLevel <= userLevel;
+        if (!readAuth) throw new Error('NO_AUTH');
+
+        await boardComments.update({ body }, { where: { commentId } });
+
         res.json({});
     } catch (err) {
         next(err);

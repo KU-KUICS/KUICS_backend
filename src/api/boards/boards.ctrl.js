@@ -238,7 +238,7 @@ const postCommentBoard = async (req, res, next) => {
 };
 
 /**
- *  댓글 수정하기
+ *  글에 대한 댓글 수정하기
  *  @route PUT /api/board/{boardId}/comment/{commentId}
  *  @group Board
  *  @param {number} boardId.path.required - 글 번호
@@ -250,38 +250,7 @@ const postCommentBoard = async (req, res, next) => {
  */
 const reviseCommentBoard = async (req, res, next) => {
     try {
-        const { userId } = req.query;
-        const { boardId, commentId } = req.params;
-
-        const { error, value } = commentScheme.validate(req.body);
-        if (error) throw new Error('INVALID_PARAMETERS');
-
-        const { body } = value;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { checkedId, userLevel } = user;
-
-        const board = await checkBoard(boardId, 'board');
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { readLevel } = board;
-
-        const comment = await checkComment(boardId, commentId);
-        if (!comment) throw new Error('INVALID_PARAMETERS');
-
-        const { writerCommentId } = comment;
-
-        const isWriterComment = checkedId === writerCommentId;
-        if (!isWriterComment) throw new Error('NO_AUTH');
-
-        const readAuth = readLevel <= userLevel;
-        if (!readAuth) throw new Error('NO_AUTH');
-
-        await boardComments.update({ body }, { where: { commentId } });
-
-        res.json({});
+        reviseCommentFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
