@@ -85,7 +85,16 @@ const reviseCommentNotice = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ *  공지글에 대한 댓글 삭제하기
+ *  @route DELETE /api/notice/{boardId}/comment/{commentId}
+ *  @group Notice
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {number} commentId.path.required - 댓글 번호
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const deleteCommentNotice = async (req, res, next) => {
     try {
         deleteCommentFunction(req, res, next, 'notice');

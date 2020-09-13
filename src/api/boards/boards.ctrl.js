@@ -257,7 +257,7 @@ const reviseCommentBoard = async (req, res, next) => {
 };
 
 /**
- *  댓글 삭제하기
+ *  글에 대한 댓글 삭제하기
  *  @route DELETE /api/board/{boardId}/comment/{commentId}
  *  @group Board
  *  @param {number} boardId.path.required - 글 번호
@@ -268,51 +268,7 @@ const reviseCommentBoard = async (req, res, next) => {
  */
 const deleteCommentBoard = async (req, res, next) => {
     try {
-        const { userId } = req.query;
-        const { boardId, commentId } = req.params;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { checkedId, userLevel } = user;
-
-        const board = await checkBoard(boardId, 'board');
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { readLevel } = board;
-
-        const comment = await checkComment(boardId, commentId);
-        if (!comment) throw new Error('INVALID_PARAMETERS');
-
-        const { writerCommentId } = comment;
-
-        const isWriterComment = checkedId === writerCommentId;
-        const isAdmin = userLevel === 999;
-        if (!isWriterComment && !isAdmin) throw new Error('NO_AUTH');
-
-        const readAuth = readLevel <= userLevel;
-        if (!readAuth) throw new Error('NO_AUTH');
-
-        const t = await sequelize.transaction();
-
-        await boardComments.destroy(
-            { where: { commentId } },
-            { transaction: t },
-        );
-
-        await boards.decrement(
-            'commentCount',
-            {
-                by: 1,
-                where: { boardId },
-                silent: true,
-            },
-            { transaction: t },
-        );
-
-        await t.commit();
-
-        res.json({});
+        deleteCommentFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
