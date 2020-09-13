@@ -134,7 +134,7 @@ const getBoard = async (req, res, next) => {
 /**
  * @typedef boardScheme
  * @property {string} title.required
- * @property {string} body.required
+ * @property {Array<string>} body.required
  * @property {number} level.required
  */
 

@@ -166,7 +166,7 @@ const deleteUser = async (req, res, next) => {
  * 소개글 작성
  * @typedef Intro
  * @property {string} title.required - 제목
- * @property {string} content.required - 내용
+ * @property {{Array<string>}} content.required - 내용
  */
 
 /**
@@ -264,7 +264,7 @@ const deleteIntro = async (req, res, next) => {
 /**
  * @typedef boardScheme
  * @property {string} title.required
- * @property {string} body.required
+ * @property {{Array<string>}} body.required
  * @property {number} level.required
  */
 
