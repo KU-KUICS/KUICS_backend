@@ -103,7 +103,16 @@ const deleteCommentNotice = async (req, res, next) => {
     }
 };
 
-/** */
+/**
+ *  commentId에 해당하는 공지글의 댓글 추천하기
+ *  @route POST /api/notice/{boardId}/comment/{commentId}/recommend
+ *  @group Notice
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {number} commentId.path.required - 댓글 번호
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
 const recommendCommentNotice = async (req, res, next) => {
     try {
         recommendCommentFunction(req, res, next, 'notice');

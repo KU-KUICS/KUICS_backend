@@ -275,7 +275,7 @@ const deleteCommentBoard = async (req, res, next) => {
 };
 
 /**
- *  commentId에 해당하는 글 추천하기
+ *  commentId에 해당하는 글의 댓글 추천하기
  *  @route POST /api/board/{boardId}/comment/{commentId}/recommend
  *  @group Board
  *  @param {number} boardId.path.required - 글 번호
@@ -286,73 +286,7 @@ const deleteCommentBoard = async (req, res, next) => {
  */
 const recommendCommentBoard = async (req, res, next) => {
     try {
-        const { boardId, commentId } = req.params;
-        const { userId } = req.query;
-
-        const user = await checkUser(userId);
-        if (!user) throw new Error('INVALID_PARAMETERS');
-
-        const { userLevel } = user;
-
-        const board = await checkBoard(boardId, 'board');
-        if (!board) throw new Error('INVALID_PARAMETERS');
-
-        const { readLevel } = board;
-
-        const comment = await checkComment(boardId, commentId);
-        if (!comment) throw new Error('INVALID_PARAMETERS');
-
-        const readAuth = readLevel <= userLevel;
-        if (!readAuth) throw new Error('NO_AUTH');
-
-        const checkRecommended = await recommendedComment(commentId, userId);
-
-        const t = await sequelize.transaction();
-        if (!checkRecommended) {
-            /* 추천하지 않은 경우, 추천하기 */
-            await recommendComments.create(
-                {
-                    boardCommentCommentId: commentId,
-                    userUserId: userId,
-                },
-                { transaction: t },
-            );
-
-            await boardComments.increment(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { commentId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        } else {
-            /* 이미 추천한 경우, 추천 취소하기 */
-            await recommendComments.destroy(
-                {
-                    where: {
-                        boardCommentCommentId: commentId,
-                        userUserId: userId,
-                    },
-                },
-                { transaction: t },
-            );
-
-            await boardComments.decrement(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { commentId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        }
-
-        await t.commit();
-
-        res.json({});
+        recommendCommentFunction(req, res, next, 'board');
     } catch (err) {
         next(err);
     }
