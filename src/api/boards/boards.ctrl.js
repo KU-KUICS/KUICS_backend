@@ -12,7 +12,7 @@ const {
     boardListScheme,
 } = require('../../lib/schemes');
 
-const { postFunction } = require('../../lib/postFunctions');
+const { postFunction } = require('../../lib/postingFunctions');
 
 const {
     checkUser,
@@ -336,7 +336,7 @@ const recommendBoard = async (req, res, next) => {
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
-const postComment = async (req, res, next) => {
+const postCommentBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId } = req.params;
@@ -389,7 +389,7 @@ const postComment = async (req, res, next) => {
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
-const reviseComment = async (req, res, next) => {
+const reviseCommentBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId, commentId } = req.params;
@@ -438,7 +438,7 @@ const reviseComment = async (req, res, next) => {
  *  @returns {Error} INVALID_PARAMETERS - invalid parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
-const deleteComment = async (req, res, next) => {
+const deleteCommentBoard = async (req, res, next) => {
     try {
         const { userId } = req.query;
         const { boardId, commentId } = req.params;
@@ -489,7 +489,7 @@ const deleteComment = async (req, res, next) => {
  *  @returns {Error} INVALID_PARAMETERS - invalid parameters
  *  @returns {Error} NO_AUTH - unauthorized
  */
-const recommendComment = async (req, res, next) => {
+const recommendCommentBoard = async (req, res, next) => {
     try {
         const { boardId, commentId } = req.params;
         const { userId } = req.query;
@@ -570,8 +570,8 @@ module.exports = {
     reviseBoard,
     deleteBoard,
     recommendBoard,
-    postComment,
-    reviseComment,
-    deleteComment,
-    recommendComment,
+    postCommentBoard,
+    reviseCommentBoard,
+    deleteCommentBoard,
+    recommendCommentBoard,
 };

@@ -11,7 +11,7 @@ const {
 
 const { checkAdmin } = require('../../lib/validations');
 
-const { postFunction } = require('../../lib/postFunctions');
+const { postFunction } = require('../../lib/postingFunctions');
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
