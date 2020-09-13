@@ -6,7 +6,7 @@ const {
     updateUserPermission,
     deleteUser,
     postNotice,
-    putEditNotice,
+    reviseNotice,
     deleteNotice,
     postIntro,
     updateIntro,
@@ -21,8 +21,8 @@ router.put('/user/permission', isAuthenticated, updateUserPermission); // 사용
 router.delete('/user/:userId', isAuthenticated, deleteUser); // 사용자 삭제
 
 router.post('/notice', postNotice); // 공지 작성
-router.put('/notice/:notice_id', putEditNotice); // 공지 수정
-router.delete('/notice/:notice_id', deleteNotice); // 공지 삭제
+router.put('/notice/:boardId', reviseNotice); // 공지 수정
+router.delete('/notice/:boardId', deleteNotice); // 공지 삭제
 
 router.post('/intro', isAuthenticated, postIntro);
 router.put('/intro/:introId', isAuthenticated, updateIntro);

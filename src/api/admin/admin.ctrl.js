@@ -11,7 +11,7 @@ const {
 
 const { checkAdmin } = require('../../lib/validations');
 
-const { postFunction } = require('../../lib/postingFunctions');
+const { postFunction, reviseFunction } = require('../../lib/postingFunctions');
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
@@ -285,7 +285,27 @@ const postNotice = async (req, res, next) => {
     }
 };
 
-const putEditNotice = async (req, res, next) => {};
+/**
+ *  boardId에 해당하는 공지글 수정하기
+ *  @route PUT /api/admin/notice/{boardId}
+ *  @group Admin
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+const reviseNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await checkAdmin(req.query.userId);
+        if (!admin) throw new Error('NO_AUTH');
+
+        reviseFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
 const deleteNotice = async (req, res, next) => {};
 
 module.exports = {
@@ -294,7 +314,7 @@ module.exports = {
     updateUserPermission,
     deleteUser,
     postNotice,
-    putEditNotice,
+    reviseNotice,
     deleteNotice,
     postIntro,
     updateIntro,
