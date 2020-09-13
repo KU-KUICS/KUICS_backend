@@ -260,7 +260,7 @@ const deleteIntro = async (req, res, next) => {
 const postNotice = async (req, res, next) => {
     try {
         /* admin check */
-        const admin = await isAdmin(req.query.userId);
+        const admin = await checkAdmin(req.query.userId);
         if (!admin) throw new Error('NO_AUTH');
 
         postFunction(req, res, next, 'notice');
