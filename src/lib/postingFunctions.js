@@ -1,3 +1,5 @@
+const { boardScheme, commentScheme, boardListScheme } = require('./schemes');
+
 const {
     boards,
     boardComments,
@@ -6,8 +8,6 @@ const {
     sequelize,
 } = require('../models');
 
-const { boardScheme, commentScheme, boardListScheme } = require('./schemes');
-
 const {
     checkUser,
     checkBoard,
@@ -15,6 +15,10 @@ const {
     recommendedBoard,
     recommendedComment,
 } = require('./validations');
+
+/* TODO: 권한 확인 query, 데이터 요청 query 통합 */
+/* TODO: 게시글에 tag 붙이기 */
+/* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 
 const postFunction = async (req, res, next, type) => {
     try {

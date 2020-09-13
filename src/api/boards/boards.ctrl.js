@@ -1,14 +1,4 @@
 const {
-    boards,
-    boardComments,
-    recommendBoards,
-    recommendComments,
-    sequelize,
-} = require('../../models');
-
-const { commentScheme, boardListScheme } = require('../../lib/schemes');
-
-const {
     postFunction,
     reviseFunction,
     deleteFunction,
@@ -20,18 +10,6 @@ const {
     deleteCommentFunction,
     recommendCommentFunction,
 } = require('../../lib/postingFunctions');
-
-const {
-    checkUser,
-    checkBoard,
-    checkComment,
-    recommendedBoard,
-    recommendedComment,
-} = require('../../lib/validations');
-
-/* TODO: 권한 확인 query, 데이터 요청 query 통합 */
-/* TODO: 게시글에 tag 붙이기 */
-/* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 
 /**
  *  page에 해당하는 글 리스트 가져오기
