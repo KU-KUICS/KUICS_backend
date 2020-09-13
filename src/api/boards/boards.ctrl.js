@@ -324,13 +324,24 @@ const deleteCommentBoard = async (req, res, next) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        await boardComments.destroy({ where: { commentId } });
+        const t = await sequelize.transaction();
 
-        await boards.decrement('commentCount', {
-            by: 1,
-            where: { boardId },
-            silent: true,
-        });
+        await boardComments.destroy(
+            { where: { commentId } },
+            { transaction: t },
+        );
+
+        await boards.decrement(
+            'commentCount',
+            {
+                by: 1,
+                where: { boardId },
+                silent: true,
+            },
+            { transaction: t },
+        );
+
+        await t.commit();
 
         res.json({});
     } catch (err) {

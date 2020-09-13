@@ -158,6 +158,7 @@ const recommendFunction = async (req, res, next, type) => {
         const checkRecommended = await recommendedBoard(boardId, userId);
 
         const t = await sequelize.transaction();
+
         if (!checkRecommended) {
             /* 추천하지 않은 경우, 추천하기 */
             await recommendBoards.create(
@@ -231,18 +232,29 @@ const postCommentFunction = async (req, res, next, type) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        await boardComments.create({
-            body,
-            recommendedTime: 0,
-            userUserId: userId,
-            boardBoardId: boardId,
-        });
+        const t = await sequelize.transaction();
 
-        await boards.increment('commentCount', {
-            by: 1,
-            where: { boardId },
-            silent: true,
-        });
+        await boardComments.create(
+            {
+                body,
+                recommendedTime: 0,
+                userUserId: userId,
+                boardBoardId: boardId,
+            },
+            { transaction: t },
+        );
+
+        await boards.increment(
+            'commentCount',
+            {
+                by: 1,
+                where: { boardId },
+                silent: true,
+            },
+            { transaction: t },
+        );
+
+        await t.commit();
 
         res.json({});
     } catch (err) {
