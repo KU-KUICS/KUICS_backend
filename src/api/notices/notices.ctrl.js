@@ -17,7 +17,7 @@ const {
  *  @returns {Object} 200 - 글 리스트
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
-const getNoticeList = async (req, res, next) => {
+const getListNotice = async (req, res, next) => {
     try {
         getListFunction(req, res, next, 'notice');
     } catch (err) {
@@ -139,7 +139,7 @@ const recommendCommentNotice = async (req, res, next) => {
 };
 
 module.exports = {
-    getNoticeList,
+    getListNotice,
     getNotice,
     recommendNotice,
     postCommentNotice,

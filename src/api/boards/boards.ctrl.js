@@ -42,7 +42,7 @@ const {
  *  @returns {Object} 200 - 글 리스트
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
-const getBoardList = async (req, res, next) => {
+const getListBoard = async (req, res, next) => {
     try {
         getListFunction(req, res, next, 'board');
     } catch (err) {
@@ -223,7 +223,7 @@ const recommendCommentBoard = async (req, res, next) => {
 };
 
 module.exports = {
-    getBoardList,
+    getListBoard,
     getBoard,
     postBoard,
     reviseBoard,

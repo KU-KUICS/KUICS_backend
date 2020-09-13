@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const {
-    getNoticeList,
+    getListNotice,
     getNotice,
     recommendNotice,
     postCommentNotice,
@@ -11,7 +11,7 @@ const {
 
 const router = Router();
 
-router.get('/page/:page', getNoticeList);
+router.get('/page/:page', getListNotice);
 router.get('/:boardId', getNotice);
 router.post('/:boardId/recommend', recommendNotice);
 router.post('/:boardId/comment', postCommentNotice);
