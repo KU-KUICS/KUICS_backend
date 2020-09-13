@@ -12,7 +12,7 @@ const {
     boardListScheme,
 } = require('../../lib/schemes');
 
-const { postFunction } = require('../../lib/functions');
+const { postFunction } = require('../../lib/postFunctions');
 
 const {
     checkUser,
