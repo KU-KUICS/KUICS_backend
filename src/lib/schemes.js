@@ -5,6 +5,8 @@ const Joi = require('@hapi/joi');
  */
 const contentScheme = Joi.array().items(Joi.string()).required();
 
+const boardLevelScheme = Joi.any().valid('1', '2').required();
+
 const emailScheme = Joi.string()
     .pattern(
         /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
@@ -18,7 +20,9 @@ const nameScheme = Joi.string()
     .pattern(/^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/)
     .required();
 
-const numberScheme = Joi.number().positive();
+const numberScheme = Joi.number().positive().required();
+
+const numberSchemeOptional = Joi.number().positive().optional();
 
 const studentIdScheme = Joi.string()
     .pattern(/^[0-9]{10}$/)
@@ -34,6 +38,7 @@ const searchTargetScheme = Joi.string()
  * Scheme wrappers
  * 1. Admin API
  * 2. Search API
+ * 3. Board API
  */
 const userScheme = Joi.object({
     userName: nameScheme,
@@ -63,10 +68,29 @@ const searchInputScheme = Joi.object({
     target: searchTargetScheme,
 });
 
+/* Board API */
+const boardScheme = Joi.object({
+    title: stringScheme,
+    body: contentScheme,
+    level: boardLevelScheme,
+});
+
+const commentScheme = Joi.object({
+    body: stringScheme,
+});
+
+const boardListScheme = Joi.object({
+    page: numberScheme,
+    count: numberSchemeOptional,
+});
+
 module.exports = {
     userScheme,
     introScheme,
     permScheme,
     updateIntroScheme,
     searchInputScheme,
+    boardScheme,
+    commentScheme,
+    boardListScheme,
 };

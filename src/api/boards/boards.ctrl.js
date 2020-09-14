@@ -1,4 +1,3 @@
-const Joi = require('@hapi/joi');
 const {
     boards,
     boardComments,
@@ -8,19 +7,12 @@ const {
     sequelize,
 } = require('../../models');
 
-const titleScheme = Joi.string().min(3).required();
-const bodyScheme = Joi.string().required();
-const boardLevelScheme = Joi.any().valid('1', '2').required();
-
-const boardScheme = Joi.object({
-    title: titleScheme,
-    body: bodyScheme,
-    level: boardLevelScheme,
-});
-
-const commentScheme = Joi.object({
-    body: bodyScheme,
-});
+const {
+    boardScheme,
+    commentScheme,
+    boardListScheme,
+} = require('../../lib/schemes');
+/* TODO: vaildation 추가 */
 
 const checkUser = async (userId) => {
     const user = await users.findOne({
@@ -75,22 +67,33 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 /* TODO: user 가져오는 방식 변경 (req.user.emails[0].value) */
 
 /**
- *  글 미리보기 정보 가져오기
- *  @route GET /api/board
+ *  page에 해당하는 글 리스트 가져오기
+ *  @route GET /api/board/page/{page}
  *  @group Board
- *  @param {number} boardId.query.required - 글 번호
- *  @returns {Object} 200 - 글 미리보기
+ *  @param {number} page.path.required - 페이지 번호
+ *  @param {number} count.query.optional - 글 개수
+ *  @returns {Object} 200 - 글 리스트
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
-const getBoardExcerpt = async (req, res, next) => {
+const getBoardList = async (req, res, next) => {
     try {
-        const { boardId } = req.query;
+        const baseCount = 10;
 
-        const board = await checkBoard(boardId);
-        if (!board) throw new Error('INVALID_PARAMETERS');
+        const { error, value } = boardListScheme.validate({
+            page: req.params.page,
+            count: req.query.count,
+        });
+        if (error) throw new Error('INVALID_PARAMETERS');
 
-        const boardExcerpt = await boards.findOne({
-            where: { boardId },
+        const { page, count } = value;
+
+        const limit = count || baseCount; // count 없는 경우 baseCount 사용
+        const offset = (page - 1) * limit;
+
+        const boardList = await boards.findAll({
+            offset,
+            limit,
+            order: [['boardId', 'DESC']],
             attributes: [
                 'boardId',
                 'excerpt',
@@ -101,7 +104,7 @@ const getBoardExcerpt = async (req, res, next) => {
             ],
         });
 
-        res.json({ boardExcerpt });
+        res.json({ boardList });
     } catch (err) {
         next(err);
     }
@@ -201,7 +204,7 @@ const postBoard = async (req, res, next) => {
         const writeAuth = level <= userLevel;
         if (!writeAuth) throw new Error('NO_AUTH');
 
-        const excerpt = body.substring(0, 150);
+        const excerpt = body.join(' ').substring(0, 150);
 
         /* ISSUE: 에러 발생하는 경우에 boardId 증가하지 않도록 (빈 번호 없도록) 처리 필요 */
         await boards.create({
@@ -257,7 +260,7 @@ const reviseBoard = async (req, res, next) => {
         const writeAuth = level <= userLevel;
         if (!writeAuth) throw new Error('NO_AUTH');
 
-        const excerpt = body.substring(0, 150);
+        const excerpt = body.join(' ').substring(0, 150);
 
         await boards.update(
             { title, body, excerpt, level },
@@ -631,7 +634,7 @@ const recommendComment = async (req, res, next) => {
 };
 
 module.exports = {
-    getBoardExcerpt,
+    getBoardList,
     getBoard,
     postBoard,
     reviseBoard,
