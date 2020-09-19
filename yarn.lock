@@ -2618,10 +2618,10 @@ mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mysql2@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-2.2.1.tgz#2ae95be607231c5a68695646198be0aa73388534"
-  integrity sha512-15V3jAvxkxdApCoTUbO0p07/R6XAbtWZ75Be0MF70bN7i7zojk+cKxKlodmACZCbifLimxxqihrsNycKVxRuxg==
+mysql2@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-2.2.2.tgz#496b4ff87cfb609b055ad822e261182bd956f9aa"
+  integrity sha512-ah5+q525gmcQ/wfZExkFTSvajjAyje3PS4OAgWS2JyU8FOgUFJFQ3aitgRoZjhOW4fbIMI6RYkWtW7Yk0uK9vw==
   dependencies:
     "@types/mysql" "^2.15.7"
     denque "^1.4.1"
