@@ -30,9 +30,9 @@ const studentIdScheme = Joi.string()
 
 const stringScheme = Joi.string().min(3).required();
 
-const searchTargetScheme = Joi.string()
-    .valid('title', 'body', 'titleAndBody')
-    .required();
+const searchScheme = Joi.string().min(2); // search 검사 조건 구체화 필요
+
+const searchDurationScheme = Joi.array(); // Duration search 검사 조건 구체화 필요
 
 /**
  * Scheme wrappers
@@ -64,8 +64,11 @@ const updateIntroScheme = Joi.object({
 
 /* Search API */
 const searchInputScheme = Joi.object({
-    key: stringScheme,
-    target: searchTargetScheme,
+    title: searchScheme,
+    body: searchScheme,
+    duration: searchDurationScheme,
+    userName: searchScheme,
+    tag: searchScheme,
 });
 
 /* Board API */
