@@ -72,8 +72,8 @@ const getChallenges = async (req, res, next) => {
         if (!checkMember) throw new Error('NO_AUTH');
 
         const challengeList = await challenges.findAll({
-            attributes: ['challNo', 'category', 'score', 'title'],
-            order: [['challNo', 'ASC']],
+            attributes: ['challId', 'category', 'score', 'title', 'solvers'],
+            order: [['challId', 'ASC']],
         });
 
         // 문제 분야별로 정렬
@@ -100,19 +100,26 @@ const getChallengesDesc = async (req, res, next) => {
         const checkMember = await isMember(req.user.emails[0].value);
         if (!checkMember) throw new Error('NO_AUTH');
 
-        const { error, value } = numberScheme.validate(req.params.challNo);
+        const { error, value } = numberScheme.validate(req.params.challId);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const challenge = await challenges.findOne({
-            where: { challNo: value },
-            attributes: {
-                exclude: ['challNo', 'createdAt', 'updatedAt', 'flag'],
-            },
+            where: { challId: value },
+            attributes: [
+                'challId',
+                'category',
+                'score',
+                'title',
+                'description',
+                'solvers',
+                ['userUserId', 'firstBlood'],
+            ],
         });
         if (!challenge) throw new Error('INVALID_PARAMETERS');
 
         res.json({ challenge });
     } catch (err) {
+        console.log(err);
         next(err);
     }
 };
