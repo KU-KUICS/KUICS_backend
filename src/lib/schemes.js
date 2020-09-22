@@ -63,10 +63,18 @@ const searchInputScheme = Joi.object({
     target: searchTargetScheme,
 });
 
+const flagSubmitScheme = Joi.object({
+    challNo: numberScheme.required(),
+    flag: Joi.string()
+        .pattern(/^KUICS\{\w+\}$/) // 임시 플래그 포맷
+        .required(),
+});
+
 module.exports = {
     userScheme,
     introScheme,
     permScheme,
     updateIntroScheme,
     searchInputScheme,
+    flagSubmitScheme,
 };

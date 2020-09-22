@@ -1,16 +1,7 @@
-const Joi = require('@hapi/joi');
+const crypto = require('crypto');
 const { Op } = require('sequelize');
 const { users, challenges, solvers } = require('../../models');
-
-/* 검증 스키마 */
-const numberSchema = Joi.number();
-
-const flagSubmitSchema = Joi.object({
-    challNo: numberSchema.required(),
-    flag: Joi.string()
-        .pattern(/^KUICS\{\w+\}$/) // 임시 플래그 포맷
-        .required(),
-});
+const { flagSubmitScheme } = require('../../lib/schemes');
 
 // TODO: 다른 API 멤버 체크 함수랑 통합
 const isMember = async (email) => {
@@ -77,7 +68,7 @@ const postSubmitFlag = async (req, res, next) => {
         const checkMember = await isMember(req.user.emails[0].value);
         if (!checkMember) throw new Error('NO_AUTH');
 
-        const { error, value } = flagSubmitSchema.validate(req.body);
+        const { error, value } = flagSubmitScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
 
         const { challNo, flag } = value;
@@ -87,7 +78,8 @@ const postSubmitFlag = async (req, res, next) => {
         });
         if (!challenge) throw new Error('INVALID_PARAMETERS');
 
-        if (flag !== challenge.flag) throw new Error('INVALID_PARAMETERS');
+        const flagHash = crypto.createHash('sha256').update(flag).digest('hex');
+        if (flagHash !== challenge.flag) throw new Error('INVALID_PARAMETERS');
         if (challenge.solvers === 0) {
             challenge.userUserNo = checkMember.userNo; // 퍼스트 블러드
         } else {
