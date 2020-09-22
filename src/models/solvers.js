@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Solvers = sequelize.define('solvers', {
         // Priamry Key
-        challengeNo: {
+        solverId: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,

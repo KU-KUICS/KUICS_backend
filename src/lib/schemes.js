@@ -64,13 +64,14 @@ const searchInputScheme = Joi.object({
 });
 
 const flagSubmitScheme = Joi.object({
-    challNo: numberScheme.required(),
+    challId: numberScheme.required(),
     flag: Joi.string()
         .pattern(/^KUICS\{\w+\}$/) // 임시 플래그 포맷
         .required(),
 });
 
 module.exports = {
+    numberScheme,
     userScheme,
     introScheme,
     permScheme,
