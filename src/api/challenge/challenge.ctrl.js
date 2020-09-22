@@ -56,7 +56,7 @@ const getUserScoreboard = async (req, res, next) => {
             where: { userNo: value, state: 0 },
             attributes: [
                 'userName',
-                // 푼 문제 목록
+                // TODO: 푼 문제 목록
             ],
         });
 
@@ -119,7 +119,6 @@ const getChallengesDesc = async (req, res, next) => {
 
         res.json({ challenge });
     } catch (err) {
-        console.log(err);
         next(err);
     }
 };
@@ -157,7 +156,20 @@ const postSubmitFlag = async (req, res, next) => {
             if (isSolved) throw new Error('ALREADY_SOLVED');
         }
 
+        // 임계점 대비 솔버 수에 따라 점수가 조정됨
+        const minScore = 50;
+        const maxScore = 500;
+        const solverThreshold = 5;
         challenge.solvers += 1;
+        challenge.score =
+            solverThreshold >= challenge.solver
+                ? Math.ceil(
+                      ((minScore - maxScore) /
+                          (solverThreshold * solverThreshold)) *
+                          (challenge.solvers * challenge.solvers) +
+                          maxScore,
+                  )
+                : minScore;
         await challenge.save();
         await solvers.create({
             userUserId: checkMember.userId,
