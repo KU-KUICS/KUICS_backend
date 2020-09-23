@@ -38,11 +38,8 @@ const searchDurationScheme = Joi.array(); // Duration search 검사 조건 구�
  * Scheme wrappers
  * 1. Admin API
  * 2. Search API
-<<<<<<< HEAD
  * 3. Board API
  * 4. Challenge API
-=======
->>>>>>> apply
  */
 const userScheme = Joi.object({
     userName: nameScheme,
