@@ -298,14 +298,14 @@ const postChallenge = async (req, res, next) => {
             try {
                 if (e) throw new Error('INVALID_PARAMETERS');
 
+                const { error, value } = challengeScheme.validate(req.body);
+                if (error) throw new Error('INVALID_PARAMETERS');
+
                 const attachment = await fs.readFile(req.file.path);
                 const attachmentHash = crypto
                     .createHash('sha256')
                     .update(attachment)
                     .digest('hex');
-
-                const { error, value } = challengeScheme.validate(req.body);
-                if (error) throw new Error('INVALID_PARAMETERS');
 
                 const { category, title, description, flag } = value;
                 const originalName = path.parse(req.file.originalname);
@@ -349,27 +349,64 @@ const putChallenge = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = updateChallengeScheme.validate({
-            challId: req.params.challId,
-            ...req.body,
+        challengeUpload.single('attachment')(req, res, async (e) => {
+            try {
+                if (e) throw new Error('INVALID_PARAMETERS');
+
+                const { error, value } = updateChallengeScheme.validate({
+                    challId: req.params.challId,
+                    ...req.body,
+                });
+                if (error) throw new Error('INVALID_PARAMETERS');
+
+                const { challId, category, title, description, flag } = value;
+                const challenge = await challenges.findOne({
+                    where: { challId },
+                });
+                if (!challenge) throw new Error('INVALID_PARAMETERS');
+
+                const attachment = await fs.readFile(req.file.path);
+                const attachmentHash = crypto
+                    .createHash('sha256')
+                    .update(attachment)
+                    .digest('hex');
+
+                const originalName = path.parse(req.file.originalname);
+                const t = await sequelize.transaction();
+                const prevAttachment = await attachedFile.findOne({
+                    where: {
+                        challengeChallId: challId,
+                    },
+                });
+                if (prevAttachment) {
+                    await fs.unlink(prevAttachment.path);
+                    await prevAttachment.destroy({ transaction: t });
+                }
+                await attachedFile.create(
+                    {
+                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                        path: req.file.path,
+                        challengeChallId: challId,
+                    },
+                    { transaction: t },
+                );
+
+                challenge.category = category;
+                challenge.title = title;
+                challenge.description = description;
+                challenge.flag = crypto
+                    .createHash('sha256')
+                    .update(flag)
+                    .digest('hex')
+                    .toUpperCase();
+                await challenge.save({ transaction: t });
+                await t.commit();
+
+                res.json({});
+            } catch (err) {
+                next(err);
+            }
         });
-        if (error) throw new Error('INVALID_PARAMETERS');
-
-        const { challId, category, title, description, flag } = value;
-        const challenge = await challenges.findone({ where: { challId } });
-        if (!challenge) throw new Error('INVALID_PARAMETERS');
-
-        challenge.category = category;
-        challenge.title = title;
-        challenge.description = description;
-        challenge.flag = crypto
-            .createHash('sha256')
-            .update(flag)
-            .digest('hex')
-            .toUpperCase();
-        await challenge.save({});
-
-        res.json({});
     } catch (err) {
         next(err);
     }
