@@ -64,11 +64,35 @@ const searchInputScheme = Joi.object({
     target: searchTargetScheme,
 });
 
+/* Challnege API */
+const categoryScheme = Joi.any()
+    .valid('PWN', 'REV', 'WEB', 'CRYPTO', 'MISC')
+    .required();
+
+const flagScheme = Joi.string()
+    .pattern(/^KUICS\{\w+\}$/)
+    .required();
+
+const challengeScheme = Joi.object({
+    category: categoryScheme,
+    title: stringScheme,
+    description: stringScheme,
+    flag: flagScheme,
+    // TODO: attachment
+});
+
+const updateChallengeScheme = Joi.object({
+    challId: numberScheme,
+    category: categoryScheme,
+    title: stringScheme,
+    description: stringScheme,
+    flag: flagScheme,
+    // TODO: attachment
+});
+
 const flagSubmitScheme = Joi.object({
     challId: numberScheme.required(),
-    flag: Joi.string()
-        .pattern(/^KUICS\{\w+\}$/) // 임시 플래그 포맷
-        .required(),
+    flag: flagScheme,
 });
 
 module.exports = {
@@ -78,5 +102,7 @@ module.exports = {
     permScheme,
     updateIntroScheme,
     searchInputScheme,
+    challengeScheme,
+    updateChallengeScheme,
     flagSubmitScheme,
 };

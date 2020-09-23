@@ -31,8 +31,8 @@ router.post('/intro', isAuthenticated, postIntro);
 router.put('/intro/:introId', isAuthenticated, updateIntro);
 router.delete('/intro/:introId', isAuthenticated, deleteIntro);
 
-router.post('/challenge', postChallenge);
-router.put('/challenge', putChallenge);
-router.delete('/challenge/:challNo', deleteChallenge);
+router.post('/challenge', postChallenge); // 문제 등록
+router.put('/challenge/:challId', putChallenge); // 문제 수정
+router.delete('/challenge/:challId', deleteChallenge); // 문제 삭제
 
 module.exports = router;

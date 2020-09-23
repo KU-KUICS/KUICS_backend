@@ -1,12 +1,15 @@
 const crypto = require('crypto');
-const { users, intros } = require('../../models');
+const { users, intros, challenges } = require('../../models');
 const {
+    numberScheme,
     userScheme,
     introIdScheme,
     introScheme,
     updateIntroScheme,
     permScheme,
     userIdScheme,
+    challengeScheme,
+    updateChallengeScheme,
 } = require('../../lib/schemes');
 
 const isAdmin = async (email) => {
@@ -257,11 +260,82 @@ const postNotice = async (req, res, next) => {};
 const putEditNotice = async (req, res, next) => {};
 const deleteNotice = async (req, res, next) => {};
 
-const postChallenge = async (req, res, next) => {};
+const postChallenge = async (req, res, next) => {
+    try {
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-const putChallenge = async (req, res, next) => {};
+        const { error, value } = challengeScheme.validate(req.body);
+        if (error) throw new Error('INVALID_PARAMETERS');
 
-const deleteChallenge = async (req, res, next) => {};
+        const { category, title, description, flag } = value;
+        await challenges.create({
+            category,
+            title,
+            description,
+            flag: crypto
+                .createHash('sha256')
+                .update(flag)
+                .digest('hex')
+                .toUpperCase(),
+        });
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const putChallenge = async (req, res, next) => {
+    try {
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
+        const { error, value } = updateChallengeScheme.validate({
+            challId: req.params.challId,
+            ...req.body,
+        });
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const { challId, category, title, description, flag } = value;
+        const challenge = await challenges.findone({ where: { challId } });
+        if (!challenge) throw new Error('INVALID_PARAMETERS');
+
+        challenge.category = category;
+        challenge.title = title;
+        challenge.description = description;
+        challenge.flag = crypto
+            .createHash('sha256')
+            .update(flag)
+            .digest('hex')
+            .toUpperCase();
+        await challenge.save({});
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deleteChallenge = async (req, res, next) => {
+    try {
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
+
+        const { error, value } = numberScheme.validate(req.params.challId);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const challId = value;
+        const challenge = await intros.findOne({ where: { challId } });
+        if (!challenge) throw new Error('INVALID_PARAMETERS');
+
+        await challenge.destroy();
+
+        res.json({});
+    } catch (err) {
+        next(err);
+    }
+};
 
 module.exports = {
     getUser,

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         // 점수
         score: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            defaultValue: 500,
         },
         // 제목
         title: {
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         // 내용
         description: {
             type: DataTypes.TEXT,
-            allowNull: true,
+            allowNull: false,
         },
         // 플래그
         flag: {
