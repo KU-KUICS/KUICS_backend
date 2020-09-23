@@ -1,5 +1,11 @@
 const crypto = require('crypto');
-const { sequelize, users, challenges, solvers } = require('../../models');
+const {
+    sequelize,
+    users,
+    challenges,
+    solvers,
+    attachedFile,
+} = require('../../models');
 const { numberScheme, flagSubmitScheme } = require('../../lib/schemes');
 
 // TODO: 다른 API 멤버 체크 함수랑 통합
@@ -203,10 +209,30 @@ const postSubmitFlag = async (req, res, next) => {
     }
 };
 
+const getDownloadAttachment = async (req, res, next) => {
+    try {
+        // const checkMember = await isMember(req.user.emails[0].value);
+        // if (!checkMember) throw new Error('NO_AUTH');
+
+        const { error, value } = numberScheme.validate(req.params.challId);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const attachment = await attachedFile.findOne({
+            where: { challengeChallId: value },
+        });
+        if (!attachment) throw new Error('INVALID_PARAMETERS');
+
+        res.download(attachment.path, attachment.fileName);
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getScoreboard,
     getUserScoreboard,
     getChallenges,
     getChallengesDesc,
     postSubmitFlag,
+    getDownloadAttachment,
 };
