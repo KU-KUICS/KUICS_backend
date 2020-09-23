@@ -43,7 +43,7 @@ const getSearchResult = async (req, res, next) => {
                 body: { [Op.like]: searchBody },
                 createdAt: {
                     [Op.between]: [searchDuration[0], searchDuration[1]],
-                },
+                }, // TODO: boards의 구조 재확인 필요
                 userID: searchUserID, // TODO: user와 board Join 구현 필요
                 //  tag: searchTag , // ISSUE: board에 아직 기능 추가 안 됨
             },
