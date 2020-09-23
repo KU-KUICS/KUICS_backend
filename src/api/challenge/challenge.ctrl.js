@@ -54,16 +54,27 @@ const getUserScoreboard = async (req, res, next) => {
         const checkMember = await isMember(req.user.emails[0].value);
         if (!checkMember) throw new Error('NO_AUTH');
 
-        const { error, value } = numberScheme.validate(req.params.userNo);
+        const { error, value } = numberScheme.validate(req.params.userId);
         if (error) throw new Error('INVALID_PARAMETERS');
 
-        const scoreboard = await users.findAll({
-            where: { userNo: value, state: 0 },
-            attributes: [
-                'userName',
-                // TODO: 푼 문제 목록
+        const scoreboard = await solvers.findAll({
+            attributes: ['userUserId', ['createdAt', 'submitted']],
+            where: { userUserId: value },
+            include: [
+                {
+                    model: challenges,
+                    attributes: ['title', 'score'],
+                    required: true,
+                },
+                {
+                    model: users,
+                    attributes: ['userName'],
+                    required: true,
+                },
             ],
+            order: [['createdAt', 'ASC']],
         });
+        if (scoreboard.length === 0) throw new Error('INVALID_PARAMETERS');
 
         res.json({ scoreboard });
     } catch (err) {
