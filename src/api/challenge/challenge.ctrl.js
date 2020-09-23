@@ -21,6 +21,7 @@ const getScoreboard = async (req, res, next) => {
             attributes: [
                 'userUserId',
                 [fn('SUM', col('challenge.score')), 'score'],
+                [fn('MAX', col('solvers.updatedAt')), 'lastSubmit'],
             ],
             include: [
                 {
@@ -35,6 +36,10 @@ const getScoreboard = async (req, res, next) => {
                 },
             ],
             group: ['solvers.userUserId', 'user.userName'],
+            order: [
+                [col('score'), 'DESC'],
+                [col('lastSubmit'), 'ASC'],
+            ],
             raw: true,
         });
 
@@ -162,7 +167,7 @@ const postSubmitFlag = async (req, res, next) => {
         const solverThreshold = 5;
         challenge.solvers += 1;
         challenge.score =
-            solverThreshold >= challenge.solver
+            solverThreshold >= challenge.solvers
                 ? Math.ceil(
                       ((minScore - maxScore) /
                           (solverThreshold * solverThreshold)) *
