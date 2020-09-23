@@ -2,7 +2,13 @@ const crypto = require('crypto');
 const fs = require('fs').promises;
 const path = require('path');
 const multer = require('multer');
-const { users, intros, challenges, attachedFile } = require('../../models');
+const {
+    sequelize,
+    users,
+    intros,
+    challenges,
+    attachedFile,
+} = require('../../models');
 const {
     numberScheme,
     userScheme,
@@ -285,8 +291,8 @@ const deleteNotice = async (req, res, next) => {};
 
 const postChallenge = async (req, res, next) => {
     try {
-        // const checkAdmin = await isAdmin(req.user.emails[0].value);
-        // if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const checkAdmin = await isAdmin(req.user.emails[0].value);
+        if (!checkAdmin) throw new Error('NOT_ADMIN');
 
         challengeUpload.single('attachment')(req, res, async (e) => {
             try {
@@ -303,21 +309,30 @@ const postChallenge = async (req, res, next) => {
 
                 const { category, title, description, flag } = value;
                 const originalName = path.parse(req.file.originalname);
-                const challenge = await challenges.create({
-                    category,
-                    title,
-                    description,
-                    flag: crypto
-                        .createHash('sha256')
-                        .update(flag)
-                        .digest('hex')
-                        .toUpperCase(),
-                });
-                await attachedFile.create({
-                    fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
-                    path: req.file.path,
-                    challengeChallId: challenge.challId,
-                });
+
+                const t = await sequelize.transaction();
+                const challenge = await challenges.create(
+                    {
+                        category,
+                        title,
+                        description,
+                        flag: crypto
+                            .createHash('sha256')
+                            .update(flag)
+                            .digest('hex')
+                            .toUpperCase(),
+                    },
+                    { transaction: t },
+                );
+                await attachedFile.create(
+                    {
+                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                        path: req.file.path,
+                        challengeChallId: challenge.challId,
+                    },
+                    { transaction: t },
+                );
+                await t.commit();
 
                 res.json({});
             } catch (err) {

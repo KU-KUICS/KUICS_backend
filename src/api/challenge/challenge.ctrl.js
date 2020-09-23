@@ -1,12 +1,11 @@
 const crypto = require('crypto');
-const { Op, fn, col } = require('sequelize');
-const { users, challenges, solvers } = require('../../models');
+const { sequelize, users, challenges, solvers } = require('../../models');
 const { numberScheme, flagSubmitScheme } = require('../../lib/schemes');
 
 // TODO: 다른 API 멤버 체크 함수랑 통합
 const isMember = async (email) => {
     const member = await users.findOne({
-        where: { email, state: 0, level: { [Op.gte]: 1 } },
+        where: { email, state: 0, level: { [sequelize.Op.gte]: 1 } },
         attributes: ['userId'],
     });
     return member;
@@ -20,8 +19,14 @@ const getScoreboard = async (req, res, next) => {
         const scoreboard = await solvers.findAll({
             attributes: [
                 'userUserId',
-                [fn('SUM', col('challenge.score')), 'score'],
-                [fn('MAX', col('solvers.updatedAt')), 'lastSubmit'],
+                [
+                    sequelize.fn('SUM', sequelize.col('challenge.score')),
+                    'score',
+                ],
+                [
+                    sequelize.fn('MAX', sequelize.col('solvers.updatedAt')),
+                    'lastSubmit',
+                ],
             ],
             include: [
                 {
@@ -37,8 +42,8 @@ const getScoreboard = async (req, res, next) => {
             ],
             group: ['solvers.userUserId', 'user.userName'],
             order: [
-                [col('score'), 'DESC'],
-                [col('lastSubmit'), 'ASC'],
+                [sequelize.col('score'), 'DESC'],
+                [sequelize.col('lastSubmit'), 'ASC'],
             ],
             raw: true,
         });
