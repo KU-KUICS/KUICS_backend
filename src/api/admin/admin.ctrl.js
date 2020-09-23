@@ -1,5 +1,14 @@
 const crypto = require('crypto');
-const { users, intros, challenges } = require('../../models');
+const fs = require('fs').promises;
+const path = require('path');
+const multer = require('multer');
+const {
+    sequelize,
+    users,
+    intros,
+    challenges,
+    attachedFile,
+} = require('../../models');
 const {
     numberScheme,
     userScheme,
@@ -11,6 +20,26 @@ const {
     challengeScheme,
     updateChallengeScheme,
 } = require('../../lib/schemes');
+
+const challengeUpload = multer({
+    limits: {
+        files: 1,
+        fileSize: 4 * 1024, // 4GB
+    },
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'attachments/');
+        },
+        filename: async (req, file, cb) => {
+            const randBytes = await crypto.randomBytes(16);
+            const filename = crypto
+                .createHash('sha256')
+                .update(randBytes)
+                .digest('hex');
+            cb(null, filename);
+        },
+    }),
+});
 
 const isAdmin = async (email) => {
     const admin = await users.findOne({
@@ -265,22 +294,51 @@ const postChallenge = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = challengeScheme.validate(req.body);
-        if (error) throw new Error('INVALID_PARAMETERS');
+        challengeUpload.single('attachment')(req, res, async (e) => {
+            try {
+                if (e) throw new Error('INVALID_PARAMETERS');
 
-        const { category, title, description, flag } = value;
-        await challenges.create({
-            category,
-            title,
-            description,
-            flag: crypto
-                .createHash('sha256')
-                .update(flag)
-                .digest('hex')
-                .toUpperCase(),
+                const { error, value } = challengeScheme.validate(req.body);
+                if (error) throw new Error('INVALID_PARAMETERS');
+
+                const attachment = await fs.readFile(req.file.path);
+                const attachmentHash = crypto
+                    .createHash('sha256')
+                    .update(attachment)
+                    .digest('hex');
+
+                const { category, title, description, flag } = value;
+                const originalName = path.parse(req.file.originalname);
+
+                const t = await sequelize.transaction();
+                const challenge = await challenges.create(
+                    {
+                        category,
+                        title,
+                        description,
+                        flag: crypto
+                            .createHash('sha256')
+                            .update(flag)
+                            .digest('hex')
+                            .toUpperCase(),
+                    },
+                    { transaction: t },
+                );
+                await attachedFile.create(
+                    {
+                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                        path: req.file.path,
+                        challengeChallId: challenge.challId,
+                    },
+                    { transaction: t },
+                );
+                await t.commit();
+
+                res.json({});
+            } catch (err) {
+                next(err);
+            }
         });
-
-        res.json({});
     } catch (err) {
         next(err);
     }
@@ -291,27 +349,64 @@ const putChallenge = async (req, res, next) => {
         const checkAdmin = await isAdmin(req.user.emails[0].value);
         if (!checkAdmin) throw new Error('NOT_ADMIN');
 
-        const { error, value } = updateChallengeScheme.validate({
-            challId: req.params.challId,
-            ...req.body,
+        challengeUpload.single('attachment')(req, res, async (e) => {
+            try {
+                if (e) throw new Error('INVALID_PARAMETERS');
+
+                const { error, value } = updateChallengeScheme.validate({
+                    challId: req.params.challId,
+                    ...req.body,
+                });
+                if (error) throw new Error('INVALID_PARAMETERS');
+
+                const { challId, category, title, description, flag } = value;
+                const challenge = await challenges.findOne({
+                    where: { challId },
+                });
+                if (!challenge) throw new Error('INVALID_PARAMETERS');
+
+                const attachment = await fs.readFile(req.file.path);
+                const attachmentHash = crypto
+                    .createHash('sha256')
+                    .update(attachment)
+                    .digest('hex');
+
+                const originalName = path.parse(req.file.originalname);
+                const t = await sequelize.transaction();
+                const prevAttachment = await attachedFile.findOne({
+                    where: {
+                        challengeChallId: challId,
+                    },
+                });
+                if (prevAttachment) {
+                    await fs.unlink(prevAttachment.path);
+                    await prevAttachment.destroy({ transaction: t });
+                }
+                await attachedFile.create(
+                    {
+                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                        path: req.file.path,
+                        challengeChallId: challId,
+                    },
+                    { transaction: t },
+                );
+
+                challenge.category = category;
+                challenge.title = title;
+                challenge.description = description;
+                challenge.flag = crypto
+                    .createHash('sha256')
+                    .update(flag)
+                    .digest('hex')
+                    .toUpperCase();
+                await challenge.save({ transaction: t });
+                await t.commit();
+
+                res.json({});
+            } catch (err) {
+                next(err);
+            }
         });
-        if (error) throw new Error('INVALID_PARAMETERS');
-
-        const { challId, category, title, description, flag } = value;
-        const challenge = await challenges.findone({ where: { challId } });
-        if (!challenge) throw new Error('INVALID_PARAMETERS');
-
-        challenge.category = category;
-        challenge.title = title;
-        challenge.description = description;
-        challenge.flag = crypto
-            .createHash('sha256')
-            .update(flag)
-            .digest('hex')
-            .toUpperCase();
-        await challenge.save({});
-
-        res.json({});
     } catch (err) {
         next(err);
     }
