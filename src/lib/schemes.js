@@ -34,7 +34,6 @@ const searchTargetScheme = Joi.string()
  * Scheme wrappers
  * 1. Admin API
  * 2. Search API
- * 3. Challnege API
  */
 const userScheme = Joi.object({
     userName: nameScheme,
