@@ -187,6 +187,7 @@ const postSubmitFlag = async (req, res, next) => {
         const minScore = 50;
         const maxScore = 500;
         const solverThreshold = 5;
+        const t = sequelize.transaction();
         challenge.solvers += 1;
         challenge.score =
             solverThreshold >= challenge.solvers
@@ -197,11 +198,15 @@ const postSubmitFlag = async (req, res, next) => {
                           maxScore,
                   )
                 : minScore;
-        await challenge.save();
-        await solvers.create({
-            userUserId: checkMember.userId,
-            challengeChallId: challId,
-        });
+        await challenge.save({ transaction: t });
+        await solvers.create(
+            {
+                userUserId: checkMember.userId,
+                challengeChallId: challId,
+            },
+            { transaction: t },
+        );
+        await t.commit();
 
         res.json({});
     } catch (err) {
