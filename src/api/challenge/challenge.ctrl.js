@@ -6,7 +6,11 @@ const {
     solvers,
     attachedFile,
 } = require('../../models');
-const { numberScheme, flagSubmitScheme } = require('../../lib/schemes');
+const {
+    numberScheme,
+    categoryScheme,
+    flagSubmitScheme,
+} = require('../../lib/schemes');
 
 // TODO: 다른 API 멤버 체크 함수랑 통합
 const isMember = async (email) => {
@@ -98,23 +102,30 @@ const getChallenges = async (req, res, next) => {
         const checkMember = await isMember(req.user.emails[0].value);
         if (!checkMember) throw new Error('NO_AUTH');
 
+        const { error, value } = categoryScheme.validate(req.body.category);
+        if (error) throw new Error('INVALID_PARAMETERS');
+
+        const categories = value || ['PWN', 'REV', 'WEB', 'CRYPTO', 'MISC'];
         const challengeList = await challenges.findAll({
             attributes: ['challId', 'category', 'score', 'title', 'solvers'],
+            where: { category: categories },
             order: [['challId', 'ASC']],
         });
 
-        // 문제 분야별로 정렬
-        const categories = ['PWN', 'REV', 'WEB', 'CRYPTO', 'MISC'];
-        const challList = challengeList.reduce(
-            (acc, val) => {
-                acc[val.category].push(val);
-                return acc;
-            },
-            categories.reduce((acc, val) => {
-                acc[val] = [];
-                return acc;
-            }, {}),
-        );
+        let challList = challengeList;
+        if (typeof categories !== 'string') {
+            // 문제 분야별로 정렬
+            challList = challengeList.reduce(
+                (acc, val) => {
+                    acc[val.category].push(val);
+                    return acc;
+                },
+                categories.reduce((acc, val) => {
+                    acc[val] = [];
+                    return acc;
+                }, {}),
+            );
+        }
 
         res.json({ challList });
     } catch (err) {

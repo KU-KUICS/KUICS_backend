@@ -89,16 +89,14 @@ const boardListScheme = Joi.object({
 });
 
 /* Challnege API */
-const categoryScheme = Joi.any()
-    .valid('PWN', 'REV', 'WEB', 'CRYPTO', 'MISC')
-    .required();
+const categoryScheme = Joi.any().valid('PWN', 'REV', 'WEB', 'CRYPTO', 'MISC');
 
 const flagScheme = Joi.string()
     .pattern(/^KUICS\{\w+\}$/)
     .required();
 
 const challengeScheme = Joi.object({
-    category: categoryScheme,
+    category: categoryScheme.required(),
     title: stringScheme,
     description: stringScheme,
     flag: flagScheme,
@@ -107,7 +105,7 @@ const challengeScheme = Joi.object({
 
 const updateChallengeScheme = Joi.object({
     challId: numberScheme,
-    category: categoryScheme,
+    category: categoryScheme.required(),
     title: stringScheme,
     description: stringScheme,
     flag: flagScheme,
@@ -129,6 +127,7 @@ module.exports = {
     boardScheme,
     commentScheme,
     boardListScheme,
+    categoryScheme,
     challengeScheme,
     updateChallengeScheme,
     flagSubmitScheme,
