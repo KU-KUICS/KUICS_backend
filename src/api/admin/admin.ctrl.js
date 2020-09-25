@@ -23,6 +23,7 @@ const isAdmin = async (email) => {
     });
     return admin;
 }; // TODO: ../../lib/validations의 checkAdmin과 통합
+// TODO: const admin = await checkAdmin(req.user.emails[0].value);
 
 /**
  *  유저 정보를 읽어옴
