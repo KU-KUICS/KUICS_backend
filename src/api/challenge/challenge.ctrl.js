@@ -72,8 +72,15 @@ const getUserScoreboard = async (req, res, next) => {
         const { error, value } = numberScheme.validate(req.params.userId);
         if (error) throw new Error('INVALID_PARAMETERS');
 
+        const user = await users.findOne({
+            where: { userId: value },
+            attributes: ['userName'],
+        });
+        if (!user) throw new Error('INVALID_PARAMETERS');
+
+        const { userName } = user;
         const scoreboard = await solvers.findAll({
-            attributes: ['userUserId', ['createdAt', 'submitted']],
+            attributes: [['createdAt', 'submitted']],
             where: { userUserId: value },
             include: [
                 {
@@ -81,17 +88,12 @@ const getUserScoreboard = async (req, res, next) => {
                     attributes: ['title', 'score'],
                     required: true,
                 },
-                {
-                    model: users,
-                    attributes: ['userName'],
-                    required: true,
-                },
             ],
             order: [['createdAt', 'ASC']],
         });
         if (scoreboard.length === 0) throw new Error('INVALID_PARAMETERS');
 
-        res.json({ scoreboard });
+        res.json({ userId: value, userName, scoreboard });
     } catch (err) {
         next(err);
     }
