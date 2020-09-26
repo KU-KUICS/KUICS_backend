@@ -9,9 +9,9 @@ const {
 } = require('../models');
 
 const {
-    checkUser,
-    checkBoard,
-    checkComment,
+    isUser,
+    isBoard,
+    isComment,
     recommendedBoard,
     recommendedComment,
 } = require('./validations');
@@ -28,7 +28,7 @@ const postFunction = async (req, res, next, type) => {
 
         const { title, body, level } = value;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { userLevel } = user;
@@ -66,12 +66,12 @@ const reviseFunction = async (req, res, next, type) => {
         if (error) throw new Error('INVALID_PARAMETERS');
         const { title, body, level } = value;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { writerBoardId } = board;
@@ -101,12 +101,12 @@ const deleteFunction = async (req, res, next, type) => {
         const { boardId } = req.params;
         const { userId } = req.query;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { writerBoardId } = board;
@@ -165,12 +165,12 @@ const getFunction = async (req, res, next, type) => {
         const { userId } = req.query;
         const { boardId } = req.params;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -216,12 +216,12 @@ const recommendFunction = async (req, res, next, type) => {
         const { boardId } = req.params;
         const { userId } = req.query;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -229,10 +229,10 @@ const recommendFunction = async (req, res, next, type) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        const checkRecommended = await recommendedBoard(boardId, userId);
+        const isRecommended = await recommendedBoard(boardId, userId);
 
         await sequelize.transaction(async (t) => {
-            if (!checkRecommended) {
+            if (!isRecommended) {
                 /* 추천하지 않은 경우, 추천하기 */
                 await recommendBoards.create(
                     {
@@ -291,12 +291,12 @@ const postCommentFunction = async (req, res, next, type) => {
 
         const { body } = value;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
@@ -342,17 +342,17 @@ const reviseCommentFunction = async (req, res, next, type) => {
 
         const { body } = value;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
 
-        const comment = await checkComment(boardId, commentId);
+        const comment = await isComment(boardId, commentId);
         if (!comment) throw new Error('INVALID_PARAMETERS');
 
         const { writerCommentId } = comment;
@@ -376,17 +376,17 @@ const deleteCommentFunction = async (req, res, next, type) => {
         const { userId } = req.query;
         const { boardId, commentId } = req.params;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { checkedId, userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
 
-        const comment = await checkComment(boardId, commentId);
+        const comment = await isComment(boardId, commentId);
         if (!comment) throw new Error('INVALID_PARAMETERS');
 
         const { writerCommentId } = comment;
@@ -426,26 +426,26 @@ const recommendCommentFunction = async (req, res, next, type) => {
         const { boardId, commentId } = req.params;
         const { userId } = req.query;
 
-        const user = await checkUser(userId);
+        const user = await isUser(userId);
         if (!user) throw new Error('INVALID_PARAMETERS');
 
         const { userLevel } = user;
 
-        const board = await checkBoard(boardId, type);
+        const board = await isBoard(boardId, type);
         if (!board) throw new Error('INVALID_PARAMETERS');
 
         const { readLevel } = board;
 
-        const comment = await checkComment(boardId, commentId);
+        const comment = await isComment(boardId, commentId);
         if (!comment) throw new Error('INVALID_PARAMETERS');
 
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        const checkRecommended = await recommendedComment(commentId, userId);
+        const isRecommended = await recommendedComment(commentId, userId);
 
         await sequelize.transaction(async (t) => {
-            if (!checkRecommended) {
+            if (!isRecommended) {
                 /* 추천하지 않은 경우, 추천하기 */
                 await recommendComments.create(
                     {

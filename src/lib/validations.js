@@ -7,7 +7,7 @@ const {
 } = require('../models');
 
 /* TODO: email 이용한 validation으로 수정 */
-const checkAdmin = async (userId) => {
+const isAdmin = async (userId) => {
     const admin = await users.findOne({
         where: { userId, state: 0, level: 999 },
     });
@@ -15,11 +15,11 @@ const checkAdmin = async (userId) => {
 };
 
 /* TODO: email 이용한 validation으로 수정 */
-const checkUser = async (userId) => {
+const isUser = async (userId) => {
     const user = await users.findOne({
         where: { userId, state: 0, level: [1, 2, 999] },
         attributes: [
-            ['userId', 'checkedId'],
+            ['userId', 'iedId'],
             ['level', 'userLevel'],
         ],
         raw: true,
@@ -27,7 +27,7 @@ const checkUser = async (userId) => {
     return user;
 };
 
-const checkBoard = async (boardId, type) => {
+const isBoard = async (boardId, type) => {
     const board = await boards.findOne({
         where: { boardId, type, deletedAt: null },
         paranoid: false,
@@ -40,7 +40,7 @@ const checkBoard = async (boardId, type) => {
     return board;
 };
 
-const checkComment = async (boardBoardId, commentId) => {
+const isComment = async (boardBoardId, commentId) => {
     const comment = await boardComments.findOne({
         where: { boardBoardId, commentId, deletedAt: null },
         paranoid: false,
@@ -65,10 +65,10 @@ const recommendedComment = async (boardCommentCommentId, userUserId) => {
 };
 
 module.exports = {
-    checkAdmin,
-    checkUser,
-    checkBoard,
-    checkComment,
+    isAdmin,
+    isUser,
+    isBoard,
+    isComment,
     recommendedBoard,
     recommendedComment,
 };
