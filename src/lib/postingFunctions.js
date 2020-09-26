@@ -231,51 +231,49 @@ const recommendFunction = async (req, res, next, type) => {
 
         const checkRecommended = await recommendedBoard(boardId, userId);
 
-        const t = await sequelize.transaction();
-
-        if (!checkRecommended) {
-            /* 추천하지 않은 경우, 추천하기 */
-            await recommendBoards.create(
-                {
-                    boardBoardId: boardId,
-                    userUserId: userId,
-                },
-                { transaction: t },
-            );
-
-            await boards.increment(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { boardId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        } else {
-            /* 이미 추천한 경우, 추천 취소하기 */
-            await recommendBoards.destroy(
-                {
-                    where: {
+        await sequelize.transaction(async (t) => {
+            if (!checkRecommended) {
+                /* 추천하지 않은 경우, 추천하기 */
+                await recommendBoards.create(
+                    {
                         boardBoardId: boardId,
                         userUserId: userId,
                     },
-                },
-                { transaction: t },
-            );
+                    { transaction: t },
+                );
 
-            await boards.decrement(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { boardId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        }
+                await boards.increment(
+                    'recommendedTime',
+                    {
+                        by: 1,
+                        where: { boardId },
+                        silent: true,
+                    },
+                    { transaction: t },
+                );
+            } else {
+                /* 이미 추천한 경우, 추천 취소하기 */
+                await recommendBoards.destroy(
+                    {
+                        where: {
+                            boardBoardId: boardId,
+                            userUserId: userId,
+                        },
+                    },
+                    { transaction: t },
+                );
 
-        await t.commit();
+                await boards.decrement(
+                    'recommendedTime',
+                    {
+                        by: 1,
+                        where: { boardId },
+                        silent: true,
+                    },
+                    { transaction: t },
+                );
+            }
+        });
 
         res.json({});
     } catch (err) {
@@ -306,29 +304,27 @@ const postCommentFunction = async (req, res, next, type) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        const t = await sequelize.transaction();
+        await sequelize.transaction(async (t) => {
+            await boardComments.create(
+                {
+                    body,
+                    recommendedTime: 0,
+                    userUserId: userId,
+                    boardBoardId: boardId,
+                },
+                { transaction: t },
+            );
 
-        await boardComments.create(
-            {
-                body,
-                recommendedTime: 0,
-                userUserId: userId,
-                boardBoardId: boardId,
-            },
-            { transaction: t },
-        );
-
-        await boards.increment(
-            'commentCount',
-            {
-                by: 1,
-                where: { boardId },
-                silent: true,
-            },
-            { transaction: t },
-        );
-
-        await t.commit();
+            await boards.increment(
+                'commentCount',
+                {
+                    by: 1,
+                    where: { boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        });
 
         res.json({});
     } catch (err) {
@@ -402,24 +398,22 @@ const deleteCommentFunction = async (req, res, next, type) => {
         const readAuth = readLevel <= userLevel;
         if (!readAuth) throw new Error('NO_AUTH');
 
-        const t = await sequelize.transaction();
+        await sequelize.transaction(async (t) => {
+            await boardComments.destroy(
+                { where: { commentId } },
+                { transaction: t },
+            );
 
-        await boardComments.destroy(
-            { where: { commentId } },
-            { transaction: t },
-        );
-
-        await boards.decrement(
-            'commentCount',
-            {
-                by: 1,
-                where: { boardId },
-                silent: true,
-            },
-            { transaction: t },
-        );
-
-        await t.commit();
+            await boards.decrement(
+                'commentCount',
+                {
+                    by: 1,
+                    where: { boardId },
+                    silent: true,
+                },
+                { transaction: t },
+            );
+        });
 
         res.json({});
     } catch (err) {
@@ -450,50 +444,49 @@ const recommendCommentFunction = async (req, res, next, type) => {
 
         const checkRecommended = await recommendedComment(commentId, userId);
 
-        const t = await sequelize.transaction();
-        if (!checkRecommended) {
-            /* 추천하지 않은 경우, 추천하기 */
-            await recommendComments.create(
-                {
-                    boardCommentCommentId: commentId,
-                    userUserId: userId,
-                },
-                { transaction: t },
-            );
-
-            await boardComments.increment(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { commentId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        } else {
-            /* 이미 추천한 경우, 추천 취소하기 */
-            await recommendComments.destroy(
-                {
-                    where: {
+        await sequelize.transaction(async (t) => {
+            if (!checkRecommended) {
+                /* 추천하지 않은 경우, 추천하기 */
+                await recommendComments.create(
+                    {
                         boardCommentCommentId: commentId,
                         userUserId: userId,
                     },
-                },
-                { transaction: t },
-            );
+                    { transaction: t },
+                );
 
-            await boardComments.decrement(
-                'recommendedTime',
-                {
-                    by: 1,
-                    where: { commentId },
-                    silent: true,
-                },
-                { transaction: t },
-            );
-        }
+                await boardComments.increment(
+                    'recommendedTime',
+                    {
+                        by: 1,
+                        where: { commentId },
+                        silent: true,
+                    },
+                    { transaction: t },
+                );
+            } else {
+                /* 이미 추천한 경우, 추천 취소하기 */
+                await recommendComments.destroy(
+                    {
+                        where: {
+                            boardCommentCommentId: commentId,
+                            userUserId: userId,
+                        },
+                    },
+                    { transaction: t },
+                );
 
-        await t.commit();
+                await boardComments.decrement(
+                    'recommendedTime',
+                    {
+                        by: 1,
+                        where: { commentId },
+                        silent: true,
+                    },
+                    { transaction: t },
+                );
+            }
+        });
 
         res.json({});
     } catch (err) {
