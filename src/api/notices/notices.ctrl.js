@@ -18,11 +18,7 @@ const {
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
 const getListNotice = async (req, res, next) => {
-    try {
-        getListFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    getListFunction(req, res, next, 'notice');
 };
 
 /**
@@ -36,11 +32,7 @@ const getListNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const getNotice = async (req, res, next) => {
-    try {
-        getFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    getFunction(req, res, next, 'notice');
 };
 
 /**
@@ -53,11 +45,7 @@ const getNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendNotice = async (req, res, next) => {
-    try {
-        recommendFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    recommendFunction(req, res, next, 'notice');
 };
 
 /**
@@ -76,11 +64,7 @@ const recommendNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const postCommentNotice = async (req, res, next) => {
-    try {
-        postCommentFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    postCommentFunction(req, res, next, 'notice');
 };
 
 /**
@@ -95,11 +79,7 @@ const postCommentNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const reviseCommentNotice = async (req, res, next) => {
-    try {
-        reviseCommentFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    reviseCommentFunction(req, res, next, 'notice');
 };
 
 /**
@@ -113,11 +93,7 @@ const reviseCommentNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const deleteCommentNotice = async (req, res, next) => {
-    try {
-        deleteCommentFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    deleteCommentFunction(req, res, next, 'notice');
 };
 
 /**
@@ -131,11 +107,7 @@ const deleteCommentNotice = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendCommentNotice = async (req, res, next) => {
-    try {
-        recommendCommentFunction(req, res, next, 'notice');
-    } catch (err) {
-        next(err);
-    }
+    recommendCommentFunction(req, res, next, 'notice');
 };
 
 module.exports = {

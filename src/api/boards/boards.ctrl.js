@@ -21,11 +21,7 @@ const {
  *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
  */
 const getListBoard = async (req, res, next) => {
-    try {
-        getListFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    getListFunction(req, res, next, 'board');
 };
 
 /**
@@ -39,11 +35,7 @@ const getListBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const getBoard = async (req, res, next) => {
-    try {
-        getFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    getFunction(req, res, next, 'board');
 };
 
 /**
@@ -63,11 +55,7 @@ const getBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const postBoard = async (req, res, next) => {
-    try {
-        postFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    postFunction(req, res, next, 'board');
 };
 
 /**
@@ -81,11 +69,7 @@ const postBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const reviseBoard = async (req, res, next) => {
-    try {
-        reviseFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    reviseFunction(req, res, next, 'board');
 };
 
 /**
@@ -98,11 +82,7 @@ const reviseBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const deleteBoard = async (req, res, next) => {
-    try {
-        deleteFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    deleteFunction(req, res, next, 'board');
 };
 
 /**
@@ -115,11 +95,7 @@ const deleteBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendBoard = async (req, res, next) => {
-    try {
-        recommendFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    recommendFunction(req, res, next, 'board');
 };
 
 /**
@@ -138,11 +114,7 @@ const recommendBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const postCommentBoard = async (req, res, next) => {
-    try {
-        postCommentFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    postCommentFunction(req, res, next, 'board');
 };
 
 /**
@@ -157,11 +129,7 @@ const postCommentBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const reviseCommentBoard = async (req, res, next) => {
-    try {
-        reviseCommentFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    reviseCommentFunction(req, res, next, 'board');
 };
 
 /**
@@ -175,11 +143,7 @@ const reviseCommentBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const deleteCommentBoard = async (req, res, next) => {
-    try {
-        deleteCommentFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    deleteCommentFunction(req, res, next, 'board');
 };
 
 /**
@@ -193,11 +157,7 @@ const deleteCommentBoard = async (req, res, next) => {
  *  @returns {Error} NO_AUTH - unauthorized
  */
 const recommendCommentBoard = async (req, res, next) => {
-    try {
-        recommendCommentFunction(req, res, next, 'board');
-    } catch (err) {
-        next(err);
-    }
+    recommendCommentFunction(req, res, next, 'board');
 };
 
 module.exports = {
