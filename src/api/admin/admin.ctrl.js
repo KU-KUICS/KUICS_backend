@@ -9,12 +9,21 @@ const {
     userIdScheme,
 } = require('../../lib/schemes');
 
-const isAdmin = async (email) => {
+const { isAdmin } = require('../../lib/validations');
+
+const {
+    postFunction,
+    reviseFunction,
+    deleteFunction,
+} = require('../../lib/postingFunctions');
+
+const isAdmin_temp = async (email) => {
     const admin = await users.findOne({
         where: { email, state: 0, level: 999 },
     });
     return admin;
-};
+}; // TODO: ../../lib/validations의 isAdmin과 통합
+// TODO: const admin = await isAdmin(req.user.emails[0].value);
 
 /**
  *  유저 정보를 읽어옴
@@ -25,8 +34,9 @@ const isAdmin = async (email) => {
  */
 const getUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         // 관리자 API라 관리자, 탈퇴자 모두 반환하도록 함.
         const userList = await users.findAll();
@@ -54,8 +64,9 @@ const getUser = async (req, res, next) => {
  */
 const postUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = userScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -93,8 +104,9 @@ const postUser = async (req, res, next) => {
  */
 const updateUserPermission = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = permScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -123,8 +135,9 @@ const updateUserPermission = async (req, res, next) => {
  */
 const deleteUser = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = userIdScheme.validate(req.params.userId);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -158,7 +171,7 @@ const deleteUser = async (req, res, next) => {
  * 소개글 작성
  * @typedef Intro
  * @property {string} title.required - 제목
- * @property {string} content.required - 내용
+ * @property {{Array<string>}} content.required - 내용
  */
 
 /**
@@ -172,8 +185,9 @@ const deleteUser = async (req, res, next) => {
  */
 const postIntro = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = introScheme.validate(req.body);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -200,8 +214,9 @@ const postIntro = async (req, res, next) => {
  */
 const updateIntro = async (req, res, next) => {
     try {
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = updateIntroScheme.validate({
             ...req.body,
@@ -235,8 +250,9 @@ const updateIntro = async (req, res, next) => {
 const deleteIntro = async (req, res, next) => {
     try {
         // TODO: 어드민 체크
-        const checkAdmin = await isAdmin(req.user.emails[0].value);
-        if (!checkAdmin) throw new Error('NOT_ADMIN');
+        const admin = await isAdmin_temp(req.user.emails[0].value);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NOT_ADMIN');
 
         const { error, value } = introIdScheme.validate(req.params.introId);
         if (error) throw new Error('INVALID_PARAMETERS');
@@ -253,9 +269,79 @@ const deleteIntro = async (req, res, next) => {
     }
 };
 
-const postNotice = async (req, res, next) => {};
-const putEditNotice = async (req, res, next) => {};
-const deleteNotice = async (req, res, next) => {};
+/**
+ * @typedef boardScheme
+ * @property {string} title.required
+ * @property {{Array<string>}} body.required
+ * @property {number} level.required
+ */
+
+/**
+ *  공지글 작성하기
+ *  @route POST /api/admin/notice
+ *  @group Admin
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+const postNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await isAdmin(req.query.userId);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NO_AUTH');
+
+        postFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ *  boardId에 해당하는 공지글 수정하기
+ *  @route PUT /api/admin/notice/{boardId}
+ *  @group Admin
+ *  @param {number} boardId.path.required - 글 번호
+ *  @param {boardScheme.model} boardScheme.body.required - 작성할 글 정보
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+const reviseNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await isAdmin(req.query.userId);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NO_AUTH');
+
+        reviseFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ *  boardId에 해당하는 글 삭제하기
+ *  @route DELETE /api/admin/notice/{boardId}
+ *  @group Admin
+ *  @param {number} boardId.path.required - 글 번호
+ *  @returns {Object} 200 - 빈 객체
+ *  @returns {Error} INVALID_PARAMETERS - invalid Parameters
+ *  @returns {Error} NO_AUTH - unauthorized
+ */
+const deleteNotice = async (req, res, next) => {
+    try {
+        /* admin check */
+        const admin = await isAdmin(req.query.userId);
+        /* const admin = await isAdmin(req.user.emails[0].value); */
+        if (!admin) throw new Error('NO_AUTH');
+
+        deleteFunction(req, res, next, 'notice');
+    } catch (err) {
+        next(err);
+    }
+};
 
 module.exports = {
     getUser,
@@ -263,7 +349,7 @@ module.exports = {
     updateUserPermission,
     deleteUser,
     postNotice,
-    putEditNotice,
+    reviseNotice,
     deleteNotice,
     postIntro,
     updateIntro,
