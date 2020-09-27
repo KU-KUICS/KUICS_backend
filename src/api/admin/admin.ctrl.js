@@ -310,29 +310,29 @@ const postChallenge = async (req, res, next) => {
                 const { category, title, description, flag } = value;
                 const originalName = path.parse(req.file.originalname);
 
-                const t = await sequelize.transaction();
-                const challenge = await challenges.create(
-                    {
-                        category,
-                        title,
-                        description,
-                        flag: crypto
-                            .createHash('sha256')
-                            .update(flag)
-                            .digest('hex')
-                            .toUpperCase(),
-                    },
-                    { transaction: t },
-                );
-                await attachedFile.create(
-                    {
-                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
-                        path: req.file.path,
-                        challengeChallId: challenge.challId,
-                    },
-                    { transaction: t },
-                );
-                await t.commit();
+                await sequelize.transaction(async (t) => {
+                    const challenge = await challenges.create(
+                        {
+                            category,
+                            title,
+                            description,
+                            flag: crypto
+                                .createHash('sha256')
+                                .update(flag)
+                                .digest('hex')
+                                .toUpperCase(),
+                        },
+                        { transaction: t },
+                    );
+                    await attachedFile.create(
+                        {
+                            fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                            path: req.file.path,
+                            challengeChallId: challenge.challId,
+                        },
+                        { transaction: t },
+                    );
+                });
 
                 res.json({});
             } catch (err) {
@@ -372,35 +372,35 @@ const putChallenge = async (req, res, next) => {
                     .digest('hex');
 
                 const originalName = path.parse(req.file.originalname);
-                const t = await sequelize.transaction();
-                const prevAttachment = await attachedFile.findOne({
-                    where: {
-                        challengeChallId: challId,
-                    },
-                });
-                if (prevAttachment) {
-                    await fs.unlink(prevAttachment.path);
-                    await prevAttachment.destroy({ transaction: t });
-                }
-                await attachedFile.create(
-                    {
-                        fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
-                        path: req.file.path,
-                        challengeChallId: challId,
-                    },
-                    { transaction: t },
-                );
+                await sequelize.transaction(async (t) => {
+                    const prevAttachment = await attachedFile.findOne({
+                        where: {
+                            challengeChallId: challId,
+                        },
+                    });
+                    if (prevAttachment) {
+                        await fs.unlink(prevAttachment.path);
+                        await prevAttachment.destroy({ transaction: t });
+                    }
+                    await attachedFile.create(
+                        {
+                            fileName: `${originalName.name}_${attachmentHash}${originalName.ext}`,
+                            path: req.file.path,
+                            challengeChallId: challId,
+                        },
+                        { transaction: t },
+                    );
 
-                challenge.category = category;
-                challenge.title = title;
-                challenge.description = description;
-                challenge.flag = crypto
-                    .createHash('sha256')
-                    .update(flag)
-                    .digest('hex')
-                    .toUpperCase();
-                await challenge.save({ transaction: t });
-                await t.commit();
+                    challenge.category = category;
+                    challenge.title = title;
+                    challenge.description = description;
+                    challenge.flag = crypto
+                        .createHash('sha256')
+                        .update(flag)
+                        .digest('hex')
+                        .toUpperCase();
+                    await challenge.save({ transaction: t });
+                });
 
                 res.json({});
             } catch (err) {
