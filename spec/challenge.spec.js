@@ -71,6 +71,41 @@ describe('challenge', async () => {
             equal(Object.keys(resObj.challList).length, 5);
             equal(Object.keys(resObj.challList.PWN).length, 2);
             equal(Object.keys(resObj.challList.WEB).length, 1);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList.PWN[0],
+                    'challId',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList.PWN[0],
+                    'category',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList.PWN[0],
+                    'score',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList.PWN[0],
+                    'title',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList.PWN[0],
+                    'score',
+                ),
+                true,
+            );
         });
 
         it('returns challenge info with given category(valid)', async () => {
@@ -83,6 +118,41 @@ describe('challenge', async () => {
             equal(res.status, 200);
             isArray(resObj.challList);
             equal(resObj.challList.length, 2);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList[0],
+                    'challId',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList[0],
+                    'category',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList[0],
+                    'score',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList[0],
+                    'title',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challList[0],
+                    'score',
+                ),
+                true,
+            );
         });
 
         it('returns challenge info with given category(invalid)', async () => {
@@ -102,6 +172,49 @@ describe('challenge', async () => {
 
             equal(res.status, 200);
             isObject(resObj.challenge);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challenge,
+                    'challId',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challenge,
+                    'category',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(resObj.challenge, 'score'),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(resObj.challenge, 'title'),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challenge,
+                    'description',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challenge,
+                    'solvers',
+                ),
+                true,
+            );
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.challenge,
+                    'firstBlood',
+                ),
+                true,
+            );
         });
 
         it('returns challenge info of invalid challId(positive number)', async () => {

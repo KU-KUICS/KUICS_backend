@@ -52,6 +52,7 @@ activateSwagger(app);
 
 const models = require('./models');
 
+/*
 models.sequelize
     .sync({ alter: true })
     .then(() => {
@@ -61,5 +62,6 @@ models.sequelize
         logger.error(err);
         logger.error('DB sync process failed');
     });
+    */
 
 module.exports = app;
