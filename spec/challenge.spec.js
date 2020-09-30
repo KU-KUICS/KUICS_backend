@@ -7,18 +7,43 @@ const server = require('../src/server');
 
 chai.use(chaiHttp);
 
-const { challenges, solvers } = require('../src/models');
+const { users, challenges, solvers } = require('../src/models');
 
 describe('challenge', async () => {
     before(async () => {
         // 데이터베이스 초기화
-        await solvers.destroy({
+        await users.destroy({
             where: {},
             truncate: true,
             restartIdentity: true,
             force: true,
             cascade: true,
         });
+        await users.create({
+            userName: 'admin',
+            email: 'test@kuics.kro.kr',
+            studentId: '2020123456',
+            joinedAt: new Date(Date.now()),
+            level: '999',
+            state: '0',
+        });
+        await users.create({
+            userName: 'Hello',
+            email: 'hello@foo.com',
+            studentId: '2020123123',
+            joinedAt: new Date(Date.now()),
+            level: '1',
+            state: '0',
+        });
+        await users.create({
+            userName: 'World',
+            email: 'world@bar.com',
+            joinedAt: new Date(Date.now()),
+            studentId: '2020456456',
+            level: '1',
+            state: '0',
+        });
+
         await challenges.destroy({
             where: {},
             truncate: true,
@@ -26,43 +51,159 @@ describe('challenge', async () => {
             force: true,
             cascade: true,
         });
+        await challenges.create({
+            category: 'PWN',
+            title: 'PWN1',
+            description: 'PWN1',
+            flag:
+                'B94E1088528150F7A87D035C2BFD1CC3DFC40C6A85CBBD663FF9C55C0B3D7783', // KUICS{PWN}
+            score: 1000,
+            solvers: 1,
+            userUserId: 2,
+        });
+        await challenges.create({
+            category: 'PWN',
+            title: 'PWN2',
+            description: 'PWN2',
+            flag:
+                'B94E1088528150F7A87D035C2BFD1CC3DFC40C6A85CBBD663FF9C55C0B3D7783', // KUICS{PWN}
+            score: 1000,
+            solvers: 1,
+            userUserId: 2,
+        });
+        await challenges.create({
+            category: 'WEB',
+            title: 'WEB1',
+            description: 'WEB1',
+            flag:
+                '3507CE1728D2A7870235D14902EE62E387060E5DB2FCF3D17334F936354BB522', // KUICS{WEB}
+            score: 1000,
+            solvers: 1,
+            userUserId: 3,
+        });
+
+        await solvers.destroy({
+            where: {},
+            truncate: true,
+            restartIdentity: true,
+            force: true,
+            cascade: true,
+        });
+        await solvers.create({
+            userUserId: 2,
+            challengeChallId: 1,
+        });
+        await solvers.create({
+            userUserId: 2,
+            challengeChallId: 2,
+        });
+        await solvers.create({
+            userUserId: 3,
+            challengeChallId: 3,
+        });
     });
 
     // 스코어 보드
-    describe('GET /scoreboard', async () => {});
+    describe('GET /scoreboard', async () => {
+        it('returns scoreboard', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/scoreboard');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 200);
+            isArray(resObj.scoreboard);
+            equal(resObj.scoreboard.length, 2);
+            equal(resObj.scoreboard[0].userUserId, 2);
+            equal(resObj.scoreboard[0].score, 2000);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.scoreboard[0],
+                    'lastSubmit',
+                ),
+                true,
+            );
+            equal(resObj.scoreboard[0]['user.userName'], 'Hello');
+            equal(resObj.scoreboard[1].userUserId, 3);
+            equal(resObj.scoreboard[1].score, 1000);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.scoreboard[1],
+                    'lastSubmit',
+                ),
+                true,
+            );
+            equal(resObj.scoreboard[1]['user.userName'], 'World');
+        });
+    });
 
     // 유저 스코어 상세
-    describe('GET /scoreboard/:userId', async () => {});
+    describe('GET /scoreboard/:userId', async () => {
+        it('returns scoreboard of valid user', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/scoreboard/2');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 200);
+            equal(resObj.userId, 2);
+            equal(resObj.userName, 'Hello');
+            isArray(resObj.scoreboard);
+            equal(resObj.scoreboard.length, 2);
+
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.scoreboard[0],
+                    'submitted',
+                ),
+                true,
+            );
+            equal(resObj.scoreboard[0].challenge.title, 'PWN1');
+            equal(resObj.scoreboard[0].challenge.score, 1000);
+            equal(
+                Object.prototype.hasOwnProperty.call(
+                    resObj.scoreboard[1],
+                    'submitted',
+                ),
+                true,
+            );
+            equal(resObj.scoreboard[1].challenge.title, 'PWN2');
+            equal(resObj.scoreboard[1].challenge.score, 1000);
+        });
+
+        it('returns scoreboard of invalid user(positive)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/scoreboard/10');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+
+        it('returns scoreboard of invalid user(negative)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/scoreboard/-1');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+
+        it('returns scoreboard of invalid user(string)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/scoreboard/hello');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+    });
 
     // 문제 목록 불러오기
     describe('GET /', async () => {
-        before(async () => {
-            await challenges.create({
-                category: 'PWN',
-                title: 'PWN1',
-                description: 'PWN1',
-                flag:
-                    'B94E1088528150F7A87D035C2BFD1CC3DFC40C6A85CBBD663FF9C55C0B3D7783', // KUICS{PWN}
-                score: 1000,
-            });
-            await challenges.create({
-                category: 'PWN',
-                title: 'PWN2',
-                description: 'PWN2',
-                flag:
-                    'B94E1088528150F7A87D035C2BFD1CC3DFC40C6A85CBBD663FF9C55C0B3D7783', // KUICS{PWN}
-                score: 1000,
-            });
-            await challenges.create({
-                category: 'WEB',
-                title: 'WEB1',
-                description: 'WEB1',
-                flag:
-                    '3507CE1728D2A7870235D14902EE62E387060E5DB2FCF3D17334F936354BB522', // KUICS{WEB}
-                score: 1000,
-            });
-        });
-
         it('returns all challenge info', async () => {
             const res = await chai.request(server).get('/api/challenge/');
             const resObj = JSON.parse(res.text);

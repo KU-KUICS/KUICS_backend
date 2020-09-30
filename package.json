@@ -8,7 +8,7 @@
     "start:dev": "cross-env NODE_ENV=development&& nodemon ./src/index.js",
     "prod": "cross-env NODE_ENV=production&& pm2 start ./src/index.js",
     "test": "eslint ./src/**.*",
-    "mocha": "cross-env NODE_ENV=development&& mocha spec/"
+    "mocha": "cross-env NODE_ENV=development&& mocha -t 10000 spec/"
   },
   "repository": {
     "type": "git",
