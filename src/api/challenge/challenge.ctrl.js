@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { env } = require('process');
+const { Op } = require('sequelize');
 const {
     sequelize,
     users,
@@ -16,7 +16,7 @@ const {
 // TODO: 다른 API 멤버 체크 함수랑 통합
 const isMember = async (email) => {
     const member = await users.findOne({
-        where: { email, state: 0, level: { [sequelize.Op.gte]: 1 } },
+        where: { email, state: 0, level: { [Op.gte]: 1 } },
         attributes: ['userId'],
     });
     return member;
@@ -132,6 +132,7 @@ const getChallenges = async (req, res, next) => {
 
         res.json({ challList });
     } catch (err) {
+        console.log(err);
         next(err);
     }
 };

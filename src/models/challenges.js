@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Chanllenges.associate = (models) => {
         // 퍼스트 블러드
-        Chanllenges.belongsTo(models.users);
+        Chanllenges.belongsTo(models.users, { onDelete: 'SET NULL' });
     };
 
     return Chanllenges;

@@ -9,8 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Solvers.associate = (models) => {
-        // 사용자는 삭제되지 않기 때문에 CASCADE 적용 안함
-        Solvers.belongsTo(models.users);
+        Solvers.belongsTo(models.users, { onDelete: 'CASCADE' });
         Solvers.belongsTo(models.challenges, { onDelete: 'CASCADE' });
     };
 

@@ -29,6 +29,14 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+if (NODE_ENV === 'development') {
+    app.use((req, res, next) => {
+        req.user = {
+            emails: [{ value: 'test@kuics.kro.kr' }],
+        };
+        next();
+    });
+}
 
 if (NODE_ENV === 'production') {
     app.use(morgan('combined', { stream }));
