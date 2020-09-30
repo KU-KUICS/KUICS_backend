@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { env } = require('process');
 const {
     sequelize,
     users,
@@ -231,8 +232,8 @@ const postSubmitFlag = async (req, res, next) => {
 
 const getDownloadAttachment = async (req, res, next) => {
     try {
-        // const checkMember = await isMember(req.user.emails[0].value);
-        // if (!checkMember) throw new Error('NO_AUTH');
+        const checkMember = await isMember(req.user.emails[0].value);
+        if (!checkMember) throw new Error('NO_AUTH');
 
         const { error, value } = numberScheme.validate(req.params.challId);
         if (error) throw new Error('INVALID_PARAMETERS');

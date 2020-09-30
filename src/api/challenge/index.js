@@ -15,6 +15,6 @@ router.get('/scoreboard/:userId', getUserScoreboard); // 유저 스코어 상세
 router.get('/', getChallenges); // 문제 목록 불러오기
 router.get('/:challId', getChallengesDesc); // 문제 설명 불러오기
 router.post('/', postSubmitFlag); // 문제 플래그 인증
-router.get('/attachments/:challId', getDownloadAttachment); // 문제 설명 불러오기
+router.get('/attachments/:challId', getDownloadAttachment); // 문제 파일 다운로드
 
 module.exports = router;
