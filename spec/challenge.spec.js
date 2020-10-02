@@ -384,8 +384,98 @@ describe('challenge', async () => {
     });
 
     // 문제 플래그 인증
-    describe('POST /', async () => {});
+    describe('POST /', async () => {
+        before(async () => {
+            await solvers.destroy({
+                where: {},
+                truncate: true,
+                restartIdentity: true,
+                force: true,
+                cascade: true,
+            });
+            await challenges.update(
+                { solvers: 0, userUserId: null },
+                { where: {} },
+            );
+        });
+
+        it('submit valid flag', async () => {
+            const res = await chai
+                .request(server)
+                .post('/api/challenge')
+                .send({ challId: 1, flag: 'KUICS{PWN}' });
+            const chall = await challenges.findOne({ where: { challId: 1 } });
+
+            equal(res.status, 200);
+            equal(chall.userUserId, 1); // 퍼스트 블러드
+        });
+
+        it('submit already submitted flag', async () => {
+            const res = await chai
+                .request(server)
+                .post('/api/challenge')
+                .send({ challId: 1, flag: 'KUICS{PWN}' });
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 403);
+            equal(resObj.errorCode, 5);
+        });
+
+        it('submit invalid flag(invalid format)', async () => {
+            const res = await chai
+                .request(server)
+                .post('/api/challenge')
+                .send({ challId: 2, flag: 'FooBar' });
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+
+        it('submit invalid flag(wrong flag)', async () => {
+            const res = await chai
+                .request(server)
+                .post('/api/challenge')
+                .send({ challId: 2, flag: 'KUICS{FooPWN}' });
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+    });
 
     // 문제 파일 다운로드
-    describe('GET /attachments/:challId', async () => {});
+    describe('GET /attachments/:challId', async () => {
+        before(async () => {
+            await challenges.destroy({
+                where: {},
+                truncate: true,
+                restartIdentity: true,
+                force: true,
+                cascade: true,
+            });
+            await solvers.destroy({
+                where: {},
+                truncate: true,
+                restartIdentity: true,
+                force: true,
+                cascade: true,
+            });
+            await challenges.create({
+                category: 'PWN',
+                title: 'PWN1',
+                description: 'PWN1',
+                flag:
+                    'B94E1088528150F7A87D035C2BFD1CC3DFC40C6A85CBBD663FF9C55C0B3D7783', // KUICS{PWN}
+                score: 1000,
+                solvers: 1,
+                userUserId: 2,
+            });
+        });
+
+        it('download attachment(valid challId)', async () => {});
+        it('download attachment(invalid challId, positive)', async () => {});
+        it('download attachment(invalid challId, negative)', async () => {});
+        it('download attachment(invalid challId, string)', async () => {});
+    });
 });
