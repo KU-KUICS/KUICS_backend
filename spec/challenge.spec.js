@@ -1,3 +1,4 @@
+const fs = require('fs');
 const chai = require('chai');
 
 const { equal, isObject, isArray } = chai.assert;
@@ -7,7 +8,7 @@ const server = require('../src/server');
 
 chai.use(chaiHttp);
 
-const { users, challenges, solvers } = require('../src/models');
+const { users, challenges, solvers, attachedFile } = require('../src/models');
 
 describe('challenge', async () => {
     before(async () => {
@@ -471,11 +472,82 @@ describe('challenge', async () => {
                 solvers: 1,
                 userUserId: 2,
             });
+
+            fs.writeFileSync('attachment/test.dat', 'HelloWorld');
+            await attachedFile.create({
+                fileName: 'test.dat',
+                path: 'attachment/test.dat',
+                challengeChallId: 1,
+            });
         });
 
-        it('download attachment(valid challId)', async () => {});
-        it('download attachment(invalid challId, positive)', async () => {});
-        it('download attachment(invalid challId, negative)', async () => {});
-        it('download attachment(invalid challId, string)', async () => {});
+        it('download attachment(valid challId)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/attachments/1');
+
+            equal(res.status, 200);
+            equal(res.header['content-length'], 10);
+        });
+
+        it('download attachment(invalid challId, positive)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/attachments/100');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+        it('download attachment(invalid challId, negative)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/attachments/-1');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+        it('download attachment(invalid challId, string)', async () => {
+            const res = await chai
+                .request(server)
+                .get('/api/challenge/attachments/hello');
+            const resObj = JSON.parse(res.text);
+
+            equal(res.status, 404);
+            equal(resObj.errorCode, 1);
+        });
+    });
+
+    after(async () => {
+        await users.destroy({
+            where: {},
+            truncate: true,
+            restartIdentity: true,
+            force: true,
+            cascade: true,
+        });
+        await challenges.destroy({
+            where: {},
+            truncate: true,
+            restartIdentity: true,
+            force: true,
+            cascade: true,
+        });
+        await solvers.destroy({
+            where: {},
+            truncate: true,
+            restartIdentity: true,
+            force: true,
+            cascade: true,
+        });
+        await attachedFile.destroy({
+            where: {},
+            truncate: true,
+            restartIdentity: true,
+            force: true,
+            cascade: true,
+        });
+        fs.unlinkSync('attachment/test.dat');
     });
 });

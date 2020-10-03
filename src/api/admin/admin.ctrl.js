@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsPromises = require('fs').promises;
 const path = require('path');
 const multer = require('multer');
 const {
@@ -21,6 +22,11 @@ const {
     updateChallengeScheme,
 } = require('../../lib/schemes');
 
+const attachmentDir = 'attachment/';
+if (!fs.existsSync(attachmentDir)) {
+    fs.mkdirSync(attachmentDir, 0744);
+}
+
 const challengeUpload = multer({
     limits: {
         files: 1,
@@ -28,7 +34,7 @@ const challengeUpload = multer({
     },
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'attachments/');
+            cb(null, attachmentDir);
         },
         filename: async (req, file, cb) => {
             const randBytes = await crypto.randomBytes(16);
@@ -301,7 +307,7 @@ const postChallenge = async (req, res, next) => {
                 const { error, value } = challengeScheme.validate(req.body);
                 if (error) throw new Error('INVALID_PARAMETERS');
 
-                const attachment = await fs.readFile(req.file.path);
+                const attachment = await fsPromises.readFile(req.file.path);
                 const attachmentHash = crypto
                     .createHash('sha256')
                     .update(attachment)
@@ -365,7 +371,7 @@ const putChallenge = async (req, res, next) => {
                 });
                 if (!challenge) throw new Error('INVALID_PARAMETERS');
 
-                const attachment = await fs.readFile(req.file.path);
+                const attachment = await fsPromises.readFile(req.file.path);
                 const attachmentHash = crypto
                     .createHash('sha256')
                     .update(attachment)
@@ -379,7 +385,7 @@ const putChallenge = async (req, res, next) => {
                         },
                     });
                     if (prevAttachment) {
-                        await fs.unlink(prevAttachment.path);
+                        await fsPromises.unlink(prevAttachment.path);
                         await prevAttachment.destroy({ transaction: t });
                     }
                     await attachedFile.create(
