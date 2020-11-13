@@ -48,7 +48,7 @@
     "mysql2": "^2.2.5",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
-    "pg": "^8.5.0",
+    "pg": "^8.5.1",
     "pm2": "^4.5.0",
     "sequelize": "^6.3.5",
     "swagger-jsdoc": "^5.0.1",
