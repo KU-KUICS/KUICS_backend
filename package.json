@@ -34,7 +34,7 @@
     "@hapi/joi": "^17.1.1",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "eslint-config-prettier": "^6.15.0",
