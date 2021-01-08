@@ -31,7 +31,6 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "@hapi/joi": "^17.1.1",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -41,6 +40,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "express": "^4.17.1",
     "express-swagger-generator": "^1.1.17",
+    "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
