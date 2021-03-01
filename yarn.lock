@@ -3900,10 +3900,10 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-swagger-jsdoc@^6.0.6:
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/swagger-jsdoc/-/swagger-jsdoc-6.0.6.tgz#b94a57deb128631461d58812bae306a887bd3b18"
-  integrity sha512-YZ36PDYLVboInie2yF91XNUwPC2spm8beZKciqNZ78sO61k5HadREn9rml1hQykPE5uKjZN7Z863F5wlTAF+JA==
+swagger-jsdoc@^6.0.8:
+  version "6.0.8"
+  resolved "https://registry.yarnpkg.com/swagger-jsdoc/-/swagger-jsdoc-6.0.8.tgz#8b3f0684485ff80c83cb681c93ee4d45bb244a7a"
+  integrity sha512-LVI4dp1/FZ1f5A57jl4TveHDEAiHWIlqxApMJcM+oEeh5BGZ/hH1KBonU/S3p2DPrt4DivkQIFZGxUdIfmbVNg==
   dependencies:
     commander "6.2.0"
     doctrine "3.0.0"
