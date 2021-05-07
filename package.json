@@ -54,7 +54,7 @@
     "swagger-jsdoc": "^6.0.6",
     "swagger-ui-express": "^4.1.6",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2",
+    "winston-daily-rotate-file": "^4.5.5",
     "winston-syslog": "^2.4.4"
   },
   "directories": {
