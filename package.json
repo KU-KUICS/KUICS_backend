@@ -38,7 +38,7 @@
     "dotenv": "^8.2.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-swagger-generator": "^1.1.17",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
